@@ -1,0 +1,5 @@
+*.pyc
+.history/
+.vscode/
+Binaries/
+Intermediate/

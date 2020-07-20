@@ -1,0 +1,43 @@
+{
+    "section":{
+        "Model":"建模",
+        "Anim":"动画",
+        "FX":"特效",
+        "Render":"渲染",
+        "Help":"帮助"
+    },
+    "menu":{
+        "Model_Tool" : {
+            "section": "Model",
+            "label": "演示:模型处理工具(打印到屏幕)",
+            "type": "PYTHON",
+            "command": "unreal.SystemLibrary.print_string(None,'模型处理工具',text_color=[255,255,255,255])"
+        },
+        "Anim_Tool" : {
+            "section": "Anim",
+            "label": "动画导入比较面板",
+            "type": "COMMAND",
+            "command": "py \"{Content}/Anim/FBXImporter/main.py\""
+        },
+        "FX_Tool" : {
+            "section": "FX",
+            "label": "特效工具",
+            "type": "COMMAND",
+            "command": "py \"{Content}/FX/sequencer_export_fbx.py\""
+        },
+        "SequencerFBX" : {
+            "section": "Render",
+            "label": "批量渲染 Sequencer 工具",
+            "type": "COMMAND",
+            "command": "py \"{Content}/Anim/sequencer_batch_render/render_tool.py\""
+        },
+        "Document" : {
+            "section": "Help",
+            "label": "帮助文档",
+            "type": "PYTHON",
+            "command": "import webbrowser;webbrowser.open_new_tab('https://github.com/FXTD-ODYSSEY/Unreal-PyToolkit')"
+        }
+    }
+}
+
+
