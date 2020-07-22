@@ -29,7 +29,6 @@ type_map = {
     "python": unreal.ToolMenuStringCommandType.PYTHON
 }
 
-
 def read_menu_json(path):
 
     with open(path, 'r') as f:
@@ -86,13 +85,14 @@ def slate_deco(func):
                     win.deleteLater()
                     # win.setParent(None)
                     win.close()
-        
+
         # NOTE https://forums.unrealengine.com/unreal-engine/unreal-studio/1526501-how-to-get-the-main-window-of-the-editor-to-parent-qt-or-pyside-application-to-it
         # NOTE 让窗口嵌入到 unreal 内部
         unreal.parent_external_window_to_slate(self.winId())
         # NOTE 添加 dayu_widget 的样式
+        res = func(self, *args, **kwargs)
         dayu_theme.apply(self)
-        return func(self, *args, **kwargs)
+        return res
     return wrapper
 
 
@@ -106,20 +106,17 @@ def __QtAppTick__(delta_seconds):
 
 # This part is for the initial setup. Need to run once to spawn the application.
 unreal_app = QtWidgets.QApplication.instance()
-
 if not unreal_app:
     unreal_app = QtWidgets.QApplication([])
-
-    # # NOTE set dark theme to unreal_app
-    # set_dark_theme(unreal_app)
-
     tick_handle = unreal.register_slate_post_tick_callback(__QtAppTick__)
     __QtAppQuit__ = partial(
         unreal.unregister_slate_post_tick_callback, tick_handle)
     unreal_app.aboutToQuit.connect(__QtAppQuit__)
 
+    with open(os.path.join(DIR,"main.css"),'r') as f:
+        unreal_app.setStyleSheet(f.read())
+
     # NOTE 重载 show 方法
     QtWidgets.QWidget.show = slate_deco(QtWidgets.QWidget.show)
 
     create_menu()
-    # unreal_app.exec_()

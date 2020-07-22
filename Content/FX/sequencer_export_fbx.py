@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-
+导出 Sequencer 选择的元素动画
+使用 FBX SDK 转换为骨骼蒙皮动画
 """
 
 from __future__ import division
@@ -22,29 +23,30 @@ import unreal
 import fbx
 import FbxCommon
 from Qt import QtCore, QtWidgets, QtGui
+from dayu_widgets import dayu_theme
 
 DIR = os.path.dirname(__file__)
 
-def alert(msg=u"msg", title=u"警告", button_text=u"确定"):
+def alert(msg=u"msg", title=u"警告",icon=QtWidgets.QMessageBox.Warning,button_text=u"确定"):
     # NOTE 生成 Qt 警告窗口
     msg_box = QtWidgets.QMessageBox()
-    msg_box.setIcon(QtWidgets.QMessageBox.Warning)
+    msg_box.setIcon(icon)
     msg_box.setWindowTitle(title)
     msg_box.setText(msg)
     msg_box.addButton(button_text, QtWidgets.QMessageBox.AcceptRole)
-    unreal.parent_external_window_to_slate(msg_box.winId())
+    dayu_theme.apply(msg_box)
     msg_box.exec_()
 
 def unreal_export_fbx(fbx_file):
     # NOTE 获取当前 Sequencer 中的 LevelSequence
-    sequence = unreal.RedArtToolkitBPLibrary.get_focus_sequence()
+    sequence = unreal.PyToolkitBPLibrary.get_focus_sequence()
     if not sequence:
         msg = u"请打开定序器"
         alert(msg)
         raise RuntimeError(msg)
 
     # NOTE 获取当前 Sequencer 中选中的 Bindings
-    id_list = unreal.RedArtToolkitBPLibrary.get_focus_bindings(sequence)
+    id_list = unreal.PyToolkitBPLibrary.get_focus_bindings(sequence)
     bindings_list = [binding for binding in sequence.get_bindings() if binding.get_id() in id_list]
 
     if bindings_list:

@@ -26,10 +26,11 @@ from collections import Iterable
 from functools import partial
 
 from Qt import QtCore, QtWidgets, QtGui
-from path_selector import PathSelector
+from path_selector import IPathSelector
 from splitter import ISplitter
 from progress_dialog import IProgressDialog
 
+from dayu_widgets.push_button import MPushButton
 
 class ListSyncer(object):
     """
@@ -347,7 +348,7 @@ class FBXImporter_UI(QtWidgets.QWidget):
 
         self.Unreal_Layout = QtWidgets.QVBoxLayout()
         self.Unreal_Layout.setContentsMargins(0, 0, 0, 0)
-        self.selector = PathSelector(
+        self.selector = IPathSelector(
             select_callback=self.select_folder, button_text=u"获取选择资源的目录路径")
 
         self.asset_list = AssetListWidget(self)
@@ -362,9 +363,9 @@ class FBXImporter_UI(QtWidgets.QWidget):
         fbx_layout = QtWidgets.QVBoxLayout()
         fbx_layout.setContentsMargins(0, 0, 0, 0)
         butotn_layout = QtWidgets.QHBoxLayout()
-        self.root_btn = QtWidgets.QPushButton(u"获取文件目录路径")
+        self.root_btn = MPushButton(u"获取文件目录路径")
         self.root_btn.clicked.connect(self.handle_directory)
-        self.file_btn = QtWidgets.QPushButton(u"获取文件")
+        self.file_btn = MPushButton(u"获取文件")
         self.file_btn.clicked.connect(self.get_file)
         butotn_layout.addWidget(self.root_btn)
         butotn_layout.addWidget(self.file_btn)
@@ -381,7 +382,7 @@ class FBXImporter_UI(QtWidgets.QWidget):
         self.compare_splitter.addWidget(self.Unreal_Widget)
         self.compare_splitter.addWidget(fbx_widget)
 
-        self.import_button = QtWidgets.QPushButton(u"刷新")
+        self.import_button = MPushButton(u"刷新")
         self.import_button.clicked.connect(self.refresh)
 
         layout = QtWidgets.QVBoxLayout()

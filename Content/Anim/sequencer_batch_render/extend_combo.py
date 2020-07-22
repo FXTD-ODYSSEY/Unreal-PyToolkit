@@ -12,8 +12,15 @@ __email__ = '820472580@qq.com'
 __date__ = '2020-07-18 21:09:23'
 
 from Qt import QtCore, QtWidgets, QtGui
+from dayu_widgets.combo_box import MComboBox
+from dayu_widgets.mixin import property_mixin, cursor_mixin, focus_shadow_mixin
+# class ExtendedCombo(QtWidgets.QComboBox):
 
-class ExtendedCombo(QtWidgets.QComboBox):
+@property_mixin
+class MCompleter(QtWidgets.QCompleter):
+    pass
+
+class ExtendedCombo(MComboBox):
 
     popup = QtCore.Signal()
 
@@ -22,7 +29,7 @@ class ExtendedCombo(QtWidgets.QComboBox):
 
         self.setFocusPolicy(QtCore.Qt.StrongFocus)
         self.setEditable(True)
-        self.completer = QtWidgets.QCompleter(self)
+        self.completer = MCompleter(self)
 
         # always show all completions
         self.completer.setCompletionMode(
@@ -36,6 +43,7 @@ class ExtendedCombo(QtWidgets.QComboBox):
         self.setCompleter(self.completer)
 
         edit = self.lineEdit()
+        edit.setReadOnly(False)
         # NOTE 取消按 Enter 生成新 item 的功能
         edit.returnPressed.disconnect()
         edit.textEdited[unicode].connect(
@@ -90,3 +98,6 @@ class ExtendedCombo(QtWidgets.QComboBox):
     def showPopup(self):
         self.popup.emit()
         super(ExtendedCombo, self).showPopup()
+
+    def eventFilter(self, widget, event):
+        return False

@@ -27,7 +27,7 @@
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout_2">
    <item>
-    <widget class="QLabel" name="UIcon">
+    <widget class="QLabel" name="UThumbnail">
      <property name="text">
       <string>TextLabel</string>
      </property>
@@ -43,6 +43,9 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="sizeAdjustPolicy">
+        <enum>QComboBox::AdjustToMinimumContentsLength</enum>
+       </property>
        <property name="test" stdset="0">
         <string>adqawr</string>
        </property>
@@ -56,14 +59,14 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <widget class="QPushButton" name="UGet">
+        <widget class="MPushButton" name="UGet">
          <property name="text">
           <string/>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="UFind">
+        <widget class="MPushButton" name="UFind">
          <property name="text">
           <string/>
          </property>
@@ -94,6 +97,11 @@
   </action>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>MPushButton</class>
+   <extends>QPushButton</extends>
+   <header>dayu_widgets/push_button.h</header>
+  </customwidget>
   <customwidget>
    <class>ExtendedCombo</class>
    <extends>QComboBox</extends>

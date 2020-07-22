@@ -16,17 +16,18 @@ from Qt import QtCore
 from Qt import QtWidgets
 
 from functools import partial
+from dayu_widgets.line_edit import MLineEdit
+from dayu_widgets.push_button import MPushButton
 
-
-class PathSelector(QtWidgets.QWidget):
+class IPathSelector(QtWidgets.QWidget):
     def __init__(self, parent=None, select_callback=None, label=u"文件路径", button_text=u"浏览"):
-        super(PathSelector, self).__init__(parent=parent)
+        super(IPathSelector, self).__init__(parent=parent)
 
         self.label = QtWidgets.QLabel(label)
 
-        self.line = QtWidgets.QLineEdit()
+        self.line = MLineEdit()
 
-        self.button = QtWidgets.QPushButton()
+        self.button = MPushButton()
         self.button.setText(button_text)
         callback = select_callback if callable(
             select_callback) else self.browser_file
@@ -48,7 +49,7 @@ class PathSelector(QtWidgets.QWidget):
 
 def test():
     app = QtWidgets.QApplication([])
-    widget = PathSelector()
+    widget = IPathSelector()
     widget.show()
     app.exec_()
 

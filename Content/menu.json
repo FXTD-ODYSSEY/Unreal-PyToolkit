@@ -21,7 +21,7 @@
         },
         "FX_Tool" : {
             "section": "FX",
-            "label": "特效工具",
+            "label": "Sequencer 导出选择元素动画为骨骼蒙皮",
             "type": "COMMAND",
             "command": "py \"{Content}/FX/sequencer_export_fbx.py\""
         },
