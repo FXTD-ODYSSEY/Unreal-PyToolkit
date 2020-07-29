@@ -13,6 +13,12 @@
             "type": "PYTHON",
             "command": "unreal.SystemLibrary.print_string(None,'模型处理工具',text_color=[255,255,255,255])"
         },
+        "skeletal_socket_tool" : {
+            "section": "Anim",
+            "label": "Socket 自动化添加工具",
+            "type": "COMMAND",
+            "command": "py \"{Content}/Anim/skeletal_socket_tool/skeletal_socket_tool.py\""
+        },
         "Anim_Tool" : {
             "section": "Anim",
             "label": "动画导入比较面板",
