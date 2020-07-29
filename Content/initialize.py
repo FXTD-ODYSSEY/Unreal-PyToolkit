@@ -44,21 +44,27 @@ def read_menu_json(path):
 
 
 def create_menu():
+    # NOTE 读取 menu json 配置
     menu_section_dict, menu_entry_dict = read_menu_json("%s/menu.json" % DIR)
 
     # NOTE https://forums.unrealengine.com/development-discussion/python-scripting/1767113-making-menus-in-py
     menus = unreal.ToolMenus.get()
 
+    # NOTE 获取主界面的主菜单位置
     main_menu = menus.find_menu("LevelEditor.MainMenu")
     if not main_menu:
         raise RuntimeError(
             "Failed to find the 'Main' menu. Something is wrong in the force!")
 
+    # NOTE 添加一个下拉菜单
     script_menu = main_menu.add_sub_menu(
-        main_menu.get_name(), "PythonTools", "Tools", "RedArtToolkit")
+        main_menu.get_name(), "PythonTools", "Tools", "PyToolkit")
+
+    # NOTE 初始化下拉菜单的 Section 分组
     for section, label in menu_section_dict.items():
         script_menu.add_section(section, label)
 
+    # NOTE 根据 json 来配置菜单显示的 Entry
     for menu, data in menu_entry_dict.items():
         entry = unreal.ToolMenuEntry(
             name=menu,
@@ -71,6 +77,7 @@ def create_menu():
         entry.set_string_command(data.get("type", 0), "", string=command)
         script_menu.add_menu_entry(data.get('section', ''), entry)
 
+    # NOTE 刷新组件
     menus.refresh_all_widgets()
 
 

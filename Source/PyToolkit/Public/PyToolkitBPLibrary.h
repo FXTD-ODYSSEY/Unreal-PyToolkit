@@ -60,4 +60,17 @@ class UPyToolkitBPLibrary : public UBlueprintFunctionLibrary
 	UFUNCTION(BlueprintCallable, Category = "PyToolkit")
 		static UTextureCube* RenderTargetCubeCreateStaticTextureCube(UTextureRenderTargetCube* RenderTarget, FString InName);
 	
+	UFUNCTION(BlueprintCallable, Category = "PyToolkit")
+	static USkeletalMeshSocket* AddSkeletalMeshSocket(USkeleton* InSkeleton, FName InBoneName);
+
+	UFUNCTION(BlueprintCallable, Category = "PyToolkit")
+	static void DeleteSkeletalMeshSocket(USkeleton* InSkeleton, TArray<USkeletalMeshSocket*> SocketList);
+	
+	UFUNCTION(BlueprintCallable, Category = "PyToolkit")
+	static int32 GetSkeletonBoneNum(USkeleton* InSkeleton);
+		
+	UFUNCTION(BlueprintCallable, Category = "PyToolkit")
+	static FName GetSkeletonBoneName(USkeleton* InSkeleton,int32 BoneIndex);
+
+	
 };

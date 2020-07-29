@@ -125,3 +125,37 @@ UTextureCube* UPyToolkitBPLibrary::RenderTargetCubeCreateStaticTextureCube(UText
 	return NewTex;
 
 }
+
+
+USkeletalMeshSocket* UPyToolkitBPLibrary::AddSkeletalMeshSocket(USkeleton* InSkeleton, FName InBoneName)
+{
+	USkeletalMeshSocket* socket = nullptr;
+
+	ISkeletonEditorModule& SkeletonEditorModule = FModuleManager::LoadModuleChecked<ISkeletonEditorModule>("SkeletonEditor");
+	TSharedRef<IEditableSkeleton> EditableSkeleton = SkeletonEditorModule.CreateEditableSkeleton(InSkeleton);
+	socket = EditableSkeleton->AddSocket(InBoneName);
+	return socket;
+}
+
+void UPyToolkitBPLibrary::DeleteSkeletalMeshSocket(USkeleton* InSkeleton, TArray<USkeletalMeshSocket*> SocketList)
+{
+	InSkeleton->Modify();
+	for (USkeletalMeshSocket* Socket : SocketList)
+	{
+		InSkeleton->Sockets.Remove(Socket);
+	}
+	ISkeletonEditorModule& SkeletonEditorModule = FModuleManager::LoadModuleChecked<ISkeletonEditorModule>("SkeletonEditor");
+	TSharedRef<IEditableSkeleton> EditableSkeleton = SkeletonEditorModule.CreateEditableSkeleton(InSkeleton);
+	EditableSkeleton->RefreshBoneTree();
+}
+
+int32 UPyToolkitBPLibrary::GetSkeletonBoneNum(USkeleton* InSkeleton)
+{
+	return InSkeleton->GetReferenceSkeleton().GetNum();
+}
+
+FName UPyToolkitBPLibrary::GetSkeletonBoneName(USkeleton* InSkeleton,int32 BoneIndex)
+{
+	return InSkeleton->GetReferenceSkeleton().GetBoneName(BoneIndex);
+}
+
