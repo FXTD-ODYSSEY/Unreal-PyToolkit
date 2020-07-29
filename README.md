@@ -6,7 +6,7 @@
 
 ![工具集锦](./img/02.png)
 
-> &emsp;&emsp;插件在 4.25.1 下运行没有问题。
+> &emsp;&emsp;插件在 4.25.1 下运行没有问题。    
 
 ## Python 依赖
 
@@ -21,18 +21,18 @@ Python 目录里面添加的依赖库如下:
 
 ## 插件配置
 
-> &emsp;&emsp;插件参考官方 Python 插件的 Startup 脚本启动方案，自动执行 Content 目录下的 initialize.py 脚本
-> &emsp;&emsp;initialize.py 脚本在 Unreal 里面初始化 Qt 的运行环境。
+> &emsp;&emsp;插件参考官方 Python 插件的 Startup 脚本启动方案，自动执行 Content 目录下的 initialize.py 脚本    
+> &emsp;&emsp;initialize.py 脚本在 Unreal 里面初始化 Qt 的运行环境。    
 
-> &emsp;&emsp;读取 Content 目录下的 menu.json 配置生成 Unreal 菜单
-> &emsp;&emsp;读取 Content 目录下的 main.css  作为样式补充
+> &emsp;&emsp;读取 Content 目录下的 menu.json 配置生成 Unreal 菜单    
+> &emsp;&emsp;读取 Content 目录下的 main.css  作为样式补充    
 
-> &emsp;&emsp;重载 QWidget 的 show 方法，实现窗口唯一、Unreal窗口嵌入 以及 dayu_widgets 的样式配置。
-> &emsp;&emsp;如果想要 Qt 原生样式可以使用 `setVisible(True)` 的方法
+> &emsp;&emsp;重载 QWidget 的 show 方法，实现窗口唯一、Unreal窗口嵌入 以及 dayu_widgets 的样式配置。    
+> &emsp;&emsp;如果想要 Qt 原生样式可以使用 `setVisible(True)` 的方法    
 
 ## 菜单启动
 
-> &emsp;&emsp;menu.json 配置命令行执行相应工具的启动脚本。
+> &emsp;&emsp;menu.json 配置命令行执行相应工具的启动脚本。    
 
     section - 配置分组
 
@@ -90,8 +90,12 @@ Python 目录里面添加的依赖库如下:
 
 ### 动画导入比较面板
 
-> [说明文档链接](https://blog.l0v0.com/posts/a999f0c.html)
+> [说明文档链接](https://blog.l0v0.com/posts/a999f0c.html)    
 
 ### 批量渲染 Sequencer 工具
 
-> &emsp;&emsp;有待更新
+> &emsp;&emsp;有待更新    
+
+### 骨骼 Socket 自动化工具
+
+> &emsp;&emsp;选择 SkeletalMesh 自动根据配置的骨骼添加 Socket    
