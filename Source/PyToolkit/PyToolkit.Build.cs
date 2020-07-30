@@ -42,6 +42,7 @@ public class PyToolkit : ModuleRules
                 "Engine",
                 "Slate",
                 "SlateCore",
+                "SkeletonEditor",
 
                 "LevelSequence",
                 "SequencerScripting",

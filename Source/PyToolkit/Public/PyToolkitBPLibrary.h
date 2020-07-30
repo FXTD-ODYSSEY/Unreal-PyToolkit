@@ -19,6 +19,12 @@
 #include "Developer/AssetTools/Public/AssetToolsModule.h"
 #include "UnrealEd/Public/PackageTools.h"
 
+#include "Engine/SkeletalMeshSocket.h"
+#include "Runtime/Engine/Classes/Animation/Skeleton.h"
+#include "Editor/SkeletonEditor/Private/SkeletonTreeManager.h"
+#include "Editor/SkeletonEditor/Public/ISkeletonTree.h"
+#include "Editor/SkeletonEditor/Public/IEditableSkeleton.h"
+#include "Editor/SkeletonEditor/Public/ISkeletonEditorModule.h"
 
 #include "PyToolkitBPLibrary.generated.h"
 
