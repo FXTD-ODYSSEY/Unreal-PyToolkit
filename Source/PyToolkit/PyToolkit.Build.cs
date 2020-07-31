@@ -27,10 +27,10 @@ public class PyToolkit : ModuleRules
             {
                 "Core",
                 "CoreUObject",
-                "Sequencer",
-                "SequencerWidgets",
-                "MovieScene",
-                "MovieSceneTracks",
+                "Engine",
+                "Slate",
+                "SlateCore",
+                
 				// ... add other public dependencies that you statically link with here ...
 			}
             );
@@ -39,14 +39,20 @@ public class PyToolkit : ModuleRules
         PrivateDependencyModuleNames.AddRange(
             new string[]
             {
-                "Engine",
-                "Slate",
-                "SlateCore",
+                
+                "Sequencer",
+                "SequencerWidgets",
+                "MovieScene",
+                "MovieSceneTracks",
+
                 "InputCore",
                 "ApplicationCore",
-
                 "EditorStyle",
                 "LevelEditor",
+
+                "ContentBrowser",
+                "AssetRegistry",
+
                 "SkeletonEditor",
                 "LevelSequence",
                 "SequencerScripting",

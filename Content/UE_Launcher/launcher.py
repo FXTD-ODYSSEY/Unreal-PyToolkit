@@ -35,8 +35,13 @@ class Launcher(QtWidgets.QWidget):
 
         # NOTE 设置图标
         style = QtWidgets.QApplication.style()
-        pixmap = style.standardPixmap(QtWidgets.QStyle.SP_FileDialogContentsView)
+        icon = style.standardIcon(QtWidgets.QStyle.SP_FileDialogContentsView)
+        pixmap = icon.pixmap(32,32)
+        # pixmap = style.standardPixmap(QtWidgets.QStyle.SP_FileDialogContentsView)
+        bitmap = pixmap.createMaskFromColor(QtGui.QColor(50, 50, 50))
+        pixmap.setMask(bitmap)
         self.Label.setPixmap(pixmap)
+        
 
         # TODO 设置状态标签
 
@@ -61,33 +66,58 @@ class Launcher(QtWidgets.QWidget):
         painter.drawRoundedRect(self.rect(), 10.0, 10.0)
         painter.end()
         
+    def check_path(self,path):
+        if not path:
+            return False
+        
+        path = path.replace('\\','/')
+        project = unreal.SystemLibrary.get_project_content_directory()
+        if path.startswith(project):
+            path = path.replace(project,"/Game/")
+            
+            
+        search = re.search(r"(/Game/.*?)",path)
+        
+        path,_ = os.path.splitext(path)
+        if not search:
+            return False
+        return path
+    
     def show(self):
-        super(Launcher, self).show()
+        # NOTE 获取粘贴板的文本
+        cb = QtWidgets.QApplication.clipboard()
+        text = cb.text()
+        path = self.check_path(text)
+        if path:
+            self.LineEdit.setText(text)
+            self.LineEdit.selectAll()
+            
         self.LineEdit.setFocus()
+        super(Launcher, self).show()
         
     def accept(self):
         
         # NOTE 如果可以获取到 Game 路径 | 自动定位
         text = self.LineEdit.text()
-        search = re.search(r"'(/Game/.*?)'",text)
+        path = self.check_path(text)
         
-        if not search:
+        if not path:
             self.LineEdit.setStyleSheet("border-color:red")
             return
         
-        path = search.group(1)
-        if not unreal.EditorAssetLibrary.does_asset_exist(path):
-            self.LineEdit.setStyleSheet("border-color:red")
+        if unreal.EditorAssetLibrary.does_asset_exist(path):
+            unreal.EditorAssetLibrary.sync_browser_to_objects([path])
+        elif unreal.EditorAssetLibrary.does_directory_exist(path):
+            unreal.PyToolkitBPLibrary.set_selected_folders([path])
+        else:
             return
         
-        unreal.EditorAssetLibrary.sync_browser_to_objects([path])
         self.hide()
 
 def show():
     global launcher
     launcher = Launcher()
     # clear out, move and show
-    launcher.LineEdit.setText("")
     position_window(launcher)
 
 def position_window(window):

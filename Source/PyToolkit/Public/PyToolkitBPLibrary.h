@@ -26,6 +26,18 @@
 #include "Editor/SkeletonEditor/Public/IEditableSkeleton.h"
 #include "Editor/SkeletonEditor/Public/ISkeletonEditorModule.h"
 
+#include "Runtime/Core/Public/Misc/ConfigCacheIni.h"
+//PublicDependencyModuleNames-> "UnrealEd"
+#include "Editor/UnrealEd/Public/Editor.h" 
+#include "Editor/UnrealEd/Public/Toolkits/AssetEditorManager.h"
+#include "Editor/UnrealEd/Public/LevelEditorViewport.h"
+// PublicDependencyModuleNames -> "ContentBrowser"
+#include "Editor/ContentBrowser/Public/ContentBrowserModule.h"
+#include "Editor/ContentBrowser/Private/SContentBrowser.h"
+// PublicDependencyModuleNames -> "AssetRegistry"
+#include "Runtime/AssetRegistry/Public/AssetRegistryModule.h"
+// PublicDependencyModuleNames -> "PythonScriptPlugin" && "Python"
+
 #include "PyToolkitBPLibrary.generated.h"
 
 
@@ -53,6 +65,43 @@ class UPyToolkitBPLibrary : public UBlueprintFunctionLibrary
 
 		//UFUNCTION(BlueprintCallable, meta = (DisplayName = "Execute Sample function", Keywords = "PyToolkit sample test testing"), Category = "PyToolkitTesting")
 		//static float PyToolkitSampleFunction(float Param);
+
+	// ----------------------------------------------------------------
+	// copy from https://github.com/AlexQuevillon/UnrealPythonLibrary
+	UFUNCTION(BlueprintCallable, Category = "Unreal Python")
+		static TArray<FString> GetAllProperties(UClass* Class);
+
+	UFUNCTION(BlueprintCallable, Category = "Unreal Python")
+		static void ExecuteConsoleCommand(FString ConsoleCommand);
+
+	UFUNCTION(BlueprintCallable, Category = "Unreal Python")
+		static TArray<FString> GetSelectedAssets();
+
+	UFUNCTION(BlueprintCallable, Category = "Unreal Python")
+		static TArray<FString> GetSelectedFolders();
+
+	UFUNCTION(BlueprintCallable, Category = "Unreal Python")
+		static void SetSelectedAssets(TArray<FString> Paths);
+
+	UFUNCTION(BlueprintCallable, Category = "Unreal Python")
+		static void SetSelectedFolders(TArray<FString> Paths);
+
+	UFUNCTION(BlueprintCallable, Category = "Unreal Python")
+		static void CloseEditorForAssets(TArray<UObject*> Assets);
+
+	UFUNCTION(BlueprintCallable, Category = "Unreal Python")
+		static TArray<UObject*> GetAssetsOpenedInEditor();
+
+	UFUNCTION(BlueprintCallable, Category = "Unreal Python")
+		static void SetFolderColor(FString FolderPath, FLinearColor Color);
+
+	UFUNCTION(BlueprintCallable, Category = "Unreal Python")
+		static void SetViewportLocationAndRotation(int ViewportIndex, FVector Location, FRotator Rotation);
+	
+	UFUNCTION(BlueprintCallable, Category = "Unreal Python")
+		static int GetActiveViewportIndex();
+
+	// ----------------------------------------------------------------
 
 	UFUNCTION(BlueprintCallable, Category = "PyToolkit")
 		static ULevelSequence* GetFocusSequence();
