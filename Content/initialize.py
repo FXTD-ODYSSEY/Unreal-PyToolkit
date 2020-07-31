@@ -105,11 +105,10 @@ def slate_deco(func):
 
 # This function will receive the tick from Unreal
 def __QtAppTick__(delta_seconds):
-    pass
     # TODO 不添加事件处理 Qt 的窗口运行正常 | 添加反而会让 imgui 失去焦点
     # QtWidgets.QApplication.processEvents()
-    # # NOTE 处理 deleteDeferred 事件
-    # QtWidgets.QApplication.sendPostedEvents()
+    # NOTE 处理 deleteDeferred 事件
+    QtWidgets.QApplication.sendPostedEvents()
 
 
 # This part is for the initial setup. Need to run once to spawn the application.

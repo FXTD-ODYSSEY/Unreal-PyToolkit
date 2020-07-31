@@ -17,7 +17,7 @@ FPyCommandList::FPyCommandList() : TCommands<FPyCommandList>(
 void FPyCommandList::RegisterCommands()
 {
 
-	UI_COMMAND(OpenLauncher, "Launcher", "Open Qt Launcher", EUserInterfaceActionType::Button, FInputChord(EKeys::Q, EModifierKey::Alt));
+	UI_COMMAND(OpenLauncher, "Launcher", "Open Qt Launcher", EUserInterfaceActionType::Button, FInputChord(EModifierKey::Control, EKeys::F));
 
 }
 

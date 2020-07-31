@@ -40,51 +40,34 @@ class Launcher(QtWidgets.QWidget):
 
         # TODO 设置状态标签
 
-        self.setWindowFlags(QtCore.Qt.Popup)
-        self.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents)
+        self.setWindowFlags(QtCore.Qt.Popup|QtCore.Qt.FramelessWindowHint)
+        self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
         # self.setFlags(QtCore.Qt.WA_TranslucentBackground)
         
         self.LineEdit.returnPressed.connect(self.accept)
         
         self.show()
         
-        # app = QtWidgets.QApplication.instance()
-        # app.installEventFilter(self)
-    # def eventFilter(self, receiver, event):
-    #     print("receiver",receiver,event,event.type())
-    #     if not hasattr(event, "type"):
-    #         return False
-    #     # NOTE 键盘事件
-    #     if event.type() == QtCore.QEvent.KeyRelease:
-    #         print("key",event.key())
-    #         # NOTE 敲击 Tab 键
-    #         if event.key() == QtCore.Qt.Key_Tab and not self.isVisible():
-    #             self.show()
-    #     return False
-
     def paintEvent(self, ev):
+        # NOTE https://stackoverflow.com/questions/20802315/round-edges-corner-on-a-qwidget-in-pyqt
         painter = QtGui.QPainter(self)
         painter.begin(self)
-        # gradient = QtGui.QLinearGradient(QtCore.QRectF(self.rect()).topLeft(),QtCore.QRectF(self.rect()).bottomLeft())
-        # gradient.setColorAt(0.0, QtCore.Qt.black)
-        # gradient.setColorAt(0.4, QtCore.Qt.gray)
-        # gradient.setColorAt(0.7, QtCore.Qt.black)
-        # painter.setBrush(gradient)
+        # NOTE 添加灰度过渡
+        gradient = QtGui.QLinearGradient(QtCore.QRectF(self.rect()).topLeft(),QtCore.QRectF(self.rect()).bottomLeft())
+        gradient.setColorAt(0.0, QtCore.Qt.black)
+        gradient.setColorAt(0.4, QtCore.Qt.gray)
+        gradient.setColorAt(0.7, QtCore.Qt.black)
+        painter.setBrush(gradient)
         painter.drawRoundedRect(self.rect(), 10.0, 10.0)
         painter.end()
         
     def show(self):
         super(Launcher, self).show()
         self.LineEdit.setFocus()
-        style = self.styleSheet()
-        style += """
-        #Launcher_Container{
-            background:transparent;
-        }
-        """
-        self.setStyleSheet(style)
         
     def accept(self):
+        
+        # NOTE 如果可以获取到 Game 路径 | 自动定位
         text = self.LineEdit.text()
         search = re.search(r"'(/Game/.*?)'",text)
         
@@ -93,6 +76,10 @@ class Launcher(QtWidgets.QWidget):
             return
         
         path = search.group(1)
+        if not unreal.EditorAssetLibrary.does_asset_exist(path):
+            self.LineEdit.setStyleSheet("border-color:red")
+            return
+        
         unreal.EditorAssetLibrary.sync_browser_to_objects([path])
         self.hide()
 
