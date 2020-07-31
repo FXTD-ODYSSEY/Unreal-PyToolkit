@@ -26,6 +26,7 @@ public class PyToolkit : ModuleRules
             new string[]
             {
                 "Core",
+                "CoreUObject",
                 "Sequencer",
                 "SequencerWidgets",
                 "MovieScene",
@@ -38,12 +39,15 @@ public class PyToolkit : ModuleRules
         PrivateDependencyModuleNames.AddRange(
             new string[]
             {
-                "CoreUObject",
                 "Engine",
                 "Slate",
                 "SlateCore",
-                "SkeletonEditor",
+                "InputCore",
+                "ApplicationCore",
 
+                "EditorStyle",
+                "LevelEditor",
+                "SkeletonEditor",
                 "LevelSequence",
                 "SequencerScripting",
                 "LevelSequenceEditor",

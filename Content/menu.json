@@ -4,6 +4,7 @@
         "Anim":"动画",
         "FX":"特效",
         "Render":"渲染",
+        "Msic":"杂项",
         "Help":"帮助"
     },
     "menu":{
@@ -36,6 +37,12 @@
             "label": "批量渲染 Sequencer 工具",
             "type": "COMMAND",
             "command": "py \"{Content}/Anim/sequencer_batch_render/render_tool.py\""
+        },
+        "Launcher" : {
+            "section": "Msic",
+            "label": "UE启动器",
+            "type": "COMMAND",
+            "command": "py \"{Content}/Msic/ue_launcher/ue_launcher.py\""
         },
         "Document" : {
             "section": "Help",

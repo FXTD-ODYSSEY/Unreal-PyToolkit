@@ -1,6 +1,7 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "PyToolkit.h"
+#include "PyCommandList.h"
 
 #define LOCTEXT_NAMESPACE "FPyToolkitModule"
 
@@ -14,7 +15,9 @@ void FPyToolkitModule::StartupModule()
 		Tick(DeltaTime);
 		return true;
 	}));
-
+	
+	FPyCommandList::Register();
+	
 }
 
 void FPyToolkitModule::ShutdownModule()
@@ -25,11 +28,27 @@ void FPyToolkitModule::ShutdownModule()
 }
 
 void FPyToolkitModule::Tick(const float InDeltaTime) {
-	// 参考 Python 官方插件 | 引擎初始化完成之后 通过 tick 来初始化 initialize.py 脚本
+	// NOTE Reference Python Official Plugin | Trigger initialize.py by tick
 	if (!bHasTicked) {
 		bHasTicked = true;
 		FString InitScript = TEXT("py \"") + FPaths::ProjectPluginsDir() / TEXT("PyToolkit/Content/initialize.py") + TEXT("\"");
 		GEngine->Exec(NULL, InitScript.GetCharArray().GetData());
+		
+		// NOTE Register Launcher Key Event
+		FLevelEditorModule& LevelEditorModule = FModuleManager::LoadModuleChecked<FLevelEditorModule>("LevelEditor");
+		TSharedPtr< ILevelEditor > LevelEditor = LevelEditorModule.GetFirstLevelEditor();
+
+		TSharedRef<FUICommandList> CommandList = LevelEditorModule.GetGlobalLevelEditorActions();
+		//TSharedRef<FUICommandList> CommandList = MakeShareable(new FUICommandList);
+		CommandList->MapAction(FPyCommandList::Get().OpenLauncher,
+			FExecuteAction::CreateLambda([this]
+			{
+				FString LauncherScript = TEXT("py \"") + FPaths::ProjectPluginsDir() / TEXT("PyToolkit/Content/UE_Launcher/launcher.py") + TEXT("\"");
+				GEngine->Exec(NULL, LauncherScript.GetCharArray().GetData());
+			})
+			//FExecuteAction::CreateStatic(&FLevelEditorActionCallbacks::ExecuteExecCommand, FString(TEXT("CAMERA ALIGN")))
+		);
+		LevelEditor->AppendCommands(CommandList);
 	}
 }
 
