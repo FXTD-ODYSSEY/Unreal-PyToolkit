@@ -58,7 +58,7 @@ def create_menu():
 
     # NOTE 添加一个下拉菜单
     script_menu = main_menu.add_sub_menu(
-        main_menu.get_name(), "PythonTools", "Tools", "PyToolkit")
+        main_menu.get_name(), "PythonTools", "PyToolkit", "PyToolkit")
 
     # NOTE 初始化下拉菜单的 Section 分组
     for section, label in menu_section_dict.items():
