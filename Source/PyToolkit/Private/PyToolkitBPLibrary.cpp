@@ -10,7 +10,7 @@ UPyToolkitBPLibrary::UPyToolkitBPLibrary(const FObjectInitializer& ObjectInitial
 
 }
 
-// ----------------------------------------------------------------------
+#pragma region UnrealPythonLibrary
 // copy from https://github.com/AlexQuevillon/UnrealPythonLibrary
 
 TArray<FString> UPyToolkitBPLibrary::GetAllProperties(UClass* Class) {
@@ -24,15 +24,6 @@ TArray<FString> UPyToolkitBPLibrary::GetAllProperties(UClass* Class) {
 		}
 	}
 	return Ret;
-}
-
-void UPyToolkitBPLibrary::ExecuteConsoleCommand(FString ConsoleCommand) {
-	if (GEditor) {
-		UWorld* World = GEditor->GetEditorWorldContext().World();
-		if (World) {
-			GEditor->Exec(World, *ConsoleCommand, *GLog);
-		}
-	}
 }
 
 TArray<FString> UPyToolkitBPLibrary::GetSelectedAssets() {
@@ -114,8 +105,9 @@ void UPyToolkitBPLibrary::SetViewportLocationAndRotation(int ViewportIndex, FVec
 	}
 }
 
-// ----------------------------------------------------------------------
+#pragma endregion
 
+#pragma region SequencerAPI
 
 ULevelSequence* UPyToolkitBPLibrary::GetFocusSequence()
 {
@@ -158,6 +150,46 @@ TArray<FGuid> UPyToolkitBPLibrary::GetFocusBindings(ULevelSequence* LevelSeq)
 
 	return SelectedGuid;
 }
+
+#pragma endregion
+
+#pragma region SocketAPI
+
+USkeletalMeshSocket* UPyToolkitBPLibrary::AddSkeletalMeshSocket(USkeleton* InSkeleton, FName InBoneName)
+{
+	USkeletalMeshSocket* socket = nullptr;
+
+	ISkeletonEditorModule& SkeletonEditorModule = FModuleManager::LoadModuleChecked<ISkeletonEditorModule>("SkeletonEditor");
+	TSharedRef<IEditableSkeleton> EditableSkeleton = SkeletonEditorModule.CreateEditableSkeleton(InSkeleton);
+	socket = EditableSkeleton->AddSocket(InBoneName);
+	return socket;
+}
+
+void UPyToolkitBPLibrary::DeleteSkeletalMeshSocket(USkeleton* InSkeleton, TArray<USkeletalMeshSocket*> SocketList)
+{
+	InSkeleton->Modify();
+	for (USkeletalMeshSocket* Socket : SocketList)
+	{
+		InSkeleton->Sockets.Remove(Socket);
+	}
+	ISkeletonEditorModule& SkeletonEditorModule = FModuleManager::LoadModuleChecked<ISkeletonEditorModule>("SkeletonEditor");
+	TSharedRef<IEditableSkeleton> EditableSkeleton = SkeletonEditorModule.CreateEditableSkeleton(InSkeleton);
+	EditableSkeleton->RefreshBoneTree();
+}
+
+int32 UPyToolkitBPLibrary::GetSkeletonBoneNum(USkeleton* InSkeleton)
+{
+	return InSkeleton->GetReferenceSkeleton().GetNum();
+}
+
+FName UPyToolkitBPLibrary::GetSkeletonBoneName(USkeleton* InSkeleton,int32 BoneIndex)
+{
+	return InSkeleton->GetReferenceSkeleton().GetBoneName(BoneIndex);
+}
+
+#pragma endregion
+
+#pragma region Msic
 
 // https://forums.unrealengine.com/development-discussion/python-scripting/1703959-how-to-add-component-to-existing-actor-in-level-with-python-blueprint
 //You pass to it class of component, otherwise it creates StaticMeshComponent
@@ -231,35 +263,6 @@ UTextureCube* UPyToolkitBPLibrary::RenderTargetCubeCreateStaticTextureCube(UText
 
 }
 
+#pragma endregion 
 
-USkeletalMeshSocket* UPyToolkitBPLibrary::AddSkeletalMeshSocket(USkeleton* InSkeleton, FName InBoneName)
-{
-	USkeletalMeshSocket* socket = nullptr;
 
-	ISkeletonEditorModule& SkeletonEditorModule = FModuleManager::LoadModuleChecked<ISkeletonEditorModule>("SkeletonEditor");
-	TSharedRef<IEditableSkeleton> EditableSkeleton = SkeletonEditorModule.CreateEditableSkeleton(InSkeleton);
-	socket = EditableSkeleton->AddSocket(InBoneName);
-	return socket;
-}
-
-void UPyToolkitBPLibrary::DeleteSkeletalMeshSocket(USkeleton* InSkeleton, TArray<USkeletalMeshSocket*> SocketList)
-{
-	InSkeleton->Modify();
-	for (USkeletalMeshSocket* Socket : SocketList)
-	{
-		InSkeleton->Sockets.Remove(Socket);
-	}
-	ISkeletonEditorModule& SkeletonEditorModule = FModuleManager::LoadModuleChecked<ISkeletonEditorModule>("SkeletonEditor");
-	TSharedRef<IEditableSkeleton> EditableSkeleton = SkeletonEditorModule.CreateEditableSkeleton(InSkeleton);
-	EditableSkeleton->RefreshBoneTree();
-}
-
-int32 UPyToolkitBPLibrary::GetSkeletonBoneNum(USkeleton* InSkeleton)
-{
-	return InSkeleton->GetReferenceSkeleton().GetNum();
-}
-
-FName UPyToolkitBPLibrary::GetSkeletonBoneName(USkeleton* InSkeleton,int32 BoneIndex)
-{
-	return InSkeleton->GetReferenceSkeleton().GetBoneName(BoneIndex);
-}

@@ -66,13 +66,10 @@ class UPyToolkitBPLibrary : public UBlueprintFunctionLibrary
 		//UFUNCTION(BlueprintCallable, meta = (DisplayName = "Execute Sample function", Keywords = "PyToolkit sample test testing"), Category = "PyToolkitTesting")
 		//static float PyToolkitSampleFunction(float Param);
 
-	// ----------------------------------------------------------------
+	#pragma region UnrealPythonLibrary
 	// copy from https://github.com/AlexQuevillon/UnrealPythonLibrary
 	UFUNCTION(BlueprintCallable, Category = "Unreal Python")
 		static TArray<FString> GetAllProperties(UClass* Class);
-
-	UFUNCTION(BlueprintCallable, Category = "Unreal Python")
-		static void ExecuteConsoleCommand(FString ConsoleCommand);
 
 	UFUNCTION(BlueprintCallable, Category = "Unreal Python")
 		static TArray<FString> GetSelectedAssets();
@@ -100,21 +97,17 @@ class UPyToolkitBPLibrary : public UBlueprintFunctionLibrary
 	
 	UFUNCTION(BlueprintCallable, Category = "Unreal Python")
 		static int GetActiveViewportIndex();
+	#pragma endregion
 
-	// ----------------------------------------------------------------
-
+	#pragma region SequencerAPI
 	UFUNCTION(BlueprintCallable, Category = "PyToolkit")
 		static ULevelSequence* GetFocusSequence();
 
 	UFUNCTION(BlueprintCallable, Category = "PyToolkit")
 		static TArray<FGuid> GetFocusBindings(ULevelSequence* LevelSeq);
+	#pragma endregion
 
-	UFUNCTION(BlueprintCallable, Category = "PyToolkit")
-		static UActorComponent* AddComponent(AActor* a, USceneComponent *future_parent, FName name, UClass* NewComponentClass);
-
-	UFUNCTION(BlueprintCallable, Category = "PyToolkit")
-		static UTextureCube* RenderTargetCubeCreateStaticTextureCube(UTextureRenderTargetCube* RenderTarget, FString InName);
-	
+	#pragma region SocketAPI
 	UFUNCTION(BlueprintCallable, Category = "PyToolkit")
 	static USkeletalMeshSocket* AddSkeletalMeshSocket(USkeleton* InSkeleton, FName InBoneName);
 
@@ -126,6 +119,15 @@ class UPyToolkitBPLibrary : public UBlueprintFunctionLibrary
 		
 	UFUNCTION(BlueprintCallable, Category = "PyToolkit")
 	static FName GetSkeletonBoneName(USkeleton* InSkeleton,int32 BoneIndex);
+	#pragma endregion
 
+	#pragma region Msic
+	UFUNCTION(BlueprintCallable, Category = "PyToolkit")
+		static UActorComponent* AddComponent(AActor* a, USceneComponent *future_parent, FName name, UClass* NewComponentClass);
+
+	UFUNCTION(BlueprintCallable, Category = "PyToolkit")
+		static UTextureCube* RenderTargetCubeCreateStaticTextureCube(UTextureRenderTargetCube* RenderTarget, FString InName);
+
+	#pragma endregion
 	
 };

@@ -96,8 +96,8 @@ def slate_deco(func):
         # NOTE https://forums.unrealengine.com/unreal-engine/unreal-studio/1526501-how-to-get-the-main-window-of-the-editor-to-parent-qt-or-pyside-application-to-it
         # NOTE 让窗口嵌入到 unreal 内部
         unreal.parent_external_window_to_slate(self.winId())
-        # NOTE 添加 dayu_widget 的样式
         res = func(self, *args, **kwargs)
+        # NOTE 添加 dayu_widget 的样式
         dayu_theme.apply(self)
         return res
     return wrapper
