@@ -13,6 +13,11 @@ public:
 	virtual void ShutdownModule() override;
 
 private:
+
+	FString PluginName;
+	FString Content;
+	TSharedPtr<FJsonObject> SettingObject;
+
 	void Tick(const float InDeltaTime);
 	bool bHasTicked = false;
 	FDelegateHandle TickHandle;

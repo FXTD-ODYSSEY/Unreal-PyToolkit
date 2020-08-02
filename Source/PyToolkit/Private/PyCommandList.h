@@ -5,6 +5,12 @@
 #include "CoreMinimal.h"
 #include "EditorStyleSet.h"
 
+#include "Json.h"
+
+#include "LevelEditor.h"
+#include "ISequencerModule.h"
+#include "Editor/UnrealEd/Public/Editor.h" 
+
 #include "Editor/LevelEditor/Public/LevelEditor.h"
 #include "Editor//LevelEditor/Public/ILevelEditor.h"
 #include "Editor//LevelEditor/Public/LevelEditorActions.h"
@@ -20,6 +26,9 @@ public:
 	// TCommands<> interface
 	virtual void RegisterCommands() override;
 	// End of TCommands<> interface
+	
+	static TSharedPtr<FJsonObject> ReadJson(const FString path);
+	static void ExtendSequencerMenuEntry(FString LauncherScript);
 
 	// OpenLauncher Command
 	TSharedPtr<FUICommandInfo> OpenLauncher;

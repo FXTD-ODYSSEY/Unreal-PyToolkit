@@ -45,6 +45,7 @@ public class PyToolkit : ModuleRules
                 "MovieScene",
                 "MovieSceneTracks",
 
+                "Json",
                 "InputCore",
                 "ApplicationCore",
                 "EditorStyle",

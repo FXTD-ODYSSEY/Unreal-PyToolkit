@@ -50,6 +50,10 @@
             "type": "PYTHON",
             "command": "import webbrowser;webbrowser.open_new_tab('https://github.com/FXTD-ODYSSEY/Unreal-PyToolkit')"
         }
+    },
+    "script":{
+        "initialize": "py \"{Content}/initialize.py\"",
+        "launcher":"py \"{Content}/UE_Launcher/launcher.py\""
     }
 }
 

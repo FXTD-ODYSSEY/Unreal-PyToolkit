@@ -167,33 +167,6 @@ TArray<FGuid> UPyToolkitBPLibrary::GetFocusBindings(ULevelSequence *LevelSeq)
     return SelectedGuid;
 }
 
-// void UPyToolkitBPLibrary::ExtendSequencerBindingMenu()
-// {
-//     IAssetEditorInstance *AssetEditor = GEditor->GetEditorSubsystem<UAssetEditorSubsystem>()->FindEditorForAsset(LevelSeq, false);
-
-//     FLevelSequenceEditorToolkit *LevelSequenceEditor = (FLevelSequenceEditorToolkit *)AssetEditor;
-
-//     TArray<FGuid> SelectedGuid;
-//     if (!LevelSequenceEditor)
-//         return nullptr;
-
-//     // Get current Sequencer
-//     ISequencer *Sequencer = LevelSequenceEditor->GetSequencer().Get();
-
-//     TSharedPtr<FExtensibilityManager> Manager = Sequencer->GetObjectBindingContextMenuExtensibilityManager();
-//     TSharedPtr<FExtender> MenuExtender = MakeShareable(new FExtender);
-
-//     Extender->AddMenuExtension(
-//         "PyToolkitTest",
-//         EExtensionHook::After,
-//         TSharedPtr< FUICommandList >(),
-//         FMenuExtensionDelegate::CreateLambda([this] {
-//             UE_Log(LogTemp, Error, TEXT("PyToolkitTest"));
-//         }));
-
-//     manager.AddExtender(MenuExtender)
-// }
-
 #pragma endregion
 
 #pragma region SocketAPI

@@ -45,7 +45,8 @@ def read_menu_json(path):
 
 def create_menu():
     # NOTE 读取 menu json 配置
-    menu_section_dict, menu_entry_dict = read_menu_json("%s/menu.json" % DIR)
+    setting = os.path.join(DIR,"setting.json")
+    menu_section_dict, menu_entry_dict = read_menu_json(setting)
 
     # NOTE https://forums.unrealengine.com/development-discussion/python-scripting/1767113-making-menus-in-py
     menus = unreal.ToolMenus.get()
