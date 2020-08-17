@@ -13,17 +13,20 @@ void FPyToolkitModule::StartupModule()
 {
 	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
 
-	// TODO ∂¡»° json ≈‰÷√
+	// NOTE ∂¡»° json ≈‰÷√
 	PluginName = "PyToolkit";
 	Content = FPaths::ProjectPluginsDir() / PluginName + TEXT("/Content");
 
 	FString JsonSetting = Content + TEXT("/setting.json");
 	TSharedPtr<FJsonObject> JsonObject = FPyCommandList::ReadJson(JsonSetting);
 	SettingObject = JsonObject->GetObjectField("script");
-	FString launcher = SettingObject->GetStringField("launcher");
-	FPyCommandList::Register();
 
-	FPyCommandList::ExtendSequencerMenuEntry(launcher);
+	static FFormatNamedArguments Arguments;
+	Arguments.Add(TEXT("Content"), FText::FromString(Content));
+	FString Script = FText::Format(FTextFormat::FromString(SettingObject->GetStringField("launcher")), Arguments).ToString();
+	FPyCommandList::ExtendSequencerMenuEntry(Script);
+
+	FPyCommandList::Register();
 
 	// Initialize the tick handler
 	TickHandle = FTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateLambda([this](float DeltaTime) {
@@ -45,10 +48,9 @@ void FPyToolkitModule::Tick(const float InDeltaTime)
 	{
 		bHasTicked = true;
 
-		FFormatNamedArguments Arguments;
+		static FFormatNamedArguments Arguments;
 		Arguments.Add(TEXT("Content"), FText::FromString(Content));
 		FText InitScript = FText::Format(FTextFormat::FromString(SettingObject->GetStringField("initialize")), Arguments);
-		// FString InitScript = TEXT("py \"") + FPaths::ProjectPluginsDir() / TEXT("PyToolkit/Content/initialize.py") + TEXT("\"");
 		GEngine->Exec(NULL, InitScript.ToString().GetCharArray().GetData());
 
 		// NOTE Register Launcher Key Event
@@ -58,11 +60,12 @@ void FPyToolkitModule::Tick(const float InDeltaTime)
 		TSharedRef<FUICommandList> CommandList = LevelEditorModule.GetGlobalLevelEditorActions();
 		//TSharedRef<FUICommandList> CommandList = MakeShareable(new FUICommandList);
 
+		static FString Launcher = SettingObject->GetStringField("launcher");
 		struct Callback
 		{
 			static void RunCommand()
 			{
-				FString LauncherScript = TEXT("py \"") + FPaths::ProjectPluginsDir() / TEXT("PyToolkit/Content/UE_Launcher/launcher.py") + TEXT("\"");
+				FString LauncherScript = FText::Format(FTextFormat::FromString(Launcher), Arguments).ToString();
 				GEngine->Exec(NULL, LauncherScript.GetCharArray().GetData());
 			}
 		};
