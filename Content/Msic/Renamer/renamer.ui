@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>765</width>
-    <height>668</height>
+    <width>731</width>
+    <height>664</height>
    </rect>
   </property>
   <property name="font">
@@ -90,14 +90,14 @@
            <string>选项</string>
           </property>
           <layout class="QGridLayout" name="gridLayout">
-           <item row="0" column="0">
-            <widget class="MCheckBox" name="Ignore_CB">
+           <item row="1" column="0">
+            <widget class="MCheckBox" name="Ignore_Case_CB">
              <property name="text">
               <string>不区分大小写</string>
              </property>
             </widget>
            </item>
-           <item row="1" column="0">
+           <item row="0" column="0">
             <widget class="MCheckBox" name="RE_CB">
              <property name="text">
               <string>正则表达式</string>
@@ -124,7 +124,7 @@
              <item>
               <widget class="MCheckBox" name="Prefix_CB">
                <property name="text">
-                <string>前缀 </string>
+                <string>前缀</string>
                </property>
               </widget>
              </item>
@@ -178,11 +178,14 @@
             <bold>true</bold>
            </font>
           </property>
+          <property name="autoFillBackground">
+           <bool>false</bool>
+          </property>
           <property name="styleSheet">
            <string notr="true"/>
           </property>
           <property name="title">
-           <string notr="true">序号{index}</string>
+           <string notr="true">文件序号{INDEX}</string>
           </property>
           <property name="flat">
            <bool>false</bool>
@@ -276,6 +279,9 @@
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
+                 </property>
+                 <property name="minimum">
+                  <number>1</number>
                  </property>
                 </widget>
                </item>
@@ -377,6 +383,123 @@
                </property>
                <property name="text">
                 <string/>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="Variable_Group">
+          <property name="title">
+           <string>变量配置</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_11">
+           <item>
+            <widget class="MCheckBox" name="INDEX_CB">
+             <property name="text">
+              <string>资源序号       ${INDEX} </string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="MCheckBox" name="ORIGIN_NAME_CB">
+             <property name="text">
+              <string>资源原名称     ${ORIGIN_NAME} </string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="MCheckBox" name="MATCH_CB">
+             <property name="text">
+              <string>匹配的关键字   ${MATCH} </string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="MCheckBox" name="ASSET_PATH_CB">
+             <property name="text">
+              <string>资源引擎路径   ${ASSET_PATH} </string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="MCheckBox" name="FOLDER_PATH_CB">
+             <property name="text">
+              <string>资源文件夹路径 ${FOLDER_PATH} </string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="MCheckBox" name="ASSET_FILE_PATH_CB">
+             <property name="text">
+              <string>资源本地路径   ${ASSET_FILE_PATH} </string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="MCheckBox" name="ASSET_CLASS_CB">
+             <property name="text">
+              <string>资源类名简写   ${ASSET_CLASS} </string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="MCheckBox" name="ASSET_CLASS_LONG_CB">
+             <property name="text">
+              <string>资源类名全程   ${ASSET_CLASS_LONG} </string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_24">
+             <property name="sizeConstraint">
+              <enum>QLayout::SetFixedSize</enum>
+             </property>
+             <item>
+              <widget class="MPushButton" name="Select_All_BTN">
+               <property name="text">
+                <string>全选</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="MPushButton" name="Toggle_Select_BTN">
+               <property name="text">
+                <string>反选</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="MPushButton" name="Non_Select_BTN">
+               <property name="text">
+                <string>全不选</string>
                </property>
               </widget>
              </item>
@@ -576,13 +699,25 @@
             <property name="selectionMode">
              <enum>QAbstractItemView::ExtendedSelection</enum>
             </property>
+            <property name="selectionBehavior">
+             <enum>QAbstractItemView::SelectRows</enum>
+            </property>
+            <property name="showGrid">
+             <bool>true</bool>
+            </property>
             <property name="cornerButtonEnabled">
              <bool>true</bool>
             </property>
             <attribute name="horizontalHeaderCascadingSectionResizes">
              <bool>false</bool>
             </attribute>
+            <attribute name="horizontalHeaderStretchLastSection">
+             <bool>true</bool>
+            </attribute>
             <attribute name="verticalHeaderCascadingSectionResizes">
+             <bool>false</bool>
+            </attribute>
+            <attribute name="verticalHeaderStretchLastSection">
              <bool>false</bool>
             </attribute>
            </widget>
@@ -617,6 +752,9 @@
              <number>2</number>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout">
+             <property name="sizeConstraint">
+              <enum>QLayout::SetNoConstraint</enum>
+             </property>
              <property name="leftMargin">
               <number>0</number>
              </property>
@@ -629,6 +767,34 @@
              <property name="bottomMargin">
               <number>0</number>
              </property>
+             <item>
+              <widget class="MPushButton" name="Update_BTN">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>25</width>
+                 <height>25</height>
+                </size>
+               </property>
+               <property name="baseSize">
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;上移&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
              <item>
               <spacer name="verticalSpacer_4">
                <property name="orientation">
@@ -662,6 +828,9 @@
                  <height>0</height>
                 </size>
                </property>
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;获取文件&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
                <property name="text">
                 <string/>
                </property>
@@ -687,6 +856,37 @@
                  <height>0</height>
                 </size>
                </property>
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;定位文件&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="MPushButton" name="Drive_BTN">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>25</width>
+                 <height>25</height>
+                </size>
+               </property>
+               <property name="baseSize">
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;打开系统目录路径&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
                <property name="text">
                 <string/>
                </property>
@@ -711,6 +911,9 @@
                  <width>0</width>
                  <height>0</height>
                 </size>
+               </property>
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;删除文件&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="text">
                 <string/>
@@ -750,6 +953,9 @@
                  <height>0</height>
                 </size>
                </property>
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;上移&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
                <property name="text">
                 <string/>
                </property>
@@ -774,6 +980,9 @@
                  <width>25</width>
                  <height>25</height>
                 </size>
+               </property>
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;下移&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="text">
                 <string/>
@@ -865,8 +1074,8 @@ font-size:18px;</string>
     <property name="toolTipsVisible">
      <bool>false</bool>
     </property>
-    <addaction name="Import_CSV_Action"/>
-    <addaction name="Export_CSV_Action"/>
+    <addaction name="Import_Setting_Action"/>
+    <addaction name="Export_Setting_Action"/>
     <addaction name="separator"/>
     <addaction name="Close_Action"/>
    </widget>
@@ -894,12 +1103,12 @@ font-size:18px;</string>
    <addaction name="menu_3"/>
    <addaction name="menu_2"/>
   </widget>
-  <action name="Import_CSV_Action">
+  <action name="Import_Setting_Action">
    <property name="text">
     <string>读取配置</string>
    </property>
   </action>
-  <action name="Export_CSV_Action">
+  <action name="Export_Setting_Action">
    <property name="text">
     <string>导出配置</string>
    </property>
@@ -920,6 +1129,9 @@ font-size:18px;</string>
    <class>MTableView</class>
    <extends>QTableView</extends>
    <header>dayu_widgets/item_view.h</header>
+   <slots>
+    <slot>update_table()</slot>
+   </slots>
   </customwidget>
   <customwidget>
    <class>MComboBox</class>
@@ -961,6 +1173,166 @@ font-size:18px;</string>
  <resources/>
  <connections>
   <connection>
+   <sender>Prefix_CB</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>Prefix_LE</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>56</x>
+     <y>176</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>199</x>
+     <y>183</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>Suffix_CB</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>Suffix_LE</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>70</x>
+     <y>209</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>214</x>
+     <y>211</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>Index_Combo</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>stackedWidget</receiver>
+   <slot>setCurrentIndex(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>199</x>
+     <y>266</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>92</x>
+     <y>296</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>RE_CB</sender>
+   <signal>clicked()</signal>
+   <receiver>Main_Container</receiver>
+   <slot>update_table()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>86</x>
+     <y>112</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>382</x>
+     <y>333</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>Update_BTN</sender>
+   <signal>clicked()</signal>
+   <receiver>Main_Container</receiver>
+   <slot>update_table()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>708</x>
+     <y>147</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>382</x>
+     <y>333</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>Search_LE</sender>
+   <signal>editTextChanged(QString)</signal>
+   <receiver>Main_Container</receiver>
+   <slot>update_table()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>473</x>
+     <y>71</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>382</x>
+     <y>333</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>Replace_LE</sender>
+   <signal>editTextChanged(QString)</signal>
+   <receiver>Main_Container</receiver>
+   <slot>update_table()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>520</x>
+     <y>109</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>382</x>
+     <y>333</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>Padding_SP</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>Main_Container</receiver>
+   <slot>update_table()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>266</x>
+     <y>284</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>382</x>
+     <y>333</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>Lower_CB</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>Main_Container</receiver>
+   <slot>update_table()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>79</x>
+     <y>308</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>382</x>
+     <y>333</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>Upper_CB</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>Main_Container</receiver>
+   <slot>update_table()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>125</x>
+     <y>308</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>382</x>
+     <y>333</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
    <sender>Close_Action</sender>
    <signal>triggered()</signal>
    <receiver>Main_Container</receiver>
@@ -977,52 +1349,103 @@ font-size:18px;</string>
    </hints>
   </connection>
   <connection>
-   <sender>Prefix_CB</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>Prefix_LE</receiver>
-   <slot>setEnabled(bool)</slot>
+   <sender>Ignore_Case_CB</sender>
+   <signal>clicked()</signal>
+   <receiver>Main_Container</receiver>
+   <slot>update_table()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>38</x>
-     <y>159</y>
+     <x>240</x>
+     <y>87</y>
     </hint>
     <hint type="destinationlabel">
-     <x>127</x>
-     <y>162</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>Suffix_CB</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>Suffix_LE</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>52</x>
-     <y>191</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>142</x>
-     <y>189</y>
+     <x>382</x>
+     <y>333</y>
     </hint>
    </hints>
   </connection>
   <connection>
    <sender>Index_Combo</sender>
    <signal>currentIndexChanged(int)</signal>
-   <receiver>stackedWidget</receiver>
-   <slot>setCurrentIndex(int)</slot>
+   <receiver>Main_Container</receiver>
+   <slot>update_table()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>123</x>
-     <y>246</y>
+     <x>289</x>
+     <y>253</y>
     </hint>
     <hint type="destinationlabel">
-     <x>75</x>
-     <y>274</y>
+     <x>382</x>
+     <y>333</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>Prefix_LE</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>Main_Container</receiver>
+   <slot>update_table()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>225</x>
+     <y>175</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>365</x>
+     <y>331</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>Suffix_LE</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>Main_Container</receiver>
+   <slot>update_table()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>224</x>
+     <y>201</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>365</x>
+     <y>331</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>Prefix_CB</sender>
+   <signal>clicked()</signal>
+   <receiver>Main_Container</receiver>
+   <slot>update_table()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>45</x>
+     <y>176</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>365</x>
+     <y>331</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>Suffix_CB</sender>
+   <signal>clicked()</signal>
+   <receiver>Main_Container</receiver>
+   <slot>update_table()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>39</x>
+     <y>207</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>365</x>
+     <y>331</y>
     </hint>
    </hints>
   </connection>
  </connections>
+ <slots>
+  <slot>update_table()</slot>
+ </slots>
 </ui>

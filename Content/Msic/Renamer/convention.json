@@ -1,0 +1,134 @@
+{
+    "Blueprint": "BP_",
+    "Material": "M_",
+    "StaticMesh": "S_",
+    "SkeletalMesh": "SK_",
+    "Texture": "T_",
+    "ParticleSystem": "PS_",
+    "WidgetBlueprint": "WBP_",
+    "AimOffsetBlendSpace": "AO_",
+    "AimOffsetBlendSpace1D": "AO_",
+    "AnimBlueprint": "ABP_",
+    "AnimComposite": "AC_",
+    "AnimMontage": "AM_",
+    "AnimSequence": "A_",
+
+    "BlendSpace": "BS_",
+    "BlendSpace1D": "BS_",
+    "LevelSequence": "LS_",
+    "*MorphTarget": "MT_",
+    "PaperFlipbook": "PFB_",
+    "*Rig": "Rig_",
+    "Skeleton": "SKEL_",
+    "AIController": "AIC_",
+    "BehaviorTree": "BT_",
+    "BlackboardData": "BB_",
+    "*BTDecorator": "BTDecorator_",
+    "*BTService": "BTService_",
+    "*BTTaskNode": "BTTask_",
+    "Blueprint|FunctionLibrary": "BPFL_",
+    "Blueprint|Interface": "BPI_",
+    "Blueprint|MacroLibrary": "BPML_",
+    "Enum": "E",
+    "Structure": "S",
+    "Material(PostProcess)": "PP_",
+    "MaterialFunction": "MF_",
+    "MaterialInstanceConstant": "MI_",
+    "MaterialParameterCollection": "MPC_",
+    "SubsurfaceProfile": "SP_",
+    "PhysicalMaterial": "PM_",
+    "Texture(Diffuse/Albedo/BaseColor)": {
+        "prefix": "T_",
+        "suffix": "_D"
+    },
+    "Texture(Normal)": {
+        "prefix": "T_",
+        "suffix": "_N"
+    },
+    "Texture(Roughness)": {
+        "prefix": "T_",
+        "suffix": "_R"
+    },
+    "Texture(Alpha/Opacity)": {
+        "prefix": "T_",
+        "suffix": "_A"
+    },
+    "Texture(AmbientOcclusion)": {
+        "prefix": "T_",
+        "suffix": "_O"
+    },
+    "Texture(Bump)": {
+        "prefix": "T_",
+        "suffix": "_B"
+    },
+    "Texture(Emissive)": {
+        "prefix": "T_",
+        "suffix": "_E"
+    },
+    "Texture(Mask)": {
+        "prefix": "T_",
+        "suffix": "_M"
+    },
+    "Texture(Specular)": {
+        "prefix": "T_",
+        "suffix": "_S"
+    },
+    "TextureCube": "TC_",
+    "MediaTexture": "MT_",
+    "TextureRenderTarget2D": "RT_",
+    "TextureRenderTargetCube": "RTC_",
+    "TextureLightProfile": "TLP",
+    "CurveLinearColor": {
+        "Prefix": "Curve_",
+        "suffix": "_Color"
+    },
+    "CurveTable": {
+        "Prefix": "Curve_",
+        "suffix": "_Table"
+    },
+    "CurveFloat": {
+        "Prefix": "Curve_",
+        "suffix": "_Float"
+    },
+    "CurveVector": {
+        "Prefix": "Curve_",
+        "suffix": "_Vector"
+    },
+    "*AnimatedVectorField": "VFA_",
+    "CameraAnim": "CA_",
+    "*DataAsset": "*_",
+    "DataTable": "DT_",
+    "*FoliageType": "FT_",
+    "ForceFeedbackEffect": "FFE_",
+    "LandscapeGrassType": "LG_",
+    "*LandscapeLayer": "LL_",
+    "*MatineeData": "Matinee_",
+    "MediaPlayer": "MP_",
+    "ObjectLibrary": "OL_",
+    "*SpriteSheet": "SS_",
+    "*StaticVectorField": "VF_",
+    "TouchInterface": "TI_",
+    "PaperSprite": "SPR_",
+    "PaperSpriteAtlas": "SPRG_",
+    "PaperTileMap": "TM_",
+    "PaperTileSet": "TS_",
+    "PhysicsAsset": "PHYS_",
+    "DestructibleMesh": "DM_",
+    "SoundConcurrency": {
+        "suffix": "_SC"
+    },
+    "SoundCue": {
+        "prefix": "A_",
+        "suffix": "_Cue"
+    },
+    "DialogueVoice": "DV_",
+    "DialogueWave": "DW_",
+    "*MediaSoundWave": "MSW_",
+    "ReverbEffect": "Reverb_",
+    "SoundAttenuation": "ATT_",
+    "SoundMix": "Mix_",
+    "SoundWave": "A_",
+    "Font": "Font_",
+    "SlateBrush": "Brush_",
+    "SlateWidgetStyle": "Style_"
+}
