@@ -1,16 +1,21 @@
 # -*- coding: utf-8 -*-
 """
-特效资源导入配置面板
+批量重命名工具
 # TODO
 - [x] 定位文件系统路径
 - [x] 拖拽排序
 - [x] 前后缀
 - [x] 正则支持
 
-- [ ] 按照命名规范重命名
+- [x] 按照命名规范重命名
 - [x] BUG 新名称重命名会丢失
 - [x] BUG 挪动选择会丢失
 
+- [x] QSettings 配置记录
+- [x] 配置导入导出
+- [ ] ~~配置 search | replace 下拉~~
+- [ ] ~~预设配置~~
+- [ ] 帮助文档
 """
 
 from __future__ import division
@@ -26,17 +31,18 @@ import re
 import sys
 import json
 import webbrowser
+from shutil import copyfile
 from functools import partial
 from collections import deque
-from string import Template,_multimap
+from string import Template, _multimap
 
 import unreal
 
 from Qt import QtCore, QtWidgets, QtGui
-from Qt.QtCompat import load_ui
+from Qt.QtCompat import load_ui, QFileDialog
 from UE_Util import error_log, toast
 from dayu_widgets.item_model import MTableModel, MSortFilterModel
-from dayu_widgets.utils import set_obj_value,get_obj_value
+from dayu_widgets.utils import set_obj_value, get_obj_value
 util_lib = unreal.EditorUtilityLibrary()
 asset_lib = unreal.EditorAssetLibrary()
 sys_lib = unreal.SystemLibrary()
@@ -46,51 +52,14 @@ try:
 except:
     from PySide2.QtCore import SIGNAL
 
-class FixMTableModel(MTableModel):
-    def setData(self, index, value, role=QtCore.Qt.EditRole):
-        if index.isValid() and role in [QtCore.Qt.CheckStateRole, QtCore.Qt.EditRole]:
-            attr_dict = self.header_list[index.column()]
-            key = attr_dict.get('key')
-            data_obj = index.internalPointer()
-            if role == QtCore.Qt.CheckStateRole and attr_dict.get('checkable', False):
-                key += '_checked'
-                # 更新自己
-                set_obj_value(data_obj, key, value)
-                self.emit(SIGNAL('dataChanged(QModelIndex, QModelIndex)'), index, index)
 
-                # 更新它的children
-                for row, sub_obj in enumerate(get_obj_value(data_obj, 'children', [])):
-                    set_obj_value(sub_obj, key, value)
-                    sub_index = index.child(row, index.column())
-                    self.emit(SIGNAL('dataChanged(QModelIndex, QModelIndex)'), sub_index, sub_index)
+def get_convention():
+    DIR = os.path.dirname(__file__)
+    json_path = os.path.join(DIR, "convention.json")
+    with open(json_path, 'r') as f:
+        conventions = json.load(f, encoding='utf-8')
+    return conventions
 
-                # 更新它的parent
-                parent_index = index.parent()
-                if parent_index.isValid():
-                    parent_obj = parent_index.internalPointer()
-                    new_parent_value = value
-                    old_parent_value = get_obj_value(parent_obj, key)
-                    for sibling_obj in get_obj_value(get_obj_value(data_obj, '_parent'), 'children', []):
-                        if value != get_obj_value(sibling_obj, key):
-                            new_parent_value = 1
-                            break
-                    if new_parent_value != old_parent_value:
-                        set_obj_value(parent_obj, key, new_parent_value)
-                        self.emit(SIGNAL('dataChanged(QModelIndex, QModelIndex)'), parent_index, parent_index)
-            else:
-                val = data_obj.get(key)
-                if isinstance(val,dict):
-                    set_obj_value(val, "name", value)
-                else:
-                    set_obj_value(data_obj, key, value)
-                # 采用 self.dataChanged.emit方式在houdini16里面会报错
-                # TypeError: dataChanged(QModelIndex,QModelIndex,QVector<int>) only accepts 3 arguments, 3 given!
-                # 所以临时使用旧式信号的发射方式
-                self.emit(SIGNAL('dataChanged(QModelIndex, QModelIndex)'), index, index)
-                # self.dataChanged.emit(index, index)
-            return True
-        else:
-            return False
 
 class ReplaceTemplate(Template):
     def substitute(*args, **kws):
@@ -114,7 +83,7 @@ class ReplaceTemplate(Template):
             if named is not None:
                 # NOTE 修正默认 Templete 替换报错
                 default = "%s{%s}" % (self.delimiter, named) if mo.group(
-                    'braced') else "%s%s" % (self.delimiter , named)
+                    'braced') else "%s%s" % (self.delimiter, named)
                 val = mapping.get(named, default)
                 # We use this idiom instead of str() because the latter will
                 # fail if val is a Unicode containing non-ASCII characters.
@@ -136,25 +105,36 @@ class RenamerWinBase(QtWidgets.QWidget):
         file_name = os.path.splitext(file_name)[0]
         load_ui(os.path.join(DIR, "%s.ui" % file_name), self)
 
+        # NOTE 获取 convention 数据
+        self.conventions = get_convention()
+
+        name = "%s.ini" % self.__class__.__name__
+        self.settings = QtCore.QSettings(name, QtCore.QSettings.IniFormat)
         # NOTE 配置 MComboBox
-        self.Search_LE.lineEdit().setReadOnly(False)
-        self.Replace_LE.lineEdit().setReadOnly(False)
-        self.Search_LE.lineEdit().setPlaceholderText(u"输入关键字")
-        self.Replace_LE.lineEdit().setPlaceholderText(u"输入替换文字")
+        self.Search_LE.setPlaceholderText(u"输入关键字")
+        self.Replace_LE.setPlaceholderText(u"输入替换文字")
+        self.Export_Setting_Action.triggered.connect(self.export_setting)
+        self.Import_Setting_Action.triggered.connect(self.import_setting)
+        self.Help_Action.triggered.connect(lambda: webbrowser.open_new_tab(
+            'http://redarttoolkit.pages.oa.com/docs/posts/b86a33f0.html'))
 
         # NOTE 隐藏左侧配置项
-        self.Splitter.setCollapsible(1, False)
-        self.Splitter.setSizes([0, 1])
+        self.Splitter.splitterMoved.connect(
+            lambda: self.settings.setValue("splitter_size", self.Splitter.sizes()))
+        splitter_size = self.settings.value("splitter_size")
+        self.Splitter.setSizes(
+            [int(i) for i in splitter_size] if splitter_size else [0, 1])
 
         # NOTE 配置 Header
-        self.model = FixMTableModel()
+        self.model = MTableModel()
         self.header_list = [
             {
                 'label': data,
                 'key': data,
-                'bg_color': lambda *args: args[0].get('bg_color', QtGui.QColor(0, 0, 0, 0)) if isinstance(args[0], dict) else QtGui.QColor(0, 0, 0, 0),
-                'tooltip': lambda *args: args[0].get('tooltip', '') if isinstance(args[0], dict) else args[0],
-                'edit': lambda *args: args[0].get('name', '') if isinstance(args[0], dict) else args[0],
+                'bg_color': lambda x, y: y.get('bg_color', QtGui.QColor('transparent')),
+                'tooltip': lambda x, y: y.get('asset').get_path_name(),
+                'edit': lambda x, y: x or y.get('asset').get_name(),
+                'display': lambda x, y: x or y.get('asset').get_name(),
                 'editable': i == 1,
                 'draggable': True,
                 'width': 100,
@@ -167,6 +147,128 @@ class RenamerWinBase(QtWidgets.QWidget):
         self.Table_View.setModel(self.model_sort)
         self.Table_View.setShowGrid(True)
         self.setAcceptDrops(True)
+        self.load_settings()
+
+    def export_setting(self):
+        path, _ = QFileDialog.getSaveFileName(
+            self, caption=u"输出设置", filter=u"ini (*.ini)")
+        if not path:
+            return
+        copyfile(self.settings.fileName(), path)
+        toast(u"导出成功", "info")
+
+    def import_setting(self):
+        path, _ = QFileDialog.getOpenFileName(
+            self, caption=u"获取设置", filter=u"ini (*.ini)")
+        # NOTE 如果文件不存在则返回空
+        if not path or not os.path.exists(path):
+            return
+
+        self.settings = QtCore.QSettings(path, QtCore.QSettings.IniFormat)
+        self.settings.sync()
+        self.load_settings()
+        name = "%s.ini" % self.__class__.__name__
+        self.settings = QtCore.QSettings(name, QtCore.QSettings.IniFormat)
+        self.save_settings()
+        toast(u"加载成功", "info")
+
+    @staticmethod
+    def check_loop(loop_list):
+        for w in loop_list:
+            name = w.objectName()
+            if not hasattr(w, "objectName") or not name:
+                continue
+            elif isinstance(w, QtWidgets.QLineEdit) and not name.endswith("_LE"):
+                continue
+            elif isinstance(w, QtWidgets.QSpinBox) and not name.endswith("_SP"):
+                continue
+            elif isinstance(w, QtWidgets.QCheckBox) and not name.endswith("_CB"):
+                continue
+            elif isinstance(w, QtWidgets.QRadioButton) and not name.endswith("_RB"):
+                continue
+            elif isinstance(w, QtWidgets.QComboBox) and not name.endswith("_Combo"):
+                continue
+            yield w
+
+    def save_settings(self):
+        CB_list = self.findChildren(QtWidgets.QCheckBox)
+        RB_list = self.findChildren(QtWidgets.QRadioButton)
+        LE_list = self.findChildren(QtWidgets.QLineEdit)
+        SP_list = self.findChildren(QtWidgets.QSpinBox)
+        Combo_list = self.findChildren(QtWidgets.QComboBox)
+
+        for B in self.check_loop(CB_list + RB_list):
+            self.settings.setValue(B.objectName(), B.isChecked())
+
+        for LE in self.check_loop(LE_list):
+            self.settings.setValue(LE.objectName(), LE.text())
+
+        for SP in self.check_loop(SP_list):
+            self.settings.setValue(SP.objectName(), SP.value())
+
+        for Combo in self.check_loop(Combo_list):
+            index = Combo.currentIndex()
+            self.settings.setValue(Combo.objectName(), index)
+
+        # NOTE 获取 Table 记录
+        data_list = self.model.get_data_list()
+        asset_data = [data.get("asset").get_path_name() for data in data_list]
+        self.settings.setValue("table_asset", asset_data)
+
+    def load_settings(self):
+        CB_list = self.findChildren(QtWidgets.QCheckBox)
+        RB_list = self.findChildren(QtWidgets.QRadioButton)
+        LE_list = self.findChildren(QtWidgets.QLineEdit)
+        SP_list = self.findChildren(QtWidgets.QSpinBox)
+        Combo_list = self.findChildren(QtWidgets.QComboBox)
+        widget_dict = {}
+        for B in self.check_loop(CB_list + RB_list):
+            val = self.settings.value(B.objectName())
+            if val is not None:
+                val = True if val == "true" else False
+                widget_dict[B.setChecked] = val
+
+        for LE in self.check_loop(LE_list):
+            val = self.settings.value(LE.objectName())
+            if val is not None:
+                widget_dict[LE.setText] = val
+
+        for SP in self.check_loop(SP_list):
+            val = self.settings.value(SP.objectName())
+            if val is not None:
+                widget_dict[SP.setValue] = int(val)
+
+        for Combo in self.check_loop(Combo_list):
+            val = self.settings.value(Combo.objectName())
+            if val is not None:
+                widget_dict[Combo.setCurrentIndex] = int(val)
+
+        # NOTE 添加 data_list
+        asset_data = self.settings.value("table_asset")
+        # NOTE 批量设置属性值
+        for setter, val in widget_dict.items():
+            setter(val)
+        if not asset_data:
+            return
+        data_list = self.model.get_data_list()
+        tooltip_list = [data.get("asset").get_path_name()
+                        for data in data_list]
+        asset_list = [unreal.load_asset(
+            path) for path in asset_data if path not in tooltip_list and asset_lib.does_asset_exist(path)]
+
+        if not asset_list:
+            return
+
+        # NOTE 确保不添加重复的 item
+        data_list.extend([{
+            'bg_color': QtGui.QColor("transparent"),
+            'asset': asset,
+            u"原名称": asset.get_name(),
+            u"新名称": "",
+            u"文件类型": type(asset).__name__,
+        } for asset in asset_list])
+        self.model.set_data_list(data_list)
+        self.update_table()
 
     def dragEnterEvent(self, event):
         event.accept() if event.mimeData().hasUrls() else event.ignore()
@@ -177,17 +279,10 @@ class RenamerWinBase(QtWidgets.QWidget):
             event.setDropAction(QtCore.Qt.CopyAction)
             event.accept()
             print(event.mimeData().urls())
-            # for url in IProgressDialog.loop(event.mimeData().urls()):
-            #     path = (url.toLocalFile())
-            #     _, ext = os.path.splitext(path)
-            #     # Note 过滤已有的路径
-            #     if ext.lower() in self.file_filter or "*" in self.file_filter:
-            #         self.addItem(path)
         else:
             event.ignore()
 
     def dragMoveEvent(self, event):
-        print("dragMoveEvent")
         if event.mimeData().hasUrls:
             event.setDropAction(QtCore.Qt.CopyAction)
             event.accept()
@@ -232,6 +327,7 @@ class UERenamerWin(RenamerWinBase):
         self.Update_BTN.setIcon(icon)
 
         self.Get_BTN.clicked.connect(self.add_selected_asset)
+        self.Get_BTN.clicked.connect(self.add_selected_asset)
         self.Find_BTN.clicked.connect(self.locate_item_location)
         self.Drive_BTN.clicked.connect(self.locate_file_location)
         self.Del_BTN.clicked.connect(self.remove_items)
@@ -239,12 +335,11 @@ class UERenamerWin(RenamerWinBase):
         self.Up_BTN.clicked.connect(lambda: self.move_item(up=True))
         self.Dn_BTN.clicked.connect(lambda: self.move_item(up=False))
 
-        self.Locate_Widget.hide()
         self.Rename_BTN.clicked.connect(self.rename)
 
-        # self.Update_BTN.clicked.connect(self.update_table)
-        # self.Search_LE.lineEdit().textChanged.connect(self.update_table)
-        # self.Replace_LE.lineEdit().textChanged.connect(self.update_table)
+        # self.Update_BTN.clicked.connect(lambda: print(self.settings.fileName()))
+        # self.Search_LE.textChanged.connect(self.update_table)
+        # self.Replace_LE.textChanged.connect(self.update_table)
 
         # NOTE 设置内置变量启用
         for cb in self.Variable_Group.findChildren(QtWidgets.QCheckBox):
@@ -375,7 +470,6 @@ class UERenamerWin(RenamerWinBase):
         for row, idx in idx_list.items():
             self.Table_View.selectionModel().select(self.model.index(idx, 0), mode)
 
-
     # NOTE ----------------------------------------------------------------
 
     def getAlpha(self, value, capital=False):
@@ -413,12 +507,12 @@ class UERenamerWin(RenamerWinBase):
             return letter
 
     def handle_replace(self, i, data, replace):
-        path = data[u"原名称"]["tooltip"]
         var_dict = {}
         prefix = self.Prefix_LE.text() if self.Prefix_CB.isChecked() else ""
         suffix = self.Suffix_LE.text() if self.Suffix_CB.isChecked() else ""
 
-        asset = unreal.load_asset(path)
+        asset = data["asset"]
+        path = asset.get_path_name()
 
         if self.INDEX_CB.isChecked():
             var_dict["INDEX"] = self.get_index(i)
@@ -437,11 +531,15 @@ class UERenamerWin(RenamerWinBase):
             project = sys_lib.get_project_content_directory()
             var_dict["ASSET_FILE_PATH"] = path.replace("/Game/", project)
 
+        type_name = type(asset).__name__
         if self.ASSET_CLASS_LONG_CB.isChecked():
-            var_dict["ASSET_CLASS_LONG"] = type(asset).__name__
+            var_dict["ASSET_CLASS_LONG"] = type_name
 
         if self.ASSET_CLASS_CB.isChecked():
-            var_dict["ASSET_CLASS"] = type(asset).__name__
+            convention = self.conventions.get(type_name, type_name)
+            if isinstance(convention, dict):
+                convention = convention.get("prefix", type_name)
+            var_dict["ASSET_CLASS"] = convention
 
         if self.FOLDER_PATH_CB.isChecked():
             var_dict["FOLDER_PATH"] = os.path.basename(os.path.dirname(path))
@@ -452,16 +550,31 @@ class UERenamerWin(RenamerWinBase):
 
         return replace, prefix, suffix
 
+    def handle_convention(self, data):
+        asset = data["asset"]
+        name = asset.get_name()
+        type_name = type(asset).__name__
+        convention = self.conventions.get(type_name, type_name)
+        if isinstance(convention, dict):
+            prefix = convention.get("prefix", "")
+            suffix = convention.get("suffix", "")
+        else:
+            prefix = convention
+            suffix = ""
+        if name.startswith(prefix):
+            prefix = ""
+        if name.endswith(suffix):
+            suffix = ""
+        return "%s%s%s" % (prefix, name, suffix)
+
     @QtCore.Slot()
     def update_table(self):
-        print("update_table")
-
         data_list = self.model.get_data_list()
         for i, data in enumerate(data_list[:]):
-            name = data[u"原名称"]["name"]
-            path = data[u"原名称"]["tooltip"]
-            search = self.Search_LE.lineEdit().text()
-            replace = self.Replace_LE.lineEdit().text()
+            name = data["asset"].get_name()
+            path = data["asset"].get_path_name()
+            search = self.Search_LE.text()
+            replace = self.Replace_LE.text()
 
             if not asset_lib.does_asset_exist(path):
                 data_list.pop(i)
@@ -471,6 +584,9 @@ class UERenamerWin(RenamerWinBase):
             if not self.RE_CB.isChecked():
                 search = re.escape(search)
 
+            if self.Convention_CB.isChecked():
+                name = self.handle_convention(data)
+
             flags = re.I if self.Ignore_Case_CB.isChecked() else 0
             replace, prefix, suffix = self.handle_replace(i, data, replace)
             try:
@@ -479,15 +595,14 @@ class UERenamerWin(RenamerWinBase):
             except:
                 search = False
             if search and reg.search(name):
-                data[u'新名称']["name"] = "%s%s%s" % (prefix ,replace , suffix)
-                for header in data:
-                    data[header]["bg_color"] = QtGui.QColor("purple")
+                data[u'新名称'] = "%s%s%s" % (prefix, replace, suffix)
+                data["bg_color"] = QtGui.QColor("purple")
             else:
-                data[u'新名称']["name"] =  "%s%s%s" % (prefix ,name , suffix)
-                for header in data:
-                    data[header]["bg_color"] = QtGui.QColor(0, 0, 0, 0)
+                data[u'新名称'] = "%s%s%s" % (prefix, name, suffix)
+                data["bg_color"] = QtGui.QColor("transparent")
 
         self.model.set_data_list(data_list)
+        self.save_settings()
 
     def locate_file_location(self):
         data_list = self.model.get_data_list()
@@ -496,7 +611,8 @@ class UERenamerWin(RenamerWinBase):
             toast(u"没有选择元素进行定位")
             return
 
-        path = data_list[index.row()][u"原名称"]["tooltip"]
+        asset = data_list[index.row()]["asset"]
+        path = asset.get_path_name()
         # path = os.path.splitext(path)[0]
 
         project = sys_lib.get_project_content_directory()
@@ -513,7 +629,8 @@ class UERenamerWin(RenamerWinBase):
         if not index:
             toast(u"没有选择元素进行定位")
             return
-        path = data_list[index.row()][u"原名称"]["tooltip"]
+        asset = data_list[index.row()]["asset"]
+        path = asset.get_path_name()
         if asset_lib.does_asset_exist(path):
             asset_lib.sync_browser_to_objects([path])
 
@@ -521,22 +638,23 @@ class UERenamerWin(RenamerWinBase):
 
         data_list = self.model.get_data_list()
         for i, data in enumerate(data_list[:]):
-            name = data[u"原名称"]["name"]
-            path = data[u"原名称"]["tooltip"]
+            asset = data['asset']
+            name = asset.get_name()
+            path = asset.get_path_name()
             if not asset_lib.does_asset_exist(path):
                 data_list.pop(i)
             else:
-                asset = unreal.load_asset(path)
-                util_lib.rename_asset(asset, data[u'新名称']["name"])
-                data[u"原名称"]["name"] = asset.get_name()
-                data[u"原名称"]["tooltip"] = asset.get_path_name()
+                new_name = data[u'新名称']
+                if new_name != name:
+                    util_lib.rename_asset(asset, new_name)
 
         self.model.set_data_list(data_list)
         self.update_table()
 
     def add_selected_asset(self):
         data_list = self.model.get_data_list()
-        tooltip_list = [data.get(u"原名称").get("tooltip") for data in data_list]
+        tooltip_list = [data.get("asset").get_path_name()
+                        for data in data_list]
         asset_list = [asset for asset in util_lib.get_selected_assets()
                       if asset.get_path_name() not in tooltip_list]
         if not asset_list:
@@ -544,19 +662,11 @@ class UERenamerWin(RenamerWinBase):
             return
         # NOTE 确保不添加重复的 item
         data_list.extend([{
-            u"原名称": {
-                "name": asset.get_name(),
-                "tooltip": asset.get_path_name(),
-                "bg_color": QtGui.QColor(0, 0, 0, 0),
-            },
-            u"新名称": {
-                "name": "",
-                "bg_color": QtGui.QColor(0, 0, 0, 0),
-            },
-            u"文件类型": {
-                "name": type(asset).__name__,
-                "bg_color": QtGui.QColor(0, 0, 0, 0),
-            },
+            'bg_color': QtGui.QColor("transparent"),
+            'asset': asset,
+            u"原名称": asset.get_name(),
+            u"新名称": "",
+            u"文件类型": type(asset).__name__,
         } for asset in asset_list])
         self.update_table()
         self.model.set_data_list(data_list)

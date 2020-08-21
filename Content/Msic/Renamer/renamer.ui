@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>731</width>
-    <height>664</height>
+    <height>796</height>
    </rect>
   </property>
   <property name="font">
@@ -33,6 +33,9 @@
    </property>
    <item>
     <widget class="QSplitter" name="Splitter">
+     <property name="styleSheet">
+      <string notr="true">font: bold 12pt &quot;Microsoft YaHei&quot;;</string>
+     </property>
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
@@ -82,7 +85,10 @@
          <widget class="QGroupBox" name="groupBox">
           <property name="font">
            <font>
+            <family>Microsoft YaHei</family>
+            <pointsize>12</pointsize>
             <weight>75</weight>
+            <italic>false</italic>
             <bold>true</bold>
            </font>
           </property>
@@ -90,17 +96,31 @@
            <string>选项</string>
           </property>
           <layout class="QGridLayout" name="gridLayout">
-           <item row="1" column="0">
+           <item row="4" column="0">
             <widget class="MCheckBox" name="Ignore_Case_CB">
              <property name="text">
               <string>不区分大小写</string>
              </property>
             </widget>
            </item>
-           <item row="0" column="0">
+           <item row="3" column="0">
             <widget class="MCheckBox" name="RE_CB">
              <property name="text">
               <string>正则表达式</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="MCheckBox" name="Convention_CB">
+             <property name="text">
+              <string>命名规范 - 自动匹配</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="Line" name="line">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
              </property>
             </widget>
            </item>
@@ -111,7 +131,10 @@
          <widget class="QGroupBox" name="groupBox_4">
           <property name="font">
            <font>
+            <family>Microsoft YaHei</family>
+            <pointsize>12</pointsize>
             <weight>75</weight>
+            <italic>false</italic>
             <bold>true</bold>
            </font>
           </property>
@@ -174,7 +197,10 @@
           </property>
           <property name="font">
            <font>
+            <family>Microsoft YaHei</family>
+            <pointsize>12</pointsize>
             <weight>75</weight>
+            <italic>false</italic>
             <bold>true</bold>
            </font>
           </property>
@@ -364,30 +390,6 @@
              </widget>
             </widget>
            </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_2">
-             <item>
-              <widget class="QLabel" name="label_3">
-               <property name="text">
-                <string>序号参考：</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="Index_Label">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
           </layout>
          </widget>
         </item>
@@ -533,45 +535,6 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="QWidget" name="Locate_Widget" native="true">
-         <layout class="QHBoxLayout" name="horizontalLayout_12">
-          <property name="leftMargin">
-           <number>1</number>
-          </property>
-          <property name="topMargin">
-           <number>1</number>
-          </property>
-          <property name="rightMargin">
-           <number>1</number>
-          </property>
-          <property name="bottomMargin">
-           <number>1</number>
-          </property>
-          <item>
-           <widget class="QLabel" name="label_5">
-            <property name="text">
-             <string>当前路径：</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="MLineEdit" name="lineEdit">
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="MPushButton" name="Locate_BTN">
-            <property name="text">
-             <string>定位路径</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
           <widget class="QLabel" name="Selector_Label_3">
@@ -581,15 +544,12 @@
           </widget>
          </item>
          <item>
-          <widget class="MComboBox" name="Search_LE">
+          <widget class="MLineEdit" name="Search_LE">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
-           </property>
-           <property name="editable">
-            <bool>true</bool>
            </property>
           </widget>
          </item>
@@ -605,15 +565,12 @@
           </widget>
          </item>
          <item>
-          <widget class="MComboBox" name="Replace_LE">
+          <widget class="MLineEdit" name="Replace_LE">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
-           </property>
-           <property name="editable">
-            <bool>true</bool>
            </property>
           </widget>
          </item>
@@ -788,7 +745,7 @@
                 </size>
                </property>
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;上移&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;刷新&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="text">
                 <string/>
@@ -1012,8 +969,10 @@
         <widget class="MPushButton" name="Rename_BTN">
          <property name="font">
           <font>
+           <family>Microsoft YaHei</family>
            <pointsize>-1</pointsize>
            <weight>75</weight>
+           <italic>false</italic>
            <bold>true</bold>
           </font>
          </property>
@@ -1059,7 +1018,7 @@ font-size:18px;</string>
     <bool>false</bool>
    </property>
    <property name="nativeMenuBar">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <widget class="QMenu" name="menu">
     <property name="tearOffEnabled">
@@ -1091,16 +1050,7 @@ font-size:18px;</string>
     </property>
     <addaction name="Help_Action"/>
    </widget>
-   <widget class="QMenu" name="menu_3">
-    <property name="tearOffEnabled">
-     <bool>true</bool>
-    </property>
-    <property name="title">
-     <string>预设</string>
-    </property>
-   </widget>
    <addaction name="menu"/>
-   <addaction name="menu_3"/>
    <addaction name="menu_2"/>
   </widget>
   <action name="Import_Setting_Action">
@@ -1126,6 +1076,21 @@ font-size:18px;</string>
  </widget>
  <customwidgets>
   <customwidget>
+   <class>MPushButton</class>
+   <extends>QPushButton</extends>
+   <header>dayu_widgets/push_button.h</header>
+  </customwidget>
+  <customwidget>
+   <class>MLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>dayu_widgets/line_edit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>MRadioButton</class>
+   <extends>QRadioButton</extends>
+   <header>dayu_widgets/radio_button.h</header>
+  </customwidget>
+  <customwidget>
    <class>MTableView</class>
    <extends>QTableView</extends>
    <header>dayu_widgets/item_view.h</header>
@@ -1139,24 +1104,9 @@ font-size:18px;</string>
    <header>dayu_widgets/combo_box.h</header>
   </customwidget>
   <customwidget>
-   <class>MPushButton</class>
-   <extends>QPushButton</extends>
-   <header>dayu_widgets/push_button.h</header>
-  </customwidget>
-  <customwidget>
-   <class>MLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>dayu_widgets/line_edit.h</header>
-  </customwidget>
-  <customwidget>
    <class>MCheckBox</class>
    <extends>QCheckBox</extends>
    <header>dayu_widgets/check_box.h</header>
-  </customwidget>
-  <customwidget>
-   <class>MRadioButton</class>
-   <extends>QRadioButton</extends>
-   <header>dayu_widgets/radio_button.h</header>
   </customwidget>
   <customwidget>
    <class>MSpinBox</class>
@@ -1179,12 +1129,12 @@ font-size:18px;</string>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>56</x>
-     <y>176</y>
+     <x>74</x>
+     <y>212</y>
     </hint>
     <hint type="destinationlabel">
-     <x>199</x>
-     <y>183</y>
+     <x>271</x>
+     <y>214</y>
     </hint>
    </hints>
   </connection>
@@ -1195,12 +1145,12 @@ font-size:18px;</string>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>70</x>
-     <y>209</y>
+     <x>74</x>
+     <y>240</y>
     </hint>
     <hint type="destinationlabel">
-     <x>214</x>
-     <y>211</y>
+     <x>286</x>
+     <y>242</y>
     </hint>
    </hints>
   </connection>
@@ -1211,12 +1161,12 @@ font-size:18px;</string>
    <slot>setCurrentIndex(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>199</x>
-     <y>266</y>
+     <x>275</x>
+     <y>302</y>
     </hint>
     <hint type="destinationlabel">
-     <x>92</x>
-     <y>296</y>
+     <x>109</x>
+     <y>327</y>
     </hint>
    </hints>
   </connection>
@@ -1227,8 +1177,8 @@ font-size:18px;</string>
    <slot>update_table()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>86</x>
-     <y>112</y>
+     <x>120</x>
+     <y>133</y>
     </hint>
     <hint type="destinationlabel">
      <x>382</x>
@@ -1243,8 +1193,8 @@ font-size:18px;</string>
    <slot>update_table()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>708</x>
-     <y>147</y>
+     <x>724</x>
+     <y>117</y>
     </hint>
     <hint type="destinationlabel">
      <x>382</x>
@@ -1254,13 +1204,13 @@ font-size:18px;</string>
   </connection>
   <connection>
    <sender>Search_LE</sender>
-   <signal>editTextChanged(QString)</signal>
+   <signal>textChanged(QString)</signal>
    <receiver>Main_Container</receiver>
    <slot>update_table()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>473</x>
-     <y>71</y>
+     <x>723</x>
+     <y>54</y>
     </hint>
     <hint type="destinationlabel">
      <x>382</x>
@@ -1270,13 +1220,13 @@ font-size:18px;</string>
   </connection>
   <connection>
    <sender>Replace_LE</sender>
-   <signal>editTextChanged(QString)</signal>
+   <signal>textChanged(QString)</signal>
    <receiver>Main_Container</receiver>
    <slot>update_table()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>520</x>
-     <y>109</y>
+     <x>723</x>
+     <y>85</y>
     </hint>
     <hint type="destinationlabel">
      <x>382</x>
@@ -1291,8 +1241,8 @@ font-size:18px;</string>
    <slot>update_table()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>266</x>
-     <y>284</y>
+     <x>283</x>
+     <y>327</y>
     </hint>
     <hint type="destinationlabel">
      <x>382</x>
@@ -1307,8 +1257,8 @@ font-size:18px;</string>
    <slot>update_table()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>79</x>
-     <y>308</y>
+     <x>72</x>
+     <y>330</y>
     </hint>
     <hint type="destinationlabel">
      <x>382</x>
@@ -1324,7 +1274,7 @@ font-size:18px;</string>
    <hints>
     <hint type="sourcelabel">
      <x>125</x>
-     <y>308</y>
+     <y>330</y>
     </hint>
     <hint type="destinationlabel">
      <x>382</x>
@@ -1355,8 +1305,8 @@ font-size:18px;</string>
    <slot>update_table()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>240</x>
-     <y>87</y>
+     <x>274</x>
+     <y>155</y>
     </hint>
     <hint type="destinationlabel">
      <x>382</x>
@@ -1371,8 +1321,8 @@ font-size:18px;</string>
    <slot>update_table()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>289</x>
-     <y>253</y>
+     <x>343</x>
+     <y>302</y>
     </hint>
     <hint type="destinationlabel">
      <x>382</x>
@@ -1387,8 +1337,8 @@ font-size:18px;</string>
    <slot>update_table()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>225</x>
-     <y>175</y>
+     <x>297</x>
+     <y>214</y>
     </hint>
     <hint type="destinationlabel">
      <x>365</x>
@@ -1403,8 +1353,8 @@ font-size:18px;</string>
    <slot>update_table()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>224</x>
-     <y>201</y>
+     <x>296</x>
+     <y>242</y>
     </hint>
     <hint type="destinationlabel">
      <x>365</x>
@@ -1419,8 +1369,8 @@ font-size:18px;</string>
    <slot>update_table()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>45</x>
-     <y>176</y>
+     <x>63</x>
+     <y>212</y>
     </hint>
     <hint type="destinationlabel">
      <x>365</x>
@@ -1435,8 +1385,24 @@ font-size:18px;</string>
    <slot>update_table()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>39</x>
-     <y>207</y>
+     <x>57</x>
+     <y>240</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>365</x>
+     <y>331</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>Convention_CB</sender>
+   <signal>clicked()</signal>
+   <receiver>Main_Container</receiver>
+   <slot>update_table()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>179</x>
+     <y>102</y>
     </hint>
     <hint type="destinationlabel">
      <x>365</x>
