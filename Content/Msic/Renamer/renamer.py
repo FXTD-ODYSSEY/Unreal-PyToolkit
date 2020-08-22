@@ -13,9 +13,7 @@
 
 - [x] QSettings 配置记录
 - [x] 配置导入导出
-- [ ] ~~配置 search | replace 下拉~~
-- [ ] ~~预设配置~~
-- [ ] 帮助文档
+- [x] 帮助文档
 """
 
 from __future__ import division
@@ -24,7 +22,7 @@ from __future__ import absolute_import
 
 __author__ = 'timmyliang'
 __email__ = '820472580@qq.com'
-__date__ = '2020-08-10 21:38:57'
+__date__ = '2020-8-22 11:15:26'
 
 import os
 import re
@@ -40,7 +38,7 @@ import unreal
 
 from Qt import QtCore, QtWidgets, QtGui
 from Qt.QtCompat import load_ui, QFileDialog
-from UE_Util import error_log, toast
+from ue_util import error_log, toast
 from dayu_widgets.item_model import MTableModel, MSortFilterModel
 from dayu_widgets.utils import set_obj_value, get_obj_value
 util_lib = unreal.EditorUtilityLibrary()
@@ -117,6 +115,8 @@ class RenamerWinBase(QtWidgets.QWidget):
         self.Import_Setting_Action.triggered.connect(self.import_setting)
         self.Help_Action.triggered.connect(lambda: webbrowser.open_new_tab(
             'http://redarttoolkit.pages.oa.com/docs/posts/b86a33f0.html'))
+        self.Convention_Action.triggered.connect(lambda: webbrowser.open_new_tab(
+            'https://github.com/Allar/ue4-style-guide'))
 
         # NOTE 隐藏左侧配置项
         self.Splitter.splitterMoved.connect(

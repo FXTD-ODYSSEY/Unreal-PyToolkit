@@ -6,32 +6,28 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>577</width>
-    <height>636</height>
+    <width>459</width>
+    <height>497</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Sequencer 批量渲染工具</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="topMargin">
+    <number>30</number>
+   </property>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="MLabel" name="label_2">
+      <widget class="QLabel" name="label_2">
        <property name="text">
         <string>输出目录</string>
-       </property>
-       <property name="PyInit" stdset="0">
-        <string>{
-    &quot;method&quot; : {
-        &quot;setText&quot;:&quot;输出目录&quot;
-    }
-}</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="MLineEdit" name="lineEdit"/>
+      <widget class="MLineEdit" name="Output_LE"/>
      </item>
      <item>
       <widget class="MPushButton" name="pushButton">
@@ -40,26 +36,33 @@
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="MPushButton" name="Locate_BTN">
+       <property name="text">
+        <string>打开目录</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="MPushButton" name="Config_BTN">
+       <property name="text">
+        <string>读取配置</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
-      <widget class="MLabel" name="Output_Label">
+      <widget class="QLabel" name="Output_Label">
        <property name="text">
         <string>输出名称</string>
-       </property>
-       <property name="PyInit" stdset="0">
-        <string>{
-    &quot;method&quot; : {
-        &quot;setText&quot;:&quot;输出名称&quot;
-    }
-}</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="MLineEdit" name="lineEdit_2">
+      <widget class="MLineEdit" name="FileName_LE">
        <property name="placeholderText">
         <string/>
        </property>
@@ -70,21 +73,14 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="MLabel" name="label">
+      <widget class="QLabel" name="label">
        <property name="text">
         <string>输出格式</string>
-       </property>
-       <property name="PyInit" stdset="0">
-        <string>{
-    &quot;method&quot; : {
-        &quot;setText&quot;:&quot;输出格式&quot;
-    }
-}</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="MComboBox" name="comboBox">
+      <widget class="MComboBox" name="Proctocol_Combo">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -126,368 +122,340 @@
     </layout>
    </item>
    <item>
-    <widget class="QStackedWidget" name="stackedWidget">
-     <property name="frameShape">
-      <enum>QFrame::Panel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Sunken</enum>
-     </property>
-     <property name="lineWidth">
-      <number>1</number>
-     </property>
-     <property name="currentIndex">
-      <number>0</number>
-     </property>
-     <widget class="QWidget" name="page">
-      <layout class="QVBoxLayout" name="verticalLayout_2">
-       <property name="leftMargin">
-        <number>0</number>
-       </property>
-       <property name="topMargin">
-        <number>0</number>
-       </property>
-       <property name="rightMargin">
-        <number>0</number>
-       </property>
-       <property name="bottomMargin">
-        <number>0</number>
-       </property>
-       <item>
-        <widget class="QScrollArea" name="scrollArea">
-         <property name="widgetResizable">
-          <bool>true</bool>
-         </property>
-         <widget class="QWidget" name="scrollAreaWidgetContents">
-          <property name="geometry">
-           <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>555</width>
-            <height>498</height>
-           </rect>
+    <widget class="QWidget" name="Custom_Pass_Container" native="true">
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <property name="leftMargin">
+       <number>1</number>
+      </property>
+      <property name="topMargin">
+       <number>1</number>
+      </property>
+      <property name="rightMargin">
+       <number>1</number>
+      </property>
+      <property name="bottomMargin">
+       <number>1</number>
+      </property>
+      <item>
+       <widget class="QWidget" name="Pass_Container" native="true">
+        <layout class="QGridLayout" name="gridLayout">
+         <item row="2" column="0">
+          <widget class="MCheckBox" name="checkBox_12">
+           <property name="text">
+            <string>Specular Color</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="MCheckBox" name="checkBox_10">
+           <property name="text">
+            <string>Scene Depth</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="MCheckBox" name="checkBox_7">
+           <property name="text">
+            <string>Scene Color</string>
+           </property>
+          </widget>
+         </item>
+         <item row="9" column="0">
+          <widget class="MCheckBox" name="checkBox_11">
+           <property name="text">
+            <string>Post Tonemap HDR Color</string>
+           </property>
+          </widget>
+         </item>
+         <item row="10" column="0">
+          <widget class="MCheckBox" name="checkBox_17">
+           <property name="text">
+            <string>Seperate Translucncy RGB</string>
+           </property>
+          </widget>
+         </item>
+         <item row="11" column="0">
+          <widget class="MCheckBox" name="checkBox_20">
+           <property name="text">
+            <string>Velocity</string>
+           </property>
+          </widget>
+         </item>
+         <item row="10" column="1">
+          <widget class="MCheckBox" name="checkBox_16">
+           <property name="text">
+            <string>Seperate Translucncy Alpha</string>
+           </property>
+          </widget>
+         </item>
+         <item row="9" column="1">
+          <widget class="MCheckBox" name="checkBox_13">
+           <property name="text">
+            <string>Pre Tonemap HDR Color</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="MCheckBox" name="checkBox_2">
+           <property name="text">
+            <string>Base Color</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="0">
+          <widget class="MCheckBox" name="checkBox_5">
+           <property name="text">
+            <string>Final Image</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="MCheckBox" name="checkBox_15">
+           <property name="text">
+            <string>Scene Depth World Units</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="1">
+          <widget class="MCheckBox" name="checkBox_21">
+           <property name="text">
+            <string>World Normal</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="MCheckBox" name="checkBox_18">
+           <property name="text">
+            <string>Shading Model</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="MCheckBox" name="checkBox_3">
+           <property name="text">
+            <string>Custom Depth World Units</string>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="1">
+          <widget class="MCheckBox" name="checkBox_14">
+           <property name="text">
+            <string>Roughness</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="MCheckBox" name="checkBox_6">
+           <property name="text">
+            <string>Custom Stencil</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="0">
+          <widget class="MCheckBox" name="checkBox_4">
+           <property name="text">
+            <string>Metallic</string>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="0">
+          <widget class="MCheckBox" name="checkBox_9">
+           <property name="text">
+            <string>Opacity</string>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="1">
+          <widget class="MCheckBox" name="checkBox">
+           <property name="text">
+            <string>Ambient Occlucsion</string>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="0">
+          <widget class="MCheckBox" name="checkBox_8">
+           <property name="text">
+            <string>Material Animbient Occulusion</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="1">
+          <widget class="MCheckBox" name="checkBox_19">
+           <property name="text">
+            <string>Specular</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0" colspan="2">
+          <widget class="QLabel" name="label_3">
+           <property name="text">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Include Rendere Passes&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+        <zorder>checkBox_2</zorder>
+        <zorder>checkBox_7</zorder>
+        <zorder>checkBox_12</zorder>
+        <zorder>checkBox_10</zorder>
+        <zorder>checkBox_15</zorder>
+        <zorder>checkBox_18</zorder>
+        <zorder>checkBox_21</zorder>
+        <zorder>checkBox_4</zorder>
+        <zorder>checkBox_19</zorder>
+        <zorder>checkBox_9</zorder>
+        <zorder>checkBox_14</zorder>
+        <zorder>checkBox_8</zorder>
+        <zorder>checkBox</zorder>
+        <zorder>checkBox_11</zorder>
+        <zorder>checkBox_13</zorder>
+        <zorder>checkBox_17</zorder>
+        <zorder>checkBox_16</zorder>
+        <zorder>checkBox_20</zorder>
+        <zorder>checkBox_6</zorder>
+        <zorder>checkBox_3</zorder>
+        <zorder>checkBox_5</zorder>
+        <zorder>label_3</zorder>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <item>
+         <spacer name="horizontalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
           </property>
-          <layout class="QVBoxLayout" name="verticalLayout_4">
-           <item>
-            <widget class="QWidget" name="Pass_Container" native="true">
-             <layout class="QGridLayout" name="gridLayout">
-              <item row="0" column="0">
-               <widget class="MCheckBox" name="checkBox_2">
-                <property name="text">
-                 <string>Base Color</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="1">
-               <widget class="MCheckBox" name="checkBox_7">
-                <property name="text">
-                 <string>Scene Color</string>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="0">
-               <widget class="MCheckBox" name="checkBox_12">
-                <property name="text">
-                 <string>Specular Color</string>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="1">
-               <widget class="MCheckBox" name="checkBox_10">
-                <property name="text">
-                 <string>Scene Depth</string>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="0">
-               <widget class="MCheckBox" name="checkBox_3">
-                <property name="text">
-                 <string>Custom Depth World Units</string>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="1">
-               <widget class="MCheckBox" name="checkBox_15">
-                <property name="text">
-                 <string>Scene Depth World Units</string>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="0">
-               <widget class="MCheckBox" name="checkBox_6">
-                <property name="text">
-                 <string>Custom Stencil</string>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="1">
-               <widget class="MCheckBox" name="checkBox_18">
-                <property name="text">
-                 <string>Shading Model</string>
-                </property>
-               </widget>
-              </item>
-              <item row="4" column="0">
-               <widget class="MCheckBox" name="checkBox_5">
-                <property name="text">
-                 <string>Final Image</string>
-                </property>
-               </widget>
-              </item>
-              <item row="4" column="1">
-               <widget class="MCheckBox" name="checkBox_21">
-                <property name="text">
-                 <string>World Normal</string>
-                </property>
-               </widget>
-              </item>
-              <item row="5" column="0">
-               <widget class="MCheckBox" name="checkBox_4">
-                <property name="text">
-                 <string>Metallic</string>
-                </property>
-               </widget>
-              </item>
-              <item row="5" column="1">
-               <widget class="MCheckBox" name="checkBox_19">
-                <property name="text">
-                 <string>Specular</string>
-                </property>
-               </widget>
-              </item>
-              <item row="6" column="0">
-               <widget class="MCheckBox" name="checkBox_9">
-                <property name="text">
-                 <string>Opacity</string>
-                </property>
-               </widget>
-              </item>
-              <item row="6" column="1">
-               <widget class="MCheckBox" name="checkBox_14">
-                <property name="text">
-                 <string>Roughness</string>
-                </property>
-               </widget>
-              </item>
-              <item row="7" column="0">
-               <widget class="MCheckBox" name="checkBox_8">
-                <property name="text">
-                 <string>Material Animbient Occulusion</string>
-                </property>
-               </widget>
-              </item>
-              <item row="7" column="1">
-               <widget class="MCheckBox" name="checkBox">
-                <property name="text">
-                 <string>Ambient Occlucsion</string>
-                </property>
-               </widget>
-              </item>
-              <item row="8" column="0">
-               <widget class="MCheckBox" name="checkBox_11">
-                <property name="text">
-                 <string>Post Tonemap HDR Color</string>
-                </property>
-               </widget>
-              </item>
-              <item row="8" column="1">
-               <widget class="MCheckBox" name="checkBox_13">
-                <property name="text">
-                 <string>Pre Tonemap HDR Color</string>
-                </property>
-               </widget>
-              </item>
-              <item row="9" column="0">
-               <widget class="MCheckBox" name="checkBox_17">
-                <property name="text">
-                 <string>Seperate Translucncy RGB</string>
-                </property>
-               </widget>
-              </item>
-              <item row="9" column="1">
-               <widget class="MCheckBox" name="checkBox_16">
-                <property name="text">
-                 <string>Seperate Translucncy Alpha</string>
-                </property>
-               </widget>
-              </item>
-              <item row="10" column="0">
-               <widget class="MCheckBox" name="checkBox_20">
-                <property name="text">
-                 <string>Velocity</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-             <zorder>checkBox_2</zorder>
-             <zorder>checkBox_7</zorder>
-             <zorder>checkBox_12</zorder>
-             <zorder>checkBox_10</zorder>
-             <zorder>checkBox_15</zorder>
-             <zorder>checkBox_18</zorder>
-             <zorder>checkBox_21</zorder>
-             <zorder>checkBox_4</zorder>
-             <zorder>checkBox_19</zorder>
-             <zorder>checkBox_9</zorder>
-             <zorder>checkBox_14</zorder>
-             <zorder>checkBox_8</zorder>
-             <zorder>checkBox</zorder>
-             <zorder>checkBox_11</zorder>
-             <zorder>checkBox_13</zorder>
-             <zorder>checkBox_17</zorder>
-             <zorder>checkBox_16</zorder>
-             <zorder>checkBox_20</zorder>
-             <zorder>checkBox_6</zorder>
-             <zorder>checkBox_3</zorder>
-             <zorder>checkBox_5</zorder>
-            </widget>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_4">
-             <item>
-              <spacer name="horizontalSpacer_2">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
-              <widget class="MPushButton" name="pushButton_3">
-               <property name="text">
-                <string>全选</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="MPushButton" name="pushButton_4">
-               <property name="text">
-                <string>反选</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_5">
-             <item>
-              <widget class="MLabel" name="label_4">
-               <property name="text">
-                <string>后处理材质</string>
-               </property>
-               <property name="PyInit" stdset="0">
-                <string>{
-    &quot;method&quot; : {
-        &quot;setText&quot;:&quot;后处理材质&quot;
-    }
-}</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QComboBox" name="comboBox_2">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <item>
-                <property name="text">
-                 <string>Custom Render Passes</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Image Sequence (.jpg)</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Image Sequence (.exr)</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Image Sequence (.png)</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Image Sequence (.bmp)</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Video Sequence (.avi)</string>
-                </property>
-               </item>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <spacer name="verticalSpacer">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="MPushButton" name="Select_BTN">
+          <property name="text">
+           <string>全选</string>
+          </property>
          </widget>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="page_2"/>
-     <widget class="QWidget" name="page_3"/>
-     <widget class="QWidget" name="page_4"/>
-     <widget class="QWidget" name="page_5"/>
-     <widget class="QWidget" name="page_6"/>
+        </item>
+        <item>
+         <widget class="MPushButton" name="Toggle_BTN">
+          <property name="text">
+           <string>反选</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="MPushButton" name="NonSelect_BTN">
+          <property name="text">
+           <string>全不选</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+     </layout>
     </widget>
    </item>
    <item>
     <widget class="MPushButton" name="Render_BTN">
      <property name="text">
-      <string>批量输出 Sequencer</string>
+      <string>选择 Sequncer - 批量渲染</string>
      </property>
     </widget>
    </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_5">
+     <item>
+      <widget class="QLabel" name="label_4">
+       <property name="text">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;渲染进度&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QProgressBar" name="ProgressBar">
+       <property name="value">
+        <number>0</number>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
   </layout>
+  <widget class="QMenuBar" name="MenuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>9999</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>9999</width>
+     <height>0</height>
+    </size>
+   </property>
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
+   <property name="defaultUp">
+    <bool>false</bool>
+   </property>
+   <property name="nativeMenuBar">
+    <bool>true</bool>
+   </property>
+   <widget class="QMenu" name="menu">
+    <property name="title">
+     <string>帮助</string>
+    </property>
+    <addaction name="action"/>
+   </widget>
+   <addaction name="menu"/>
+  </widget>
+  <action name="action">
+   <property name="text">
+    <string>帮助文档</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>MLabel</class>
-   <extends>QLabel</extends>
-   <header>dayu_widgets/label.h</header>
-   <slots>
-    <slot>setTest()</slot>
-   </slots>
-  </customwidget>
   <customwidget>
    <class>MComboBox</class>
    <extends>QComboBox</extends>
@@ -510,22 +478,5 @@
   </customwidget>
  </customwidgets>
  <resources/>
- <connections>
-  <connection>
-   <sender>comboBox</sender>
-   <signal>currentIndexChanged(int)</signal>
-   <receiver>stackedWidget</receiver>
-   <slot>setCurrentIndex(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>152</x>
-     <y>81</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>241</x>
-     <y>124</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

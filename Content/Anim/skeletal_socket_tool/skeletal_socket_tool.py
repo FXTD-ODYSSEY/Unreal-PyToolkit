@@ -24,7 +24,7 @@ from dayu_widgets.item_model import MTableModel, MSortFilterModel
 # from dayu_widgets.message import MMessage
 # from dayu_widgets import dayu_theme
 
-from UWidget import alert
+from ue_util import alert
 
 class SocketTool(QtWidgets.QWidget):
     def __init__(self, parent=None):

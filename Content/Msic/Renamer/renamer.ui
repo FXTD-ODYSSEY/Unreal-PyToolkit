@@ -1048,6 +1048,7 @@ font-size:18px;</string>
     <property name="toolTipsVisible">
      <bool>false</bool>
     </property>
+    <addaction name="Convention_Action"/>
     <addaction name="Help_Action"/>
    </widget>
    <addaction name="menu"/>
@@ -1071,6 +1072,11 @@ font-size:18px;</string>
   <action name="Help_Action">
    <property name="text">
     <string>帮助文档</string>
+   </property>
+  </action>
+  <action name="Convention_Action">
+   <property name="text">
+    <string>命名规范</string>
    </property>
   </action>
  </widget>

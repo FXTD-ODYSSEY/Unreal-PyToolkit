@@ -1,0 +1,70 @@
+{
+    "MovieSceneCaptureUIInstance AutomatedLevelSequenceCapture": {
+        "bUseCustomStartFrame": "use_custom_end_frame",
+        "CustomStartFrame": "custom_start_frame",
+        "bUseCustomEndFrame": "use_custom_start_frame",
+        "CustomEndFrame": "custom_end_frame",
+        "WarmUpFrameCount": "warm_up_frame_count",
+        "DelayBeforeWarmUp": "delay_before_warm_up",
+        "DelayBeforeShotWarmUp": "delay_before_shot_warm_up",
+        "DelayEveryFrame": "delay_every_frame",
+        "bWriteEditDecisionList": "write_edit_decision_list",
+        "bWriteFinalCutProXML": "write_final_cut_pro_xml",
+        "ImageCaptureProtocolType": "image_capture_protocol_type",
+        "AudioCaptureProtocolType": "audio_capture_protocol_type",
+        "bUseSeparateProcess": "use_separate_process",
+        "bCloseEditorWhenCaptureStarts": "close_editor_when_capture_starts",
+        "AdditionalCommandLineArguments": "additional_command_line_arguments",
+        "Settings": {
+            "OutputDirectory": "output_directory",
+            "GameModeOverride": "game_mode_override",
+            "OutputFormat": "output_format",
+            "bOverwriteExisting": "overwrite_existing",
+            "bUseRelativeFrameNumbers": "use_relative_frame_numbers",
+            "HandleFrames": "handle_frames",
+            "MovieExtension": "movie_extension",
+            "ZeroPadFrameNumbers": "zero_pad_frame_numbers",
+            "bUseCustomFrameRate": "use_custom_frame_rate",
+            "CustomFrameRate": "custom_frame_rate",
+            "Resolution": "resolution",
+            "bEnableTextureStreaming": "enable_texture_streaming",
+            "bCinematicEngineScalability": "cinematic_engine_scalability",
+            "bCinematicMode": "cinematic_mode",
+            "bAllowMovement": "allow_movement",
+            "bAllowTurning": "allow_turning",
+            "bShowPlayer": "show_player",
+            "bShowHUD": "show_hud",
+            "bUsePathTracer": "use_path_tracer",
+            "PathTracerSamplePerPixel": "path_tracer_sample_per_pixel"
+        }
+    },
+    "MovieSceneCaptureUIInstance_ImageProtocol ImageSequenceProtocol_JPG": {
+        "CompressionQuality": "compression_quality"
+    },
+    "MovieSceneCaptureUIInstance_ImageProtocol ImageSequenceProtocol_PNG": {
+        "CompressionQuality": "compression_quality"
+    },
+    "MovieSceneCaptureUIInstance_ImageProtocol ImageSequenceProtocol_EXR": {
+        "bCompressed": "compressed",
+        "CaptureGamut": "capture_gamut"
+    },
+    "MovieSceneCaptureUIInstance_ImageProtocol CompositionGraphCaptureProtocol": {
+        "IncludeRenderPasses": "include_render_passes",
+        "bCaptureFramesInHDR": "capture_frames_in_hdr",
+        "HDRCompressionQuality": "hdr_compression_quality",
+        "CaptureGamut": "capture_gamut",
+        "PostProcessingMaterial": "post_processing_material",
+        "bDisableScreenPercentage": "disable_screen_percentage"
+    },
+    "MovieSceneCaptureUIInstance_ImageProtocol VideoCaptureProtocol": {
+        "bUseCompression": "use_compression",
+        "CompressionQuality": "compression_quality"
+    },
+    "MovieSceneCaptureUIInstance_AudioProtocol MasterAudioSubmixCaptureProtocol": {
+        "FileName": "file_name"
+    },
+    "MovieSceneCaptureUIInstanceLevelSequenceBurnInOptions": {
+        "bUseBurnIn": "use_burn_in",
+        "BurnInClass": "burn_in_class"
+    }
+}

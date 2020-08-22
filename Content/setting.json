@@ -26,12 +26,6 @@
             "type": "COMMAND",
             "command": "py \"{Content}/Anim/FBXImporter/main.py\""
         },
-        "FX_Tool" : {
-            "section": "FX",
-            "label": "Sequencer 导出选择元素动画为骨骼蒙皮",
-            "type": "COMMAND",
-            "command": "py \"{Content}/FX/sequencer_export_fbx.py\""
-        },
         "SequencerFBX" : {
             "section": "Render",
             "label": "批量渲染 Sequencer 工具",
@@ -42,7 +36,13 @@
             "section": "Msic",
             "label": "UE启动器",
             "type": "COMMAND",
-            "command": "py \"{Content}/Msic/ue_launcher/ue_launcher.py\""
+            "command": "py \"{Content}/Msic/UE_Launcher/launcher.py\""
+        },
+        "Renamer" : {
+            "section": "Msic",
+            "label": "批量改名工具",
+            "type": "COMMAND",
+            "command": "py \"{Content}/Msic/Renamer/renamer.py\""
         },
         "Document" : {
             "section": "Help",

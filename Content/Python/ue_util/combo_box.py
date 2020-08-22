@@ -14,18 +14,24 @@ __date__ = '2020-07-18 21:09:23'
 from Qt import QtCore, QtWidgets, QtGui
 from dayu_widgets.combo_box import MComboBox
 from dayu_widgets.mixin import property_mixin, cursor_mixin, focus_shadow_mixin
-# class ExtendedCombo(QtWidgets.QComboBox):
+# class TComboBox(QtWidgets.QComboBox):
+from dayu_widgets import dayu_theme
 
 @property_mixin
 class MCompleter(QtWidgets.QCompleter):
-    pass
+    def __init__(self,parent=None):
+        super(MCompleter, self).__init__(parent)
+        dayu_theme.apply(self.popup())
+        # popup.setStyleSheet(popup.styleSheet() + """
+        # border: 0.5px solid black;
+        # """)
 
-class ExtendedCombo(MComboBox):
+class TComboBox(MComboBox):
 
     popup = QtCore.Signal()
 
     def __init__(self,  parent=None):
-        super(ExtendedCombo, self).__init__(parent)
+        super(TComboBox, self).__init__(parent)
 
         self.setFocusPolicy(QtCore.Qt.StrongFocus)
         self.setEditable(True)
@@ -52,15 +58,15 @@ class ExtendedCombo(MComboBox):
 
     def clear(self):
         self.pFilterModel.setSourceModel(QtGui.QStandardItemModel())
-        super(ExtendedCombo, self).clear()
+        super(TComboBox, self).clear()
 
     def addItems(self, texts):
-        # super(ExtendedCombo,self).addItems(texts)
+        # super(TComboBox,self).addItems(texts)
         for text in texts:
             self.addItem(text)
 
     def addItem(self, *args):
-        super(ExtendedCombo, self).addItem(*args)
+        super(TComboBox, self).addItem(*args)
         if len(args) == 2:
             _, text = args
         else:
@@ -75,14 +81,14 @@ class ExtendedCombo(MComboBox):
             self.completer.setModel(self.pFilterModel)
 
     def setModel(self, model):
-        super(ExtendedCombo, self).setModel(model)
+        super(TComboBox, self).setModel(model)
         self.pFilterModel.setSourceModel(model)
         self.completer.setModel(self.pFilterModel)
 
     def setModelColumn(self, column):
         self.completer.setCompletionColumn(column)
         self.pFilterModel.setFilterKeyColumn(column)
-        super(ExtendedCombo, self).setModelColumn(column)
+        super(TComboBox, self).setModelColumn(column)
 
     def view(self):
         return self.completer.popup()
@@ -97,7 +103,7 @@ class ExtendedCombo(MComboBox):
 
     def showPopup(self):
         self.popup.emit()
-        super(ExtendedCombo, self).showPopup()
+        super(TComboBox, self).showPopup()
 
     def eventFilter(self, widget, event):
         return False
