@@ -18,6 +18,38 @@
     <number>30</number>
    </property>
    <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_7">
+     <item>
+      <widget class="QLabel" name="Output_Label_3">
+       <property name="text">
+        <string>配置路径</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="MLineEdit" name="Config_LE">
+       <property name="placeholderText">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="MPushButton" name="Config_Browse_BTN">
+       <property name="text">
+        <string>选择目录</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="MPushButton" name="Config_BTN">
+       <property name="text">
+        <string>读取配置</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
       <widget class="QLabel" name="label_2">
@@ -30,7 +62,7 @@
       <widget class="MLineEdit" name="Output_LE"/>
      </item>
      <item>
-      <widget class="MPushButton" name="pushButton">
+      <widget class="MPushButton" name="Browse_BTN">
        <property name="text">
         <string>选择目录</string>
        </property>
@@ -40,13 +72,6 @@
       <widget class="MPushButton" name="Locate_BTN">
        <property name="text">
         <string>打开目录</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="MPushButton" name="Config_BTN">
-       <property name="text">
-        <string>读取配置</string>
        </property>
       </widget>
      </item>
@@ -266,7 +291,7 @@
           </widget>
          </item>
          <item row="8" column="1">
-          <widget class="MCheckBox" name="checkBox">
+          <widget class="MCheckBox" name="checkBox_1">
            <property name="text">
             <string>Ambient Occlucsion</string>
            </property>
@@ -306,7 +331,7 @@
         <zorder>checkBox_9</zorder>
         <zorder>checkBox_14</zorder>
         <zorder>checkBox_8</zorder>
-        <zorder>checkBox</zorder>
+        <zorder>checkBox_1</zorder>
         <zorder>checkBox_11</zorder>
         <zorder>checkBox_13</zorder>
         <zorder>checkBox_17</zorder>
@@ -392,6 +417,21 @@
       <widget class="QProgressBar" name="ProgressBar">
        <property name="value">
         <number>0</number>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+       </property>
+       <property name="textVisible">
+        <bool>true</bool>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="invertedAppearance">
+        <bool>false</bool>
+       </property>
+       <property name="textDirection">
+        <enum>QProgressBar::TopToBottom</enum>
        </property>
       </widget>
      </item>

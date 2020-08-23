@@ -12,25 +12,23 @@ __author__ = 'timmyliang'
 __email__ = '820472580@qq.com'
 __date__ = '2020-05-30 21:27:26'
 
+from dayu_widgets.push_button import MPushButton
+from progress_dialog import IProgressDialog
+from splitter import ISplitter
+from path_selector import IPathSelector
+from Qt import QtCore, QtWidgets, QtGui
+from functools import partial
+from collections import Iterable
+from itertools import chain
+import webbrowser
+import unreal
+import FbxCommon
+import fbx
 import os
 import sys
 DIR = os.path.dirname(__file__)
-sys.path.insert(0,DIR) if DIR else None
+sys.path.insert(0, DIR) if DIR else None
 
-import fbx
-import FbxCommon
-
-import unreal
-from itertools import chain
-from collections import Iterable
-from functools import partial
-
-from Qt import QtCore, QtWidgets, QtGui
-from path_selector import IPathSelector
-from splitter import ISplitter
-from progress_dialog import IProgressDialog
-
-from dayu_widgets.push_button import MPushButton
 
 class ListSyncer(object):
     """
@@ -386,8 +384,19 @@ class FBXImporter_UI(QtWidgets.QWidget):
         self.import_button.clicked.connect(self.refresh)
 
         layout = QtWidgets.QVBoxLayout()
+        layout.setContentsMargins(9, 0, 9, 9)
         self.setLayout(layout)
 
+        self.Menu_Bar = QtWidgets.QMenuBar(self)
+        self.Menu_Bar.setSizePolicy(QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed))
+        self.Help_Menu = self.Menu_Bar.addMenu(u"帮助")
+        self.Help_Action = QtWidgets.QAction(u"帮助文档", self)
+        self.Help_Menu.addAction(self.Help_Action)
+        self.Help_Action.triggered.connect(lambda: webbrowser.open_new_tab(
+            'http://wiki.l0v0.com/PyToolkit/#/1_fbx_importer'))
+
+        layout.addWidget(self.Menu_Bar)
         layout.addWidget(self.compare_splitter)
         layout.addWidget(self.import_button)
 

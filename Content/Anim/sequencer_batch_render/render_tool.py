@@ -23,6 +23,7 @@ import ast
 import json
 import posixpath
 import subprocess
+import webbrowser
 from functools import partial
 from collections import OrderedDict
 
@@ -163,7 +164,7 @@ def read_json():
 
 class SequencerRenderTool(QtWidgets.QWidget):
 
-    def __init__(self, parent=None, ini_file=None):
+    def __init__(self, parent=None):
         super(SequencerRenderTool, self).__init__()
         DIR = os.path.dirname(__file__)
         ui_path = os.path.join(DIR, "render_tool.ui")
@@ -172,42 +173,71 @@ class SequencerRenderTool(QtWidgets.QWidget):
         name = "%s.ini" % self.__class__.__name__
         self.settings = QtCore.QSettings(name, QtCore.QSettings.IniFormat)
         cb_list = self.settings.value("cb_list")
-        cb_list = cb_list if cb_list else []
-        
+        cb_list = cb_list if isinstance(cb_list, list) else [
+            cb_list] if cb_list else []
 
         self.json_config = read_json()
 
-        self.ini_file = ini_file if ini_file else posixpath.join(
-            project_dir, "Saved", "Config", "Widows", "EditorPerProjectUserSettings.ini")
-
+        self.ini_file = posixpath.join(project_dir, "Saved", "Config", "Windows", "EditorPerProjectUserSettings.ini")
+        self.ini_file = self.ini_file if os.path.exists(self.ini_file) else ""
         for cb in self.Pass_Container.findChildren(QtWidgets.QCheckBox):
             if cb.objectName() in cb_list:
                 cb.setChecked(True)
-            cb.toggled.connect(self.dump_settings)
+            cb.clicked.connect(self.dump_settings)
             self.Select_BTN.clicked.connect(partial(cb.setChecked, True))
             self.Toggle_BTN.clicked.connect(cb.toggle)
             self.NonSelect_BTN.clicked.connect(partial(cb.setChecked, False))
 
+        self.Select_BTN.clicked.connect(self.dump_settings)
+        self.Toggle_BTN.clicked.connect(self.dump_settings)
+        self.NonSelect_BTN.clicked.connect(self.dump_settings)
         self.Proctocol_Combo.currentIndexChanged.connect(self.dump_settings)
         self.Proctocol_Combo.currentIndexChanged.connect(self.combo_changed)
+
+        self.Config_LE.setText(self.ini_file)
+        self.Config_Browse_BTN.clicked.connect(self.browse_file)
+        self.Browse_BTN.clicked.connect(self.browse_directory)
         self.Render_BTN.clicked.connect(self.batch_render)
         self.Locate_BTN.clicked.connect(lambda: os.startfile(self.Output_LE.text(
         )) if os.path.exists(self.Output_LE.text()) else toast(u"输出目录的路径不存在"))
         self.Config_BTN.clicked.connect(self.read_config)
 
+        self.Help_Action.triggered.connect(lambda: webbrowser.open_new_tab(
+            'http://wiki.l0v0.com/PyToolkit/#/3_render_tool'))
+            
         self.capture_settings = unreal.MovieSceneCaptureSettings()
         self.read_config()
         index = self.settings.value("index")
         self.Proctocol_Combo.setCurrentIndex(int(index)) if index else None
 
+    def browse_file(self):
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(
+            self, caption=u"获取 Unreal 用户配置文件", filter="ini (*.ini);;所有文件 (*)")
+
+        if not os.path.exists(path):
+            toast(u"配置路径不存在")
+            return
+
+        self.Config_LE.setText(path)
+
+    def browse_directory(self):
+        directory = QtWidgets.QFileDialog.getExistingDirectory(self)
+        self.Output_LE.setText(directory)
+
     def dump_settings(self):
         cb_list = [cb.objectName() for cb in self.Pass_Container.findChildren(
             QtWidgets.QCheckBox) if cb.isChecked()]
         index = self.Proctocol_Combo.currentIndex()
-        self.settings.setValue("cb_list",cb_list)
-        self.settings.setValue("index",index)
+        self.settings.setValue("cb_list", cb_list)
+        self.settings.setValue("index", index)
 
     def read_config(self, text=True):
+        self.ini_file = self.Config_LE.text()
+        if not os.path.exists(self.ini_file):
+            toast(u"配置路径不存在")
+            self.Config_LE.setText("")
+            return
+
         self.config = ConfigParser()
         self.config.read(self.ini_file)
 
@@ -269,6 +299,12 @@ class SequencerRenderTool(QtWidgets.QWidget):
             toast(u"请选择一个 \n LevelSequence")
             return
 
+        self.ini_file = self.Config_LE.text()
+        if not os.path.exists(self.ini_file):
+            toast(u"配置路径不存在")
+            self.Config_LE.setText("")
+            return
+
         self.output_directory = self.Output_LE.text()
         if not os.access(self.output_directory, os.W_OK):
             toast(u"当前输出路径非法")
@@ -280,7 +316,6 @@ class SequencerRenderTool(QtWidgets.QWidget):
             # NOTE 如果传入文件路径则获取目录
             self.output_directory = os.path.dirname(self.output_directory)
 
-        self.capture = self.setup_capture()
         self.render(sequence_list, 0)
 
     def setup_capture(self):
@@ -347,7 +382,8 @@ class SequencerRenderTool(QtWidgets.QWidget):
 
     def render(self, sequence_list, i):
 
-        self.ProgressBar.setValue((i+1/len(sequence_list)-1)*100)
+        progress = (i/len(sequence_list))*100
+        self.ProgressBar.setValue(progress)
         # NOTE 如果超出数组则退出执行
         if i >= len(sequence_list):
             # NOTE 输出完成 打开输出文件夹的路径
@@ -358,8 +394,8 @@ class SequencerRenderTool(QtWidgets.QWidget):
 
         # NOTE 设置全局变量才起作用！
         global on_finished_callback
-
         sequence = sequence_list[i]
+        self.capture = self.setup_capture()
         self.capture.set_editor_property(
             "level_sequence_asset", unreal.SoftObjectPath(sequence.get_path_name()))
         on_finished_callback = unreal.OnRenderMovieStopped(
@@ -390,12 +426,7 @@ class SequencerRenderTool(QtWidgets.QWidget):
 
 
 def main():
-    ini_file = posixpath.join(
-        project_dir, "Saved", "Config", "Windows", "EditorPerProjectUserSettings.ini")
-    if not os.path.exists(ini_file):
-        alert(u"用户配置文件不存在\n %s" % ini_file)
-        return
-    RenderUI = SequencerRenderTool(ini_file=ini_file)
+    RenderUI = SequencerRenderTool()
     RenderUI.show()
 
 

@@ -20,35 +20,35 @@
             "type": "COMMAND",
             "command": "py \"{Content}/Anim/skeletal_socket_tool/skeletal_socket_tool.py\""
         },
-        "Anim_Tool" : {
+        "fbx_importer" : {
             "section": "Anim",
             "label": "动画导入比较面板",
             "type": "COMMAND",
             "command": "py \"{Content}/Anim/FBXImporter/main.py\""
         },
-        "SequencerFBX" : {
+        "render_tool" : {
             "section": "Render",
-            "label": "批量渲染 Sequencer 工具",
+            "label": "Sequencer 批量渲染工具",
             "type": "COMMAND",
             "command": "py \"{Content}/Anim/sequencer_batch_render/render_tool.py\""
         },
-        "Launcher" : {
+        "launcher" : {
             "section": "Msic",
             "label": "UE启动器",
             "type": "COMMAND",
             "command": "py \"{Content}/Msic/UE_Launcher/launcher.py\""
         },
-        "Renamer" : {
+        "renamer" : {
             "section": "Msic",
             "label": "批量改名工具",
             "type": "COMMAND",
             "command": "py \"{Content}/Msic/Renamer/renamer.py\""
         },
-        "Document" : {
+        "document" : {
             "section": "Help",
             "label": "帮助文档",
             "type": "PYTHON",
-            "command": "import webbrowser;webbrowser.open_new_tab('https://github.com/FXTD-ODYSSEY/Unreal-PyToolkit')"
+            "command": "import webbrowser;webbrowser.open_new_tab('http://wiki.l0v0.com/PyToolkit/')"
         }
     },
     "script":{
