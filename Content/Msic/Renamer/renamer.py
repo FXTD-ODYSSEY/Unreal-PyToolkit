@@ -308,35 +308,51 @@ class UERenamerWin(RenamerWinBase):
 
     def __init__(self, parent=None):
         super(UERenamerWin, self).__init__(parent)
-
+        
+        
         # NOTE 设置按钮图标
         style = QtWidgets.QApplication.style()
         icon = style.standardIcon(QtWidgets.QStyle.SP_ArrowUp)
         self.Up_BTN.setIcon(icon)
+        self.Up_Action.setIcon(icon)
         icon = style.standardIcon(QtWidgets.QStyle.SP_ArrowDown)
         self.Dn_BTN.setIcon(icon)
+        self.Dn_Action.setIcon(icon)
         icon = style.standardIcon(QtWidgets.QStyle.SP_BrowserStop)
         self.Del_BTN.setIcon(icon)
+        self.Del_Action.setIcon(icon)
         icon = style.standardIcon(QtWidgets.QStyle.SP_FileDialogContentsView)
         self.Find_BTN.setIcon(icon)
+        self.Find_Action.setIcon(icon)
         icon = style.standardIcon(QtWidgets.QStyle.SP_FileDialogStart)
         self.Get_BTN.setIcon(icon)
+        self.Get_Action.setIcon(icon)
         icon = style.standardIcon(QtWidgets.QStyle.SP_DriveHDIcon)
         self.Drive_BTN.setIcon(icon)
+        self.Drive_Action.setIcon(icon)
         icon = style.standardIcon(QtWidgets.QStyle.SP_BrowserReload)
         self.Update_BTN.setIcon(icon)
-
-        self.Get_BTN.clicked.connect(self.add_selected_asset)
+        self.Update_Action.setIcon(icon)
+        
         self.Get_BTN.clicked.connect(self.add_selected_asset)
         self.Find_BTN.clicked.connect(self.locate_item_location)
         self.Drive_BTN.clicked.connect(self.locate_file_location)
         self.Del_BTN.clicked.connect(self.remove_items)
-
         self.Up_BTN.clicked.connect(lambda: self.move_item(up=True))
         self.Dn_BTN.clicked.connect(lambda: self.move_item(up=False))
 
+        self.Get_Action.triggered.connect(self.add_selected_asset)
+        self.Find_Action.triggered.connect(self.locate_item_location)
+        self.Drive_Action.triggered.connect(self.locate_file_location)
+        self.Del_Action.triggered.connect(self.remove_items)
+        self.Up_Action.triggered.connect(lambda: self.move_item(up=True))
+        self.Dn_Action.triggered.connect(lambda: self.move_item(up=False))
+
         self.Rename_BTN.clicked.connect(self.rename)
 
+        # NOTE 添加 delete 键删除 
+        self.shortcut = QtWidgets.QShortcut(QtGui.QKeySequence("Del"), self)
+        self.shortcut.activated.connect(self.remove_items)
         # self.Update_BTN.clicked.connect(lambda: print(self.settings.fileName()))
         # self.Search_LE.textChanged.connect(self.update_table)
         # self.Replace_LE.textChanged.connect(self.update_table)
@@ -348,11 +364,9 @@ class UERenamerWin(RenamerWinBase):
             self.Toggle_Select_BTN.clicked.connect(cb.toggle)
             self.Non_Select_BTN.clicked.connect(partial(cb.setChecked, False))
 
-        self.create_menu()
-
         # NOTE 添加右键菜单
         self.Table_View.customContextMenuRequested.connect(
-            lambda: self.menu.popup(QtGui.QCursor.pos()))
+            lambda: self.Right_Menu.popup(QtGui.QCursor.pos()))
 
         # NOTE 运行添加 drop event
         self.Table_View.setDragEnabled(True)
@@ -413,23 +427,6 @@ class UERenamerWin(RenamerWinBase):
             return True
         # noinspection PyTypeChecker
         return rect.contains(pos, True) and not (int(self.Table_View.model().flags(index)) & QtCore.Qt.ItemIsDropEnabled) and pos.y() >= rect.center().y()
-
-    def create_menu(self):
-        self.menu = QtWidgets.QMenu(self)
-
-        add_selected_action = QtWidgets.QAction(u'添加当前选择', self)
-        add_selected_action.triggered.connect(self.add_selected_asset)
-
-        locate_file_action = QtWidgets.QAction(u'定位文件', self)
-        locate_file_action.triggered.connect(self.locate_item_location)
-
-        remove_action = QtWidgets.QAction(u'删除选择', self)
-        remove_action.triggered.connect(self.remove_items)
-
-        self.menu.addAction(add_selected_action)
-        self.menu.addSeparator()
-        self.menu.addAction(locate_file_action)
-        self.menu.addAction(remove_action)
 
     def remove_items(self):
         data_list = self.model.get_data_list()

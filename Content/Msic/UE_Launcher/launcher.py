@@ -20,11 +20,22 @@ import unreal
 from Qt import QtCore, QtGui, QtWidgets
 from Qt import QtCompat
 
-# GUI
+def error_display(func):
+    def wrapper(self,*args, **kwargs):
+        try:
+            res = func(self,*args, **kwargs)
+            return res
+        except Exception as e:
+            self.Error_Label.setVisible(True)
+            self.Error_Label.setText(u"%s" % e)
+            self.Error_Label.setStyleSheet('color: red;background-color:transparent')
+            self.LineEdit.setStyleSheet("border-color:red")
+    return wrapper
+    
 class Launcher(QtWidgets.QWidget):
 
     """A menu to find and execute Maya commands and user scripts."""
-
+        
     def __init__(self, *args, **kwds):
         super(Launcher, self).__init__(*args, **kwds)
 
@@ -33,6 +44,9 @@ class Launcher(QtWidgets.QWidget):
         ui_path = os.path.join(DIR,"%s.ui" % base_name)
         QtCompat.loadUi(ui_path,self)
 
+        # NOTE 隐藏 Error_Label
+        self.Error_Label.hide()
+        
         # NOTE 设置图标
         style = QtWidgets.QApplication.style()
         icon = style.standardIcon(QtWidgets.QStyle.SP_FileDialogContentsView)
@@ -70,6 +84,11 @@ class Launcher(QtWidgets.QWidget):
         if not path:
             return False
         
+        # NOTE 如果路径带了前后引号
+        if ((path.startswith('"') and path.endswith('"'))
+                or (path.startswith("'") and path.endswith("'"))):
+            path = path[1:-1]
+            
         path = path.replace('\\','/')
         project = unreal.SystemLibrary.get_project_content_directory()
         if path.startswith(project):
@@ -94,23 +113,23 @@ class Launcher(QtWidgets.QWidget):
             
         self.LineEdit.setFocus()
         super(Launcher, self).show()
-        
+    
+    @error_display
     def accept(self):
         
         # NOTE 如果可以获取到 Game 路径 | 自动定位
         text = self.LineEdit.text()
         path = self.check_path(text)
-        
+        # print("path",path)
         if not path:
-            self.LineEdit.setStyleSheet("border-color:red")
-            return
+            raise RuntimeError(u"不是正确的路径")
         
         if unreal.EditorAssetLibrary.does_asset_exist(path):
             unreal.EditorAssetLibrary.sync_browser_to_objects([path])
         elif unreal.EditorAssetLibrary.does_directory_exist(path):
             unreal.PyToolkitBPLibrary.set_selected_folders([path])
         else:
-            return
+            raise RuntimeError(u"路径文件不存在")
         
         self.hide()
 

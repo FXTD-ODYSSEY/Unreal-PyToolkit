@@ -485,11 +485,11 @@
     <property name="title">
      <string>帮助</string>
     </property>
-    <addaction name="action"/>
+    <addaction name="Help_Action"/>
    </widget>
    <addaction name="menu"/>
   </widget>
-  <action name="action">
+  <action name="Help_Action">
    <property name="text">
     <string>帮助文档</string>
    </property>

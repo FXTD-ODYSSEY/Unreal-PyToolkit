@@ -26,6 +26,7 @@ from dayu_widgets.item_model import MTableModel, MSortFilterModel
 
 from ue_util import alert
 
+py_lib = unreal.PyToolkitBPLibrary()
 class SocketTool(QtWidgets.QWidget):
     def __init__(self, parent=None):
         super(SocketTool, self).__init__(parent=parent)
@@ -141,7 +142,7 @@ class SocketTool(QtWidgets.QWidget):
         if not skel_mesh_list:
             msg = u'请选择一个 Skeletal Mesh 物体'
             alert(msg)
-            raise RuntimeError(msg)
+            return []
         return skel_mesh_list
 
     def clear_socket(self):
@@ -149,7 +150,7 @@ class SocketTool(QtWidgets.QWidget):
             skeleton = skel_mesh.get_editor_property("skeleton")
             # NOTE 删除所有的 socket 
             socket_list = [skel_mesh.get_socket_by_index(i) for i in range(skel_mesh.num_sockets())]
-            unreal.RedArtToolkitBPLibrary.delete_skeletal_mesh_socket(skeleton,socket_list)
+            py_lib.delete_skeletal_mesh_socket(skeleton,socket_list)
 
     def add_socket(self):
 
@@ -165,9 +166,9 @@ class SocketTool(QtWidgets.QWidget):
             return
 
         fail_list = {}
-        add_socket = unreal.RedArtToolkitBPLibrary.add_skeletal_mesh_socket
-        bone_num = unreal.RedArtToolkitBPLibrary.get_skeleton_bone_num
-        bone_name = unreal.RedArtToolkitBPLibrary.get_skeleton_bone_name
+        add_socket = py_lib.add_skeletal_mesh_socket
+        bone_num = py_lib.get_skeleton_bone_num
+        bone_name = py_lib.get_skeleton_bone_name
         for skel_mesh in self.get_selectal_mesh():
             
             skeleton = skel_mesh.get_editor_property("skeleton")

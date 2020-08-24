@@ -150,8 +150,9 @@ class FBXListWidget(QtWidgets.QListWidget):
 
         item = self.currentItem()
         path = item.toolTip()
+        path = path.split('\n')[0]
         if not os.path.exists(path):
-            open_file_action.setEnabled(False)
+            open_file_action.setVisible(False)
 
         self.menu.addAction(open_file_action)
         self.menu.addSeparator()
@@ -163,6 +164,8 @@ class FBXListWidget(QtWidgets.QListWidget):
     def open_file_location(self):
         item = self.currentItem()
         path = item.toolTip()
+        path = path.split('\n')[0]
+        print(path)
         os.startfile(os.path.dirname(path))
 
     def remove_items(self):

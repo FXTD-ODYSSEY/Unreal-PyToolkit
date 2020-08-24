@@ -53,7 +53,7 @@
     },
     "script":{
         "initialize": "py \"{Content}/initialize.py\"",
-        "launcher":"py \"{Content}/UE_Launcher/launcher.py\""
+        "launcher":"py \"{Content}/Msic/UE_Launcher/launcher.py\""
     }
 }
 
