@@ -12,6 +12,11 @@ __author__ = 'timmyliang'
 __email__ = '820472580@qq.com'
 __date__ = '2020-05-30 21:27:26'
 
+import os
+import sys
+DIR = os.path.dirname(__file__)
+sys.path.insert(0, DIR) if DIR else None
+
 from dayu_widgets.push_button import MPushButton
 from progress_dialog import IProgressDialog
 from splitter import ISplitter
@@ -24,10 +29,7 @@ import webbrowser
 import unreal
 import FbxCommon
 import fbx
-import os
-import sys
-DIR = os.path.dirname(__file__)
-sys.path.insert(0, DIR) if DIR else None
+
 
 
 class ListSyncer(object):
