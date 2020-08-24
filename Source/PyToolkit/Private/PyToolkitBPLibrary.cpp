@@ -16,9 +16,9 @@ TArray<FString> UPyToolkitBPLibrary::GetAllProperties(UClass *Class)
     TArray<FString> Ret;
     if (Class != nullptr)
     {
-        for (TFieldIterator<UProperty> It(Class); It; ++It)
+        for (TFieldIterator<FProperty> It(Class); It; ++It)
         {
-            UProperty *Property = *It;
+            FProperty *Property = *It;
             if (Property->HasAnyPropertyFlags(EPropertyFlags::CPF_Edit))
             {
                 Ret.Add(Property->GetName());
@@ -26,19 +26,6 @@ TArray<FString> UPyToolkitBPLibrary::GetAllProperties(UClass *Class)
         }
     }
     return Ret;
-}
-
-TArray<FString> UPyToolkitBPLibrary::GetSelectedAssets()
-{
-    FContentBrowserModule &ContentBrowserModule = FModuleManager::LoadModuleChecked<FContentBrowserModule>("ContentBrowser");
-    TArray<FAssetData> SelectedAssets;
-    ContentBrowserModule.Get().GetSelectedAssets(SelectedAssets);
-    TArray<FString> Result;
-    for (FAssetData &AssetData : SelectedAssets)
-    {
-        Result.Add(AssetData.PackageName.ToString());
-    }
-    return Result;
 }
 
 void UPyToolkitBPLibrary::SetSelectedAssets(TArray<FString> Paths)
@@ -73,17 +60,18 @@ void UPyToolkitBPLibrary::SetSelectedFolders(TArray<FString> Paths)
 
 void UPyToolkitBPLibrary::CloseEditorForAssets(TArray<UObject *> Assets)
 {
-    FAssetEditorManager &AssetEditorManager = FAssetEditorManager::Get();
+    // NOTE 源码的方式已经过时，推荐用 SubSystem 的方式
+    UAssetEditorSubsystem *sub = GEditor->GetEditorSubsystem<UAssetEditorSubsystem>();
     for (UObject *Asset : Assets)
     {
-        AssetEditorManager.CloseAllEditorsForAsset(Asset);
+        sub->CloseAllEditorsForAsset(Asset);
     }
 }
 
 TArray<UObject *> UPyToolkitBPLibrary::GetAssetsOpenedInEditor()
 {
-    FAssetEditorManager &AssetEditorManager = FAssetEditorManager::Get();
-    return AssetEditorManager.GetAllEditedAssets();
+	UAssetEditorSubsystem *sub = GEditor->GetEditorSubsystem<UAssetEditorSubsystem>();
+	return sub->GetAllEditedAssets();
 }
 
 void UPyToolkitBPLibrary::SetFolderColor(FString FolderPath, FLinearColor Color)
@@ -126,7 +114,8 @@ void UPyToolkitBPLibrary::SetViewportLocationAndRotation(int ViewportIndex, FVec
 
 #pragma region SequencerAPI
 
-ULevelSequence *UPyToolkitBPLibrary::GetFocusSequence()
+
+ULevelSequence *UPyToolkitBPLibrary::GetSequencerSequence()
 {
     UAssetEditorSubsystem *sub = GEditor->GetEditorSubsystem<UAssetEditorSubsystem>();
     TArray<UObject *> assets = sub->GetAllEditedAssets();
@@ -148,7 +137,7 @@ ULevelSequence *UPyToolkitBPLibrary::GetFocusSequence()
     return nullptr;
 }
 
-TArray<FGuid> UPyToolkitBPLibrary::GetFocusBindings(ULevelSequence *LevelSeq)
+TArray<FGuid> UPyToolkitBPLibrary::GetSequencerSelectedID(ULevelSequence *LevelSeq)
 {
     IAssetEditorInstance *AssetEditor = GEditor->GetEditorSubsystem<UAssetEditorSubsystem>()->FindEditorForAsset(LevelSeq, false);
 
@@ -161,10 +150,75 @@ TArray<FGuid> UPyToolkitBPLibrary::GetFocusBindings(ULevelSequence *LevelSeq)
         ISequencer *Sequencer = LevelSequenceEditor->GetSequencer().Get();
 
         Sequencer->GetSelectedObjects(SelectedGuid);
-        return SelectedGuid;
     }
 
     return SelectedGuid;
+}
+
+TArray<UMovieSceneTrack *> UPyToolkitBPLibrary::GetSequencerSelectedTracks(ULevelSequence *LevelSeq)
+{
+    IAssetEditorInstance *AssetEditor = GEditor->GetEditorSubsystem<UAssetEditorSubsystem>()->FindEditorForAsset(LevelSeq, false);
+
+    FLevelSequenceEditorToolkit *LevelSequenceEditor = (FLevelSequenceEditorToolkit *)AssetEditor;
+
+    TArray<UMovieSceneTrack *> OutSelectedTracks;
+    if (LevelSequenceEditor != nullptr)
+    {
+        // Get current Sequencer
+        ISequencer *Sequencer = LevelSequenceEditor->GetSequencer().Get();
+
+        Sequencer->GetSelectedTracks(OutSelectedTracks);
+    }
+
+    return OutSelectedTracks;
+}
+
+TSet<UMovieSceneSection *> UPyToolkitBPLibrary::GetSequencerSelectedSections(ULevelSequence *LevelSeq)
+{
+    IAssetEditorInstance *AssetEditor = GEditor->GetEditorSubsystem<UAssetEditorSubsystem>()->FindEditorForAsset(LevelSeq, false);
+    FLevelSequenceEditorToolkit *LevelSequenceEditor = (FLevelSequenceEditorToolkit *)AssetEditor;
+
+    TArray<const IKeyArea *> KeyAreaArray;
+    TSet<UMovieSceneSection *> OutSelectedSections;
+    if (LevelSequenceEditor != nullptr)
+    {
+        ISequencer *Sequencer = LevelSequenceEditor->GetSequencer().Get();
+        Sequencer->GetSelectedKeyAreas(KeyAreaArray);
+        for (const IKeyArea *KeyArea : KeyAreaArray)
+        {
+            OutSelectedSections.Add(KeyArea->GetOwningSection());
+        }
+    }
+    return OutSelectedSections;
+}
+
+TMap<UMovieSceneSection *, FString> UPyToolkitBPLibrary::GetSequencerSelectedChannels(ULevelSequence *LevelSeq)
+{
+    IAssetEditorInstance *AssetEditor = GEditor->GetEditorSubsystem<UAssetEditorSubsystem>()->FindEditorForAsset(LevelSeq, false);
+    FLevelSequenceEditorToolkit *LevelSequenceEditor = (FLevelSequenceEditorToolkit *)AssetEditor;
+
+    TMap<UMovieSceneSection *, FString> OutMap;
+    TArray<FString> KeyAreaNames;
+    TArray<const IKeyArea *> KeyAreaArray;
+    if (LevelSequenceEditor != nullptr)
+    {
+        ISequencer *Sequencer = LevelSequenceEditor->GetSequencer().Get();
+        Sequencer->GetSelectedKeyAreas(KeyAreaArray);
+        for (const IKeyArea *KeyArea : KeyAreaArray)
+        {
+            UMovieSceneSection *Section = KeyArea->GetOwningSection();
+            if (OutMap.Contains(Section))
+            {
+                OutMap[Section] += "|" + KeyArea->GetName().ToString();
+            }
+            else
+            {
+                OutMap.Emplace(Section, KeyArea->GetName().ToString());
+            }
+            // KeyAreaNames.Add(KeyArea->GetName().ToString());
+        }
+    }
+    return OutMap;
 }
 
 #pragma endregion
@@ -274,6 +328,12 @@ UTextureCube *UPyToolkitBPLibrary::RenderTargetCubeCreateStaticTextureCube(UText
         FAssetRegistryModule::AssetCreated(NewTex);
     }
     return NewTex;
+}
+
+FString UPyToolkitBPLibrary::GetCurrentContentPath()
+{
+    FContentBrowserModule &ContentBrowserModule = FModuleManager::LoadModuleChecked<FContentBrowserModule>("ContentBrowser");
+    return ContentBrowserModule.Get().GetCurrentPath();
 }
 
 #pragma endregion

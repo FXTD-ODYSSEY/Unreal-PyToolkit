@@ -10,6 +10,7 @@
 #include "Runtime/LevelSequence/Public/LevelSequence.h"
 #include "SequencerScripting/Private/SequencerBindingProxy.h"
 #include "Editor/Sequencer/Public/ISequencer.h"
+#include "Editor/Sequencer/Public/IKeyArea.h"
 
 #include "LevelSequenceEditor/Private/LevelSequenceEditorToolkit.h"
 #include "MovieSceneTrack.h"
@@ -72,9 +73,6 @@ class UPyToolkitBPLibrary : public UBlueprintFunctionLibrary
 		static TArray<FString> GetAllProperties(UClass* Class);
 
 	UFUNCTION(BlueprintCallable, Category = "Unreal Python")
-		static TArray<FString> GetSelectedAssets();
-
-	UFUNCTION(BlueprintCallable, Category = "Unreal Python")
 		static TArray<FString> GetSelectedFolders();
 
 	UFUNCTION(BlueprintCallable, Category = "Unreal Python")
@@ -100,11 +98,22 @@ class UPyToolkitBPLibrary : public UBlueprintFunctionLibrary
 	#pragma endregion
 
 	#pragma region SequencerAPI
-	UFUNCTION(BlueprintCallable, Category = "PyToolkit")
-		static ULevelSequence* GetFocusSequence();
 
-	UFUNCTION(BlueprintCallable, Category = "PyToolkit")
-		static TArray<FGuid> GetFocusBindings(ULevelSequence* LevelSeq);
+	UFUNCTION(BlueprintCallable, Category = "PyToolkit|SequencerAPI")
+	static ULevelSequence *GetSequencerSequence();
+
+	UFUNCTION(BlueprintCallable, Category = "PyToolkit|SequencerAPI")
+	static TArray<FGuid> GetSequencerSelectedID(ULevelSequence *LevelSeq);
+
+	UFUNCTION(BlueprintCallable, Category = "PyToolkit|SequencerAPI")
+	static TArray<UMovieSceneTrack *> GetSequencerSelectedTracks(ULevelSequence *LevelSeq);
+
+	UFUNCTION(BlueprintCallable, Category = "PyToolkit|SequencerAPI")
+	static TSet<UMovieSceneSection*> GetSequencerSelectedSections(ULevelSequence *LevelSeq);
+
+	UFUNCTION(BlueprintCallable, Category = "PyToolkit|SequencerAPI")
+	static TMap<UMovieSceneSection *,FString> GetSequencerSelectedChannels(ULevelSequence *LevelSeq);
+
 	#pragma endregion
 
 	#pragma region SocketAPI
@@ -127,6 +136,9 @@ class UPyToolkitBPLibrary : public UBlueprintFunctionLibrary
 
 	UFUNCTION(BlueprintCallable, Category = "PyToolkit")
 		static UTextureCube* RenderTargetCubeCreateStaticTextureCube(UTextureRenderTargetCube* RenderTarget, FString InName);
+
+	UFUNCTION(BlueprintCallable, Category = "Unreal Python")
+		static FString GetCurrentContentPath();
 
 	#pragma endregion
 	
