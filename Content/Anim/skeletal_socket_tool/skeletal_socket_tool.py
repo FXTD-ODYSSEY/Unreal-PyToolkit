@@ -66,7 +66,7 @@ class SocketTool(QtWidgets.QWidget):
         self.Close_Action.triggered.connect(self.close)
         self.Export_CSV_Action.triggered.connect(self.export_csv)
         self.Import_CSV_Action.triggered.connect(self.import_csv)
-        self.Help_Action.triggered.connect(lambda:webbrowser.open_new_tab('http://wiki.l0v0.com/PyToolkit/#/2_skeletal_socket_tool'))
+        self.Help_Action.triggered.connect(lambda:webbrowser.open_new_tab('http://wiki.l0v0.com/PyToolkit/#/anim/2_skeletal_socket_tool'))
         self.Socket_BTN.clicked.connect(self.add_socket)
         self.Clear_BTN.clicked.connect(self.clear_socket)
 

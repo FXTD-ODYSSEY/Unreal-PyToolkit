@@ -203,7 +203,7 @@ class SequencerRenderTool(QtWidgets.QWidget):
         self.Config_BTN.clicked.connect(self.read_config)
 
         self.Help_Action.triggered.connect(lambda: webbrowser.open_new_tab(
-            'http://wiki.l0v0.com/PyToolkit/#/3_render_tool'))
+            'http://wiki.l0v0.com/PyToolkit/#/render/1_render_tool'))
             
         self.capture_settings = unreal.MovieSceneCaptureSettings()
         self.read_config()

@@ -30,7 +30,7 @@
             "section": "Render",
             "label": "Sequencer 批量渲染工具",
             "type": "COMMAND",
-            "command": "py \"{Content}/Anim/sequencer_batch_render/render_tool.py\""
+            "command": "py \"{Content}/Render/sequencer_batch_render/render_tool.py\""
         },
         "launcher" : {
             "section": "Msic",

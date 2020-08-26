@@ -114,7 +114,7 @@ class RenamerWinBase(QtWidgets.QWidget):
         self.Export_Setting_Action.triggered.connect(self.export_setting)
         self.Import_Setting_Action.triggered.connect(self.import_setting)
         self.Help_Action.triggered.connect(lambda: webbrowser.open_new_tab(
-            'http://wiki.l0v0.com/PyToolkit/#/5_renamer'))
+            'http://wiki.l0v0.com/PyToolkit/#/msic/2_renamer'))
         self.Convention_Action.triggered.connect(lambda: webbrowser.open_new_tab(
             'https://github.com/Allar/ue4-style-guide'))
 

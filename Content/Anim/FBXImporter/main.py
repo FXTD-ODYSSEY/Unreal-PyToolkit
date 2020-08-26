@@ -399,7 +399,7 @@ class FBXImporter_UI(QtWidgets.QWidget):
         self.Help_Action = QtWidgets.QAction(u"帮助文档", self)
         self.Help_Menu.addAction(self.Help_Action)
         self.Help_Action.triggered.connect(lambda: webbrowser.open_new_tab(
-            'http://wiki.l0v0.com/PyToolkit/#/1_fbx_importer'))
+            'http://wiki.l0v0.com/PyToolkit/#/anim/1_fbx_importer'))
 
         layout.addWidget(self.Menu_Bar)
         layout.addWidget(self.compare_splitter)
