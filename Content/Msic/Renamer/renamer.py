@@ -38,7 +38,7 @@ import unreal
 
 from Qt import QtCore, QtWidgets, QtGui
 from Qt.QtCompat import load_ui, QFileDialog
-from ue_util import error_log, toast
+from UE_Util import error_log, toast
 from dayu_widgets.item_model import MTableModel, MSortFilterModel
 from dayu_widgets.utils import set_obj_value, get_obj_value
 util_lib = unreal.EditorUtilityLibrary()

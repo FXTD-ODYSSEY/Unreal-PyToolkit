@@ -12,7 +12,7 @@ __email__ = '820472580@qq.com'
 __date__ = '2020-07-18 21:09:23'
 
 
-from ue_util import toast
+from UE_Util import toast
 from Qt import QtCore, QtWidgets, QtGui
 from Qt.QtCompat import loadUi
 import unreal

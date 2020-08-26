@@ -24,7 +24,7 @@ from dayu_widgets.item_model import MTableModel, MSortFilterModel
 # from dayu_widgets.message import MMessage
 # from dayu_widgets import dayu_theme
 
-from ue_util import alert
+from UE_Util import alert
 
 py_lib = unreal.PyToolkitBPLibrary()
 class SocketTool(QtWidgets.QWidget):
