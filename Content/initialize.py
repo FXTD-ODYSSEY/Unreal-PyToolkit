@@ -11,77 +11,191 @@ __author__ = 'timmyliang'
 __email__ = '820472580@qq.com'
 __date__ = '2020-05-30 21:47:47'
 
-from Qt import QtCore, QtWidgets, QtGui
 import os
 import sys
 import json
-import unreal
+import posixpath
+
 from functools import partial
 from collections import OrderedDict
+
+import unreal
+from Qt import QtCore, QtWidgets, QtGui
 from dayu_widgets import dayu_theme
 
+
 DIR = os.path.dirname(__file__)
+menus = unreal.ToolMenus.get()
 
-# TODO git 自动 pull | SVN 自动更新
-
-type_map = {
-    "command": unreal.ToolMenuStringCommandType.COMMAND,
-    "python": unreal.ToolMenuStringCommandType.PYTHON
+FORMAT_ARGS = {
+    "Content": DIR
 }
 
-def read_menu_json(path):
+COMMAND_TYPE = {
+    "COMMAND": unreal.ToolMenuStringCommandType.COMMAND,
+    "PYTHON": unreal.ToolMenuStringCommandType.PYTHON,
+    "CUSTOM": unreal.ToolMenuStringCommandType.CUSTOM,
+}
 
-    with open(path, 'r') as f:
-        data = json.load(f, object_pairs_hook=OrderedDict, encoding='utf-8')
+INSERT_TYPE = {
+    "AFTER": unreal.ToolMenuInsertType.AFTER,
+    "BEFORE": unreal.ToolMenuInsertType.BEFORE,
+    "DEFAULT": unreal.ToolMenuInsertType.DEFAULT,
+    "FIRST": unreal.ToolMenuInsertType.FIRST,
+}
 
-    menu_section_dict = data['section']
-    menu_entry_dict = data['menu']
-    for menu, data in menu_entry_dict.items():
-        data['type'] = type_map[data['type'].lower()]
-        data['command'] = data['command'].format(Content=DIR)
+MENU_TYPE = {
+    "BUTTON_ROW": unreal.MultiBoxType.BUTTON_ROW,
+    "MENU": unreal.MultiBoxType.MENU,
+    "MENU_BAR": unreal.MultiBoxType.MENU_BAR,
+    "TOOL_BAR": unreal.MultiBoxType.TOOL_BAR,
+    "TOOL_MENU_BAR": unreal.MultiBoxType.TOOL_MENU_BAR,
+    "UNIFORM_TOOL_BAR": unreal.MultiBoxType.UNIFORM_TOOL_BAR,
+    "VERTICAL_TOOL_BAR": unreal.MultiBoxType.VERTICAL_TOOL_BAR,
+}
 
-    return menu_section_dict, menu_entry_dict
+ENTRY_TYPE = {
+    "BUTTON_ROW": unreal.MultiBlockType.BUTTON_ROW,
+    "EDITABLE_TEXT": unreal.MultiBlockType.EDITABLE_TEXT,
+    "HEADING": unreal.MultiBlockType.HEADING,
+    "MENU_ENTRY": unreal.MultiBlockType.MENU_ENTRY,
+    "MENU_SEPARATOR": unreal.MultiBlockType.MENU_SEPARATOR,
+    "NONE": unreal.MultiBlockType.NONE,
+    "TOOL_BAR_BUTTON": unreal.MultiBlockType.TOOL_BAR_BUTTON,
+    "TOOL_BAR_COMBO_BUTTON": unreal.MultiBlockType.TOOL_BAR_COMBO_BUTTON,
+    "TOOL_BAR_SEPARATOR": unreal.MultiBlockType.TOOL_BAR_SEPARATOR,
+    "WIDGET": unreal.MultiBlockType.WIDGET,
+}
 
+ACTION_TYPE = {
+    "BUTTON": unreal.UserInterfaceActionType.BUTTON,
+    "CHECK": unreal.UserInterfaceActionType.CHECK,
+    "COLLAPSED_BUTTON": unreal.UserInterfaceActionType.COLLAPSED_BUTTON,
+    "NONE": unreal.UserInterfaceActionType.NONE,
+    "RADIO_BUTTON": unreal.UserInterfaceActionType.RADIO_BUTTON,
+    "TOGGLE_BUTTON": unreal.UserInterfaceActionType.TOGGLE_BUTTON,
+}
+
+
+def handle_menu(data):
+    """
+    handle_menu 递归生成菜单
+    """
+    menu = data.get("menu")
+    if not menu:
+        return
+
+    for section, config in data.get("section", {}).items():
+        config = config if isinstance(config, dict) else {"label": config}
+        config.setdefault("label", "untitle")
+        # NOTE 如果存在 insert_type 需要将字符串转换
+        insert = INSERT_TYPE.get(config.get("insert_type", "").upper())
+        if insert:
+            config["insert_type"] = insert
+        insert_name = config.get("insert_name")
+        config["insert_name"] = insert_name if insert_name else "None"
+        menu.add_section(section, **config)
+
+    for prop, value in data.get("property", {}).items():
+        if prop == "menu_owner" or value == "":
+            continue
+        elif prop == "menu_type":
+            value = MENU_TYPE.get(value.upper())
+        menu.set_editor_property(prop, value)
+
+    for entry_name, config in data.get("entry", {}).items():
+        prop = config.get("property", {})
+
+        for k, v in prop.items():
+            # NOTE 不设置 owner
+            if k == 'owner':
+                prop.pop("owner")
+            elif v == '':
+                prop.pop(k)
+            elif k == "insert_position":
+                position = INSERT_TYPE.get(v.get("position", "").upper())
+                v["position"] = position if position else unreal.ToolMenuInsertType.FIRST
+                v["name"] = v.get("name", "")
+                prop[k] = unreal.ToolMenuInsert(**v)
+            elif k == "type":
+                typ = ENTRY_TYPE.get(str(v).upper())
+                prop[k] = typ if typ else unreal.MultiBlockType.MENU_ENTRY
+            elif k == "user_interface_action_type":
+                typ = ACTION_TYPE.get(str(v).upper())
+                prop.update({k:typ}) if typ else prop.pop(k)
+
+        prop.setdefault("name", entry_name)
+        prop.setdefault("type", unreal.MultiBlockType.MENU_ENTRY)
+        entry = unreal.ToolMenuEntry(**prop)
+        tooltip = config.get('tooltip')
+        entry.set_tool_tip(tooltip) if tooltip else None
+        
+        entry.set_label(config.get('label', "untitle"))
+        typ = COMMAND_TYPE.get(config.get("type", "").upper(), 0)
+
+        command = config.get('command', '').format(**FORMAT_ARGS)
+        entry.set_string_command(typ, "", string=command)
+        menu.add_menu_entry(config.get('section', ''), entry)
+
+    for entry_name, config in data.get("sub_menu", {}).items():
+        init = config.get("init", {})
+        owner = menu.get_name()
+        section_name = init.get("section", "")
+        name = init.get("name", entry_name)
+        label = init.get("label", "")
+        tooltip = init.get("tooltip", "")
+        menu = menu.add_sub_menu(
+            owner, section_name, name, label, tooltip)
+        config.setdefault('menu', menu)
+        handle_menu(config)
 
 def create_menu():
     # NOTE 读取 menu json 配置
-    setting = os.path.join(DIR,"setting.json")
-    menu_section_dict, menu_entry_dict = read_menu_json(setting)
+    json_path = posixpath.join(DIR, "menu.json")
+    with open(json_path, 'r') as f:
+        menu_json = json.load(
+            f, object_pairs_hook=OrderedDict, encoding='utf-8')
 
+    fail_menus = {}
     # NOTE https://forums.unrealengine.com/development-discussion/python-scripting/1767113-making-menus-in-py
-    menus = unreal.ToolMenus.get()
-
-    # NOTE 获取主界面的主菜单位置
-    main_menu = menus.find_menu("LevelEditor.MainMenu")
-    if not main_menu:
-        raise RuntimeError(
-            "Failed to find the 'Main' menu. Something is wrong in the force!")
-
-    # NOTE 添加一个下拉菜单
-    script_menu = main_menu.add_sub_menu(
-        main_menu.get_name(), "PythonTools", "PyToolkit", "PyToolkit")
-
-    # NOTE 初始化下拉菜单的 Section 分组
-    for section, label in menu_section_dict.items():
-        script_menu.add_section(section, label)
-
-    # NOTE 根据 json 来配置菜单显示的 Entry
-    for menu, data in menu_entry_dict.items():
-        entry = unreal.ToolMenuEntry(
-            name=menu,
-            type=unreal.MultiBlockType.MENU_ENTRY,
-            insert_position=unreal.ToolMenuInsert(
-                "", unreal.ToolMenuInsertType.FIRST)
-        )
-        entry.set_label(data.get('label', "untitle"))
-        command = data.get('command', '')
-        entry.set_string_command(data.get("type", 0), "", string=command)
-        script_menu.add_menu_entry(data.get('section', ''), entry)
+    for tool_menu, config in menu_json.items():
+        menu = menus.find_menu(tool_menu)
+        if not menu:
+            fail_menus.update({tool_menu:config})
+            continue
+        config.setdefault('menu', menu)
+        handle_menu(config)
 
     # NOTE 刷新组件
     menus.refresh_all_widgets()
+    
+    # NOTE 获取当前不存在的菜单 | 设置定时任务嵌入
+    if fail_menus:
+        timer =  QtCore.QTimer()
+        timer.timeout.connect(partial(timer_add_menu,fail_menus,timer))
+        timer.start(1000)
 
+def timer_add_menu(menu_dict,timer):
+    # NOTE 如果 menu_dict 清空则停止计时器
+    if not menu_dict:
+        timer.stop()
+        return
 
+    flag = False
+    for tool_menu, config in menu_dict.items():
+        menu = menus.find_menu(tool_menu)
+        if not menu:
+            continue
+        # NOTE 清除找到的menu
+        menu_dict.pop(tool_menu)
+        flag = True
+        config.setdefault('menu', menu)
+        handle_menu(config)
+        
+    if flag:
+        menus.refresh_all_widgets()
+        
+        
 def slate_deco(func):
     def wrapper(self, single=True, *args, **kwargs):
         # NOTE 只保留一个当前类窗口
@@ -121,7 +235,7 @@ if not unreal_app:
         unreal.unregister_slate_post_tick_callback, tick_handle)
     unreal_app.aboutToQuit.connect(__QtAppQuit__)
 
-    with open(os.path.join(DIR,"main.css"),'r') as f:
+    with open(os.path.join(DIR, "main.css"), 'r') as f:
         unreal_app.setStyleSheet(f.read())
 
     # NOTE 重载 show 方法
