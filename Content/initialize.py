@@ -14,6 +14,7 @@ __date__ = '2020-05-30 21:47:47'
 import os
 import sys
 import json
+import time
 import posixpath
 
 from functools import partial
@@ -26,6 +27,9 @@ from dayu_widgets import dayu_theme
 
 DIR = os.path.dirname(__file__)
 menus = unreal.ToolMenus.get()
+
+global last_tick
+last_tick = time.time()
 
 FORMAT_ARGS = {
     "Content": DIR
@@ -107,10 +111,11 @@ def handle_menu(data):
         prop = config.get("property", {})
 
         for k, v in prop.items():
-            # NOTE 不设置 owner
-            if k == 'owner':
-                prop.pop("owner")
-            elif v == '':
+            # NOTE 跳过 owner 和 script_object
+            prop.pop("owner") if not prop.get("owner") is None else None
+            prop.pop("script_object") if not prop.get("script_object") is None else None
+            
+            if v == '':
                 prop.pop(k)
             elif k == "insert_position":
                 position = INSERT_TYPE.get(v.get("position", "").upper())
@@ -149,16 +154,21 @@ def handle_menu(data):
         config.setdefault('menu', menu)
         handle_menu(config)
 
+def read_json(json_path):
+    with open(json_path, 'r') as f:
+        data = json.load(
+            f, object_pairs_hook=OrderedDict, encoding='utf-8')
+    return data
+
 def create_menu():
     # NOTE 读取 menu json 配置
     json_path = posixpath.join(DIR, "menu.json")
-    with open(json_path, 'r') as f:
-        menu_json = json.load(
-            f, object_pairs_hook=OrderedDict, encoding='utf-8')
+    menu_json = read_json(json_path)
 
     fail_menus = {}
     # NOTE https://forums.unrealengine.com/development-discussion/python-scripting/1767113-making-menus-in-py
     for tool_menu, config in menu_json.items():
+        # NOTE 获取主界面的主菜单位置
         menu = menus.find_menu(tool_menu)
         if not menu:
             fail_menus.update({tool_menu:config})
@@ -171,30 +181,48 @@ def create_menu():
     
     # NOTE 获取当前不存在的菜单 | 设置定时任务嵌入
     if fail_menus:
+        def timer_add_menu(menu_dict,timer):
+            # NOTE 判断当前是否卡顿状态 | 如果卡顿就跳过执行 
+            # NOTE 避免处于加载状态导致引擎崩溃 !FUObjectThreadContext::Get().IsRoutingPostLoad -> Cannot call UnrealScript while PostLoading objects
+            global last_tick
+            tick_elapsed = time.time() - last_tick
+            if (tick_elapsed > 0.3):
+                return
+            
+            # NOTE 如果 menu_dict 清空则停止计时器
+            if not menu_dict:
+                timer.stop()
+                del timer
+                return
+
+            flag = False
+            for tool_menu, config in menu_dict.items():
+                menu = menus.find_menu(tool_menu)
+                if not menu:
+                    continue
+                # NOTE 清除找到的menu
+                menu_dict.pop(tool_menu)
+                flag = True
+                config.setdefault('menu', menu)
+                handle_menu(config)
+                
+            if flag:
+                menus.refresh_all_widgets()
         timer =  QtCore.QTimer()
         timer.timeout.connect(partial(timer_add_menu,fail_menus,timer))
         timer.start(1000)
 
-def timer_add_menu(menu_dict,timer):
-    # NOTE 如果 menu_dict 清空则停止计时器
-    if not menu_dict:
-        timer.stop()
+def register_BP():
+    # NOTE 执行 BP 目录下所有的 python 脚本 注册蓝图
+    path = os.path.join(DIR,"BP")
+    if not os.path.exists(path):
         return
-
-    flag = False
-    for tool_menu, config in menu_dict.items():
-        menu = menus.find_menu(tool_menu)
-        if not menu:
-            continue
-        # NOTE 清除找到的menu
-        menu_dict.pop(tool_menu)
-        flag = True
-        config.setdefault('menu', menu)
-        handle_menu(config)
-        
-    if flag:
-        menus.refresh_all_widgets()
-        
+    for root,directories,files in os.walk(path):
+        for f in files:
+            if not f.endswith(".py"):
+                continue
+            command = 'py "%s"' % posixpath.join(root,f).replace("\\","/")
+            unreal.SystemLibrary.execute_console_command(None,command)
         
 def slate_deco(func):
     def wrapper(self, single=True, *args, **kwargs):
@@ -224,7 +252,8 @@ def __QtAppTick__(delta_seconds):
     # QtWidgets.QApplication.processEvents()
     # NOTE 处理 deleteDeferred 事件
     QtWidgets.QApplication.sendPostedEvents()
-
+    global last_tick
+    last_tick = time.time()
 
 # This part is for the initial setup. Need to run once to spawn the application.
 unreal_app = QtWidgets.QApplication.instance()
@@ -242,3 +271,4 @@ if not unreal_app:
     QtWidgets.QWidget.show = slate_deco(QtWidgets.QWidget.show)
 
     create_menu()
+    register_BP()

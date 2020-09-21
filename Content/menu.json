@@ -114,6 +114,31 @@
                 "label": "PyToolkit 工具架按钮测试",
                 "type": "PYTHON",
                 "command": "unreal.SystemLibrary.print_string(None,'Toolbar 扩展演示',text_color=[255,255,255,255])"
+            },
+            "Restart": {
+                "property": {
+                    "type": "TOOL_BAR_BUTTON"
+                },
+                "section": "Settings",
+                "label": "Restart",
+                "type": "COMMAND",
+                "command": "py \"{Content}/Msic/restart_engine.py\""
+            }
+        }
+    },
+    "LevelEditor.MainMenu.File": {
+        "entry": {
+            "Restart": {
+                "property":{
+                    "insert_position":{
+                        "name": "NewProject",
+                        "position": "BEFORE"
+                    }
+                },
+                "section": "FileProject",
+                "label": "Restart",
+                "type": "COMMAND",
+                "command": "py \"{Content}/Msic/restart_engine.py\""
             }
         }
     },
@@ -184,7 +209,7 @@
             }
         },
         "sub_menu": {
-            "RED_FX": {
+            "py_menu": {
                 "init": {
                     "label": "PyToolkit测试",
                     "section": "new_asset_section",
