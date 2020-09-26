@@ -26,8 +26,9 @@ except:
     from queue import Queue
 import threading
 from pynput import keyboard
-# import keyboard
-
+from pynput._util import win32
+import ctypes
+from ctypes import wintypes
 
 import unreal
 from Qt import QtCore, QtWidgets, QtGui
@@ -237,75 +238,29 @@ def register_BP():
             command = 'py "%s"' % posixpath.join(root, f).replace("\\", "/")
             unreal.SystemLibrary.execute_console_command(None, command)
 
-
-# # class TimeHook(object):
-# #     delta = 0
-# queue = Queue(1)
-# listener = keyboard._listener
-# listener.listen = lambda *args,**kwargs: keyboard._os_keyboard.listen(queue,listener.direct_callback)
-# # os_keyboard = keyboard._os_keyboard
-# def handle_keybard(delta_seconds):
-
-#     # if queue.empty():
-#     #     queue.put(delta_seconds,block=False)
-#     # else:
-#     #     return
-
-#     if keyboard.is_pressed('alt+s'):  # if key 'q' is pressed
-#         print('you press alt+s')
-
-from pynput.keyboard import Key, Controller
-from pynput._util import win32
-import ctypes
-from ctypes import wintypes
-from ctypes import windll
-
-user32 = windll.user32
-kernel32 = windll.kernel32
-key_queue = Queue(1)
-
-tid = kernel32.GetCurrentThreadId()
-
-# This function will receive the tick from Unreal
-def __QtAppTick__(delta_seconds):
-    # NOTE 不添加事件处理 Qt 的窗口运行正常 | 添加反而会让 imgui 失去焦点
-    # QtWidgets.QApplication.processEvents()
-    # NOTE 处理 deleteDeferred 事件
-    QtWidgets.QApplication.sendPostedEvents()
-    
-    # NOTE 获取时间，判断是否是卡顿状态
-    global last_tick
-    last_tick = time.time()
-
-    # NOTE 键盘监听
-    if key_queue.empty():
-        key_queue.put(delta_seconds)
-    elif delta_seconds > .1:
-        # NOTE win api 发送Message 阻断键盘监听
-        controller = Controller()
-        controller.press(Key.esc)
-        controller.release(Key.esc)
-        controller.press(Key.esc)
-        controller.release(Key.esc)
-    # handle_keyboard(delta_seconds)
-
+delta_queue = Queue(1)
 
 def message_itr(self):
+    global listener
     assert self._threadid is not None
     try:
         # Pump messages until WM_STOP
         while True:
-            if key_queue.empty():
+            if delta_queue.empty():
                 continue
-            elasped = key_queue.get()
+            elasped = time.time() - delta_queue.get()
+            # NOTE 如果虚幻阻塞 去掉 键盘监听
             if elasped > 0.1:
-                print(elasped)
-                continue
+                # continue
+                # self.stop()
+                listener = None
+                break
             
             # print('start capture key ...')
             msg = wintypes.MSG()
             lpmsg = ctypes.byref(msg)
-            r = self._GetMessage(lpmsg, None, 0, 0)
+            # NOTE _PeekMessage 队列不阻塞
+            r = self._PeekMessage(lpmsg, None, 0, 0 , 0x0001)
             if r <= 0:
                 continue
             elif msg.message == self.WM_STOP:
@@ -319,23 +274,41 @@ def message_itr(self):
 win32.MessageLoop.__iter__ = message_itr
 
 def on_press(key):
+    global listener
     try:
-        print('alphanumeric key {0} pressed'.format(
-            key.char))
-    except AttributeError:
-        print('special key {0} pressed'.format(
-            key))
+        print(key)
+        print(listener.canonical(key))
+    except:
+        print("error")
+    
 
+# NOTE 初始化键盘事件
 listener = keyboard.Listener(on_press=on_press)
 listener.start()
 
-# def handle_keyboard(delta_seconds):
-#     if delta_seconds > .1:
-#         return
-#     with keyboard.Events() as events:
-#         event = events.get(.1)
-#         if event:
-#             print(event)
+# This function will receive the tick from Unreal
+def __QtAppTick__(delta_seconds):
+    # NOTE 不添加事件处理 Qt 的窗口运行正常 | 添加反而会让 imgui 失去焦点
+    # QtWidgets.QApplication.processEvents()
+    # NOTE 处理 deleteDeferred 事件
+    QtWidgets.QApplication.sendPostedEvents()
+    
+    # NOTE 获取时间，判断是否是卡顿状态
+    global last_tick
+    last_tick = time.time()
+    
+    # NOTE 键盘监听
+    global listener
+    if delta_queue.empty():
+        delta_queue.put(last_tick)
+    elif listener is None:
+        # NOTE 重新构建 键盘 监听
+        listener = keyboard.Listener(on_press=on_press)
+    elif not listener.is_alive() and delta_seconds < .1:
+        # NOTE 虚幻不阻塞就开启监听
+        listener.start()
+
+
 
 def slate_deco(func):
     def wrapper(self, single=True, *args, **kwargs):
