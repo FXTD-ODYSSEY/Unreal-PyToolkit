@@ -13,6 +13,7 @@ __date__ = '2020-05-30 21:47:47'
 
 import os
 import sys
+import ast
 import json
 import time
 import posixpath
@@ -36,6 +37,9 @@ from dayu_widgets import dayu_theme
 
 
 DIR = os.path.dirname(__file__)
+sys.path.insert(0 , DIR) if DIR not in sys.path else None
+import hotkey
+
 menus = unreal.ToolMenus.get()
 
 global last_tick
@@ -90,6 +94,11 @@ ACTION_TYPE = {
     "TOGGLE_BUTTON": unreal.UserInterfaceActionType.TOGGLE_BUTTON,
 }
 
+HOTKEY_TYPE = {
+    "COMMAND":lambda command: partial(unreal.SystemLibrary.execute_console_command,None,command),
+    "PYTHON": lambda command: partial(lambda c:eval(compile(c, '<string>', 'exec')),command),
+    "SCRIPT":lambda command: getattr(hotkey,command) if hasattr(hotkey,command) else partial(unreal.SystemLibrary.execute_console_command,None,"Hotkey 配置失败 -> %s 找不到" % command),
+}
 
 def handle_menu(data):
     """
@@ -167,9 +176,12 @@ def handle_menu(data):
 
 
 def read_json(json_path):
-    with open(json_path, 'r') as f:
-        data = json.load(
-            f, object_pairs_hook=OrderedDict, encoding='utf-8')
+    try:
+        with open(json_path, 'r') as f:
+            data = json.load(
+                f, object_pairs_hook=OrderedDict, encoding='utf-8')
+    except:
+        data = {}
     return data
 
 
@@ -238,6 +250,8 @@ def register_BP():
             command = 'py "%s"' % posixpath.join(root, f).replace("\\", "/")
             unreal.SystemLibrary.execute_console_command(None, command)
 
+# NOTE 键盘监听处理 ---------------
+
 delta_queue = Queue(1)
 
 def message_itr(self):
@@ -248,11 +262,9 @@ def message_itr(self):
         while True:
             if delta_queue.empty():
                 continue
-            elasped = time.time() - delta_queue.get()
+            elasped = delta_queue.get()
             # NOTE 如果虚幻阻塞 去掉 键盘监听
             if elasped > 0.1:
-                # continue
-                # self.stop()
                 listener = None
                 break
             
@@ -273,19 +285,25 @@ def message_itr(self):
 
 win32.MessageLoop.__iter__ = message_itr
 
-def on_press(key):
-    global listener
-    try:
-        print(key)
-        print(listener.canonical(key))
-    except:
-        print("error")
-    
+def handle_hotkey():
+    json_path = posixpath.join(DIR, "hotkey.json")
+    key_data = read_json(json_path)
+    key_map = {}
+    for k,v in key_data.items():
+        v = v if isinstance(v, dict) else {"command":v,"type":"COMMAND"}
+        command = v.get("command")
+        typ = v.get("type","").upper()
+        func = HOTKEY_TYPE.get(typ)
+        if not func:
+            continue
+
+        key_map[k] = func(command)
+    return key_map
 
 # NOTE 初始化键盘事件
-listener = keyboard.Listener(on_press=on_press)
-listener.start()
-
+key_map = handle_hotkey()
+listener = None
+listener_list = []
 # This function will receive the tick from Unreal
 def __QtAppTick__(delta_seconds):
     # NOTE 不添加事件处理 Qt 的窗口运行正常 | 添加反而会让 imgui 失去焦点
@@ -298,16 +316,32 @@ def __QtAppTick__(delta_seconds):
     last_tick = time.time()
     
     # NOTE 键盘监听
-    global listener
+    global listener,key_map
     if delta_queue.empty():
-        delta_queue.put(last_tick)
+        delta_queue.put(delta_seconds)
     elif listener is None:
         # NOTE 重新构建 键盘 监听
-        listener = keyboard.Listener(on_press=on_press)
-    elif not listener.is_alive() and delta_seconds < .1:
-        # NOTE 虚幻不阻塞就开启监听
-        listener.start()
+        listener = keyboard.GlobalHotKeys(key_map)
+    # elif not listener.is_alive() and delta_seconds < .1:
+    #     # NOTE 虚幻不阻塞就开启监听
+    #     listener.start()
+    elif listener not in listener_list:
+        del listener_list[:]
+        listener_list.append(listener)
+        if not listener.is_alive():
+            listener.start()
+        
+#     key_handler(delta_seconds)
 
+# def key_handler(delta_seconds):
+#     if delta_seconds > .1:
+#         return
+    
+#     with keyboard.Events() as events:
+#         # Block at most one second
+#         event = events.get(.1)
+#         if event:
+#             print('Received event {}'.format(event))
 
 
 def slate_deco(func):

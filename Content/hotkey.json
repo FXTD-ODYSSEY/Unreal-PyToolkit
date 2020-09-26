@@ -1,0 +1,10 @@
+{
+    "<ctrl>+<alt>+q":{
+        "type":"SCRIPT",
+        "command": "print_string"
+    },
+    "<ctrl>+<alt>+r":{
+        "type":"PYTHON",
+        "command": "unreal.SystemLibrary.execute_console_command(None,'<ctrl>+<alt>+r')"
+    }
+}
