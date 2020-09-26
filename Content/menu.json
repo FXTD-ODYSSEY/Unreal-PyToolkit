@@ -106,20 +106,11 @@
             }
         },
         "entry": {
-            "toolbar_button": {
-                "property": {
-                    "type": "TOOL_BAR_BUTTON"
-                },
-                "section": "toolbar_section",
-                "label": "PyToolkit 工具架按钮测试",
-                "type": "PYTHON",
-                "command": "unreal.SystemLibrary.print_string(None,'Toolbar 扩展演示',text_color=[255,255,255,255])"
-            },
             "Restart": {
                 "property": {
                     "type": "TOOL_BAR_BUTTON"
                 },
-                "section": "Settings",
+                "section": "toolbar_section",
                 "label": "Restart",
                 "type": "COMMAND",
                 "command": "py \"{Content}/Msic/restart_engine.py\""
