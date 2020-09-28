@@ -27,9 +27,7 @@ except:
     from queue import Queue
 import threading
 from pynput import keyboard
-from pynput._util import win32
-import ctypes
-from ctypes import wintypes
+from ctypes import wintypes,byref
 
 import unreal
 from Qt import QtCore, QtWidgets, QtGui
@@ -252,8 +250,6 @@ def register_BP():
 
 # NOTE 键盘监听处理 ---------------
 
-delta_queue = Queue(1)
-
 def message_itr(self):
     global listener
     assert self._threadid is not None
@@ -270,7 +266,7 @@ def message_itr(self):
             
             # print('start capture key ...')
             msg = wintypes.MSG()
-            lpmsg = ctypes.byref(msg)
+            lpmsg = byref(msg)
             # NOTE _PeekMessage 队列不阻塞
             r = self._PeekMessage(lpmsg, None, 0, 0 , 0x0001)
             if r <= 0:
@@ -283,7 +279,6 @@ def message_itr(self):
         self._threadid = None
         self.thread = None
 
-win32.MessageLoop.__iter__ = message_itr
 
 def handle_hotkey():
     json_path = posixpath.join(DIR, "hotkey.json")
@@ -300,10 +295,6 @@ def handle_hotkey():
         key_map[k] = func(command)
     return key_map
 
-# NOTE 初始化键盘事件
-key_map = handle_hotkey()
-listener = None
-listener_list = []
 # This function will receive the tick from Unreal
 def __QtAppTick__(delta_seconds):
     # NOTE 不添加事件处理 Qt 的窗口运行正常 | 添加反而会让 imgui 失去焦点
@@ -316,15 +307,15 @@ def __QtAppTick__(delta_seconds):
     last_tick = time.time()
     
     # NOTE 键盘监听
-    global listener,key_map
+    
+    global listener,key_map,hotkey
+    if not hotkey:
+        return
     if delta_queue.empty():
         delta_queue.put(delta_seconds)
     elif listener is None:
         # NOTE 重新构建 键盘 监听
         listener = keyboard.GlobalHotKeys(key_map)
-    # elif not listener.is_alive() and delta_seconds < .1:
-    #     # NOTE 虚幻不阻塞就开启监听
-    #     listener.start()
     elif listener not in listener_list:
         del listener_list[:]
         listener_list.append(listener)
@@ -382,4 +373,18 @@ if not unreal_app:
     QtWidgets.QWidget.show = slate_deco(QtWidgets.QWidget.show)
 
     create_menu()
-    register_BP()
+    json_path = posixpath.join(DIR, "setting.json")
+    setting = read_json(json_path)
+    
+    if setting.get("blueprint"):
+        register_BP()
+    
+    # NOTE 初始化键盘事件
+    hotkey = setting.get("hotkey")
+    if hotkey:
+        delta_queue = Queue(1)
+        from pynput._util import win32
+        win32.MessageLoop.__iter__ = message_itr
+        key_map = handle_hotkey()
+        listener = None
+        listener_list = []

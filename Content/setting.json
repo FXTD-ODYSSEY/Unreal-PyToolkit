@@ -1,4 +1,6 @@
 {
+    "hotkey":false,
+    "blueprint":true,
     "script":{
         "initialize": "py \"{Content}/initialize.py\"",
         "launcher":"py \"{Content}/Msic/UE_Launcher/launcher.py\""
