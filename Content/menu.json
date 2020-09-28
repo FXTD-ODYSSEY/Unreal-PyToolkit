@@ -53,10 +53,10 @@
                 "entry": {
                     "model_tool": {
                         "section": "Model",
-                        "label": "演示:模型处理工具(打印到屏幕)",
-                        "type": "PYTHON",
-                        "command": "unreal.SystemLibrary.print_string(None,'模型处理工具',text_color=[255,255,255,255])"
-                    },
+                        "label": "场景摆放工具",
+                        "type": "COMMAND",
+                        "command": "py \"{Content}/Model/Placer/placer.py\""
+                        },
                     "skeletal_socket_tool": {
                         "section": "Anim",
                         "label": "Socket 自动化添加工具",

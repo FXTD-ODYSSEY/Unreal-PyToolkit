@@ -14,11 +14,14 @@
 
 #include "LevelSequenceEditor/Private/LevelSequenceEditorToolkit.h"
 #include "MovieSceneTrack.h"
+#include "Kismet/KismetRenderingLibrary.h"
+#include "ObjectTools.h"
 
 #include "Runtime/Engine/Classes/Engine/TextureRenderTargetCube.h"
 #include "Runtime/Engine/Classes/Engine/TextureCube.h"
 #include "Developer/AssetTools/Public/AssetToolsModule.h"
 #include "UnrealEd/Public/PackageTools.h"
+
 
 #include "Engine/SkeletalMeshSocket.h"
 #include "Runtime/Engine/Classes/Animation/Skeleton.h"
@@ -138,7 +141,9 @@ class UPyToolkitBPLibrary : public UBlueprintFunctionLibrary
 		static UTextureCube* RenderTargetCubeCreateStaticTextureCube(UTextureRenderTargetCube* RenderTarget, FString InName);
 
 	UFUNCTION(BlueprintCallable, Category = "Unreal Python")
-		static FString GetCurrentContentPath();
+		static FString GetCurrentContentPath();	
+	UFUNCTION(BlueprintCallable, Category = "Unreal Python")
+		static TArray<uint8> GetThumbnial(UObject* MeshObject,int32 _imageRes = 128);
 
 	#pragma endregion
 	

@@ -336,4 +336,14 @@ FString UPyToolkitBPLibrary::GetCurrentContentPath()
     return ContentBrowserModule.Get().GetCurrentPath();
 }
 
+
+TArray<uint8> UPyToolkitBPLibrary::GetThumbnial(UObject* MeshObject,int32 _imageRes)
+{
+    // NOTE https://blog.csdn.net/zhangxiaofan666/article/details/97643308
+    // int32 _imageRes = 128;
+	FObjectThumbnail _objectThumnail;
+	ThumbnailTools::RenderThumbnail(MeshObject, _imageRes, _imageRes, ThumbnailTools::EThumbnailTextureFlushMode::AlwaysFlush, NULL, &_objectThumnail);
+	return _objectThumnail.GetUncompressedImageData();
+}
+
 #pragma endregion
