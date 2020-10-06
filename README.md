@@ -1,9 +1,9 @@
 # Unreal-PyToolkit
 
 > 嵌入 Python PySide 模块实现 Qt 界面开发    
-> 说明文档链接 [wiki.l0v0.com/PyToolkit/](https://wiki.l0v0.com/PyToolkit/#/)
+> 说明文档链接 [链接](http://wiki.l0v0.com/unreal/PyToolkit/#/)
 
-![工具集锦](https://cdn.jsdelivr.net/gh/FXTD-ODYSSEY/CG_wiki@gh-pages/PyToolkit/_img/01.png)
+![工具集锦](http://cdn.jsdelivr.net/gh/FXTD-ODYSSEY/CG_wiki@gh-pages/unreal/PyToolkit/_img/01.png)
 
 > &emsp;&emsp;工具界面使用 PySide 组件库 [dayu_widgets](https://github.com/phenom-films/dayu_widgets)     
 > &emsp;&emsp;插件在引擎版本 4.25.1 下运行没有问题。        

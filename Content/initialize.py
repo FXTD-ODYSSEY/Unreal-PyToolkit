@@ -209,7 +209,7 @@ def create_menu():
             # NOTE 避免处于加载状态导致引擎崩溃 !FUObjectThreadContext::Get().IsRoutingPostLoad -> Cannot call UnrealScript while PostLoading objects
             global last_tick
             tick_elapsed = time.time() - last_tick
-            if (tick_elapsed > 0.3):
+            if (tick_elapsed > 0.05):
                 return
 
             # NOTE 如果 menu_dict 清空则停止计时器
