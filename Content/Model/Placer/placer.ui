@@ -6,157 +6,366 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>499</width>
-    <height>351</height>
+    <width>553</width>
+    <height>572</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>放置工具</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <property name="topMargin">
+    <number>25</number>
+   </property>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>资源路径</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="Filter_LE"/>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton">
-       <property name="text">
-        <string>获取当前路径</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>过滤</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="Filter_LE_2"/>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <widget class="QScrollArea" name="scrollArea">
-     <property name="widgetResizable">
-      <bool>true</bool>
+    <widget class="QSplitter" name="Splitter">
+     <property name="styleSheet">
+      <string notr="true">font: bold 12pt &quot;Microsoft YaHei&quot;;</string>
      </property>
-     <widget class="QWidget" name="scrollAreaWidgetContents">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>479</width>
-        <height>69</height>
-       </rect>
-      </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="handleWidth">
+      <number>10</number>
+     </property>
+     <widget class="QWidget" name="verticalWidget_2" native="true">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <property name="leftMargin">
+        <number>9</number>
+       </property>
+       <property name="topMargin">
+        <number>9</number>
+       </property>
+       <property name="rightMargin">
+        <number>9</number>
+       </property>
+       <property name="bottomMargin">
+        <number>9</number>
+       </property>
+       <item>
+        <widget class="QGroupBox" name="Align_Container">
+         <property name="title">
+          <string>对齐工具</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <property name="flat">
+          <bool>true</bool>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_3">
+          <item>
+           <widget class="MPushButton" name="Align_BTN">
+            <property name="text">
+             <string>位置对齐</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="Line" name="line_3">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QGridLayout" name="gridLayout">
+            <item row="1" column="1">
+             <widget class="MPushButton" name="C_Align_BTN">
+              <property name="text">
+               <string>居中</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="MPushButton" name="L_Align_BTN">
+              <property name="text">
+               <string>左对齐</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="2">
+             <widget class="MPushButton" name="R_Align_BTN">
+              <property name="text">
+               <string>右对齐</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="MPushButton" name="Dn_Align_BTN">
+              <property name="text">
+               <string>下对齐</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="MPushButton" name="L_Up_Align_BTN">
+              <property name="text">
+               <string>左上对齐</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="MPushButton" name="L_Dn_Align_BTN">
+              <property name="text">
+               <string>左下对齐</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="2">
+             <widget class="MPushButton" name="R_Dn_Align_BTN">
+              <property name="text">
+               <string>右下对齐</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="2">
+             <widget class="MPushButton" name="R_Up_Align_BTN">
+              <property name="text">
+               <string>右上对齐</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="MPushButton" name="Up_Align_BTN">
+              <property name="text">
+               <string>上对齐</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="Align_Container_2">
+         <property name="title">
+          <string>复制工具</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <property name="flat">
+          <bool>true</bool>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_4">
+          <item>
+           <widget class="MPushButton" name="pushButton_24">
+            <property name="text">
+             <string>特殊复制</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="MPushButton" name="pushButton_25">
+            <property name="text">
+             <string>模型替换</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="verticalWidget" native="true">
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>资源路径</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="MLineEdit" name="Content_LE"/>
+         </item>
+         <item>
+          <widget class="MPushButton" name="Content_BTN">
+           <property name="text">
+            <string>获取当前路径</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <item>
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>过滤</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="MLineEdit" name="Filter_LE"/>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QListWidget" name="List_Container">
+         <property name="contextMenuPolicy">
+          <enum>Qt::CustomContextMenu</enum>
+         </property>
+         <property name="textElideMode">
+          <enum>Qt::ElideMiddle</enum>
+         </property>
+         <property name="flow">
+          <enum>QListView::LeftToRight</enum>
+         </property>
+         <property name="isWrapping" stdset="0">
+          <bool>true</bool>
+         </property>
+         <property name="resizeMode">
+          <enum>QListView::Adjust</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </widget>
    </item>
-   <item>
-    <widget class="QGroupBox" name="groupBox">
-     <property name="title">
-      <string>工具</string>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
-      <item>
-       <widget class="QPushButton" name="pushButton_14">
-        <property name="text">
-         <string>同步位置</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="Line" name="line_3">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <layout class="QGridLayout" name="gridLayout">
-        <item row="0" column="1">
-         <widget class="QPushButton" name="pushButton_6">
-          <property name="text">
-           <string>上对齐</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QPushButton" name="pushButton_2">
-          <property name="text">
-           <string>左对齐</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="2">
-         <widget class="QPushButton" name="pushButton_4">
-          <property name="text">
-           <string>右对齐</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QPushButton" name="pushButton_3">
-          <property name="text">
-           <string>居中</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1">
-         <widget class="QPushButton" name="pushButton_7">
-          <property name="text">
-           <string>下对齐</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <widget class="Line" name="line">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="pushButton_5">
-        <property name="text">
-         <string>特殊复制</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
   </layout>
+  <widget class="QMenuBar" name="MenuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>9999</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>9999</width>
+     <height>0</height>
+    </size>
+   </property>
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
+   <property name="defaultUp">
+    <bool>false</bool>
+   </property>
+   <property name="nativeMenuBar">
+    <bool>true</bool>
+   </property>
+   <widget class="QMenu" name="menu">
+    <property name="tearOffEnabled">
+     <bool>true</bool>
+    </property>
+    <property name="title">
+     <string>文件</string>
+    </property>
+    <property name="separatorsCollapsible">
+     <bool>false</bool>
+    </property>
+    <property name="toolTipsVisible">
+     <bool>false</bool>
+    </property>
+    <addaction name="Import_Setting_Action"/>
+    <addaction name="Export_Setting_Action"/>
+    <addaction name="separator"/>
+    <addaction name="Close_Action"/>
+   </widget>
+   <widget class="QMenu" name="menu_2">
+    <property name="tearOffEnabled">
+     <bool>true</bool>
+    </property>
+    <property name="title">
+     <string>帮助</string>
+    </property>
+    <property name="toolTipsVisible">
+     <bool>false</bool>
+    </property>
+    <addaction name="Help_Action"/>
+   </widget>
+   <widget class="QMenu" name="Item_Right_Menu">
+    <property name="tearOffEnabled">
+     <bool>true</bool>
+    </property>
+    <property name="title">
+     <string/>
+    </property>
+    <addaction name="Add_Item_Action"/>
+    <addaction name="Locate_Item_Action"/>
+    <addaction name="Open_Item_Action"/>
+   </widget>
+   <addaction name="menu"/>
+   <addaction name="menu_2"/>
+   <addaction name="Item_Right_Menu"/>
+  </widget>
+  <action name="Help_Action">
+   <property name="text">
+    <string>帮助文档</string>
+   </property>
+  </action>
+  <action name="Import_Setting_Action">
+   <property name="text">
+    <string>读取配置</string>
+   </property>
+  </action>
+  <action name="Export_Setting_Action">
+   <property name="text">
+    <string>导出配置</string>
+   </property>
+  </action>
+  <action name="Close_Action">
+   <property name="text">
+    <string>关闭</string>
+   </property>
+  </action>
+  <action name="Locate_Item_Action">
+   <property name="text">
+    <string>定位资源</string>
+   </property>
+  </action>
+  <action name="Open_Item_Action">
+   <property name="text">
+    <string>打开目录</string>
+   </property>
+  </action>
+  <action name="Add_Item_Action">
+   <property name="text">
+    <string>添加资源</string>
+   </property>
+  </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>MPushButton</class>
+   <extends>QPushButton</extends>
+   <header>dayu_widgets/push_button.h</header>
+  </customwidget>
+  <customwidget>
+   <class>MLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>dayu_widgets/line_edit.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
