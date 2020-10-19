@@ -11,9 +11,9 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
-__author__ = 'timmyliang'
-__email__ = '820472580@qq.com'
-__date__ = '2020-07-14 21:57:32'
+__author__ = "timmyliang"
+__email__ = "820472580@qq.com"
+__date__ = "2020-07-14 21:57:32"
 
 import unreal
 
@@ -81,8 +81,7 @@ def render(sequence_list, i, output_directory="C:/render", output_format="{seque
     option = unreal.AutomatedLevelSequenceCapture()
     option.set_editor_property("use_separate_process", False)
     option.set_editor_property("close_editor_when_capture_starts", False)
-    option.set_editor_property(
-        "additional_command_line_arguments", "-NOSCREENMESSAGES")
+    option.set_editor_property("additional_command_line_arguments", "-NOSCREENMESSAGES")
     option.set_editor_property("inherited_command_line_arguments", "")
     option.set_editor_property("use_custom_start_frame", False)
     option.set_editor_property("use_custom_end_frame", False)
@@ -95,11 +94,11 @@ def render(sequence_list, i, output_directory="C:/render", output_format="{seque
 
     option.set_editor_property("settings", settings)
     option.set_editor_property(
-        "level_sequence_asset", unreal.SoftObjectPath(sequence.get_path_name()))
+        "level_sequence_asset", unreal.SoftObjectPath(sequence.get_path_name())
+    )
 
     # NOTE 设置自定义渲染参数
-    option.set_image_capture_protocol_type(
-        unreal.CompositionGraphCaptureProtocol)
+    option.set_image_capture_protocol_type(unreal.CompositionGraphCaptureProtocol)
     protocol = option.get_image_capture_protocol()
     # NOTE 这里设置 Base Color 渲染 Base Color 通道，可以根据输出的 UI 设置数组名称
     passes = unreal.CompositionGraphCapturePasses(["Base Color"])
@@ -109,15 +108,19 @@ def render(sequence_list, i, output_directory="C:/render", output_format="{seque
     # NOTE 设置全局变量才起作用！
     global on_finished_callback
     on_finished_callback = unreal.OnRenderMovieStopped(
-        lambda s: render(sequence_list, i+1, output_directory, output_format))
+        lambda s: render(sequence_list, i + 1, output_directory, output_format)
+    )
     unreal.SequencerTools.render_movie(option, on_finished_callback)
 
 
 def batch_render(output_directory="C:/render", output_format="{sequence}"):
 
     # NOTE 获取当前选择的 LevelSequence
-    sequence_list = [asset for asset in unreal.EditorUtilityLibrary.get_selected_assets(
-    ) if isinstance(asset, unreal.LevelSequence)]
+    sequence_list = [
+        asset
+        for asset in unreal.EditorUtilityLibrary.get_selected_assets()
+        if isinstance(asset, unreal.LevelSequence)
+    ]
 
     if not sequence_list:
         toast(u"请选择一个 LevelSequence")
@@ -142,7 +145,7 @@ HDRCaptureGamut = {
     "HCGM_LINEAR": unreal.HDRCaptureGamut.HCGM_LINEAR,
     "HCGM_P3DCI": unreal.HDRCaptureGamut.HCGM_P3DCI,
     "HCGM_REC2020": unreal.HDRCaptureGamut.HCGM_REC2020,
-    "HCGM_REC709": unreal.HDRCaptureGamut.HCGM_REC709
+    "HCGM_REC709": unreal.HDRCaptureGamut.HCGM_REC709,
 }
 
 proctocol_dict = {
@@ -151,19 +154,18 @@ proctocol_dict = {
     2: unreal.ImageSequenceProtocol_EXR,
     3: unreal.ImageSequenceProtocol_PNG,
     4: unreal.ImageSequenceProtocol_BMP,
-    5: unreal.VideoCaptureProtocol
+    5: unreal.VideoCaptureProtocol,
 }
 
 
 def read_json():
     DIR = os.path.dirname(os.path.abspath(__file__))
     json_path = posixpath.join(DIR, "config.json")
-    with open(json_path, 'r') as f:
+    with open(json_path, "r") as f:
         return json.load(f)
 
 
 class SequencerRenderTool(QtWidgets.QWidget):
-
     def __init__(self, parent=None):
         super(SequencerRenderTool, self).__init__()
         DIR = os.path.dirname(__file__)
@@ -173,12 +175,17 @@ class SequencerRenderTool(QtWidgets.QWidget):
         name = "%s.ini" % self.__class__.__name__
         self.settings = QtCore.QSettings(name, QtCore.QSettings.IniFormat)
         cb_list = self.settings.value("cb_list")
-        cb_list = cb_list if isinstance(cb_list, list) else [
-            cb_list] if cb_list else []
+        cb_list = cb_list if isinstance(cb_list, list) else [cb_list] if cb_list else []
 
         self.json_config = read_json()
 
-        self.ini_file = posixpath.join(project_dir, "Saved", "Config", "Windows", "EditorPerProjectUserSettings.ini")
+        self.ini_file = posixpath.join(
+            project_dir,
+            "Saved",
+            "Config",
+            "Windows",
+            "EditorPerProjectUserSettings.ini",
+        )
         self.ini_file = self.ini_file if os.path.exists(self.ini_file) else ""
         for cb in self.Pass_Container.findChildren(QtWidgets.QCheckBox):
             if cb.objectName() in cb_list:
@@ -198,13 +205,19 @@ class SequencerRenderTool(QtWidgets.QWidget):
         self.Config_Browse_BTN.clicked.connect(self.browse_file)
         self.Browse_BTN.clicked.connect(self.browse_directory)
         self.Render_BTN.clicked.connect(self.batch_render)
-        self.Locate_BTN.clicked.connect(lambda: os.startfile(self.Output_LE.text(
-        )) if os.path.exists(self.Output_LE.text()) else toast(u"输出目录的路径不存在"))
+        self.Locate_BTN.clicked.connect(
+            lambda: os.startfile(self.Output_LE.text())
+            if os.path.exists(self.Output_LE.text())
+            else toast(u"输出目录的路径不存在")
+        )
         self.Config_BTN.clicked.connect(self.read_config)
 
-        self.Help_Action.triggered.connect(lambda: webbrowser.open_new_tab(
-            'http://wiki.l0v0.com/PyToolkit/#/render/1_render_tool'))
-            
+        self.Help_Action.triggered.connect(
+            lambda: webbrowser.open_new_tab(
+                "http://wiki.l0v0.com/unreal/PyToolkit/#/render/1_render_tool"
+            )
+        )
+
         self.capture_settings = unreal.MovieSceneCaptureSettings()
         self.read_config()
         index = self.settings.value("index")
@@ -212,7 +225,8 @@ class SequencerRenderTool(QtWidgets.QWidget):
 
     def browse_file(self):
         path, _ = QtWidgets.QFileDialog.getOpenFileName(
-            self, caption=u"获取 Unreal 用户配置文件", filter="ini (*.ini);;所有文件 (*)")
+            self, caption=u"获取 Unreal 用户配置文件", filter="ini (*.ini);;所有文件 (*)"
+        )
 
         if not os.path.exists(path):
             toast(u"配置路径不存在")
@@ -225,8 +239,11 @@ class SequencerRenderTool(QtWidgets.QWidget):
         self.Output_LE.setText(directory)
 
     def dump_settings(self):
-        cb_list = [cb.objectName() for cb in self.Pass_Container.findChildren(
-            QtWidgets.QCheckBox) if cb.isChecked()]
+        cb_list = [
+            cb.objectName()
+            for cb in self.Pass_Container.findChildren(QtWidgets.QCheckBox)
+            if cb.isChecked()
+        ]
         index = self.Proctocol_Combo.currentIndex()
         self.settings.setValue("cb_list", cb_list)
         self.settings.setValue("index", index)
@@ -260,26 +277,25 @@ class SequencerRenderTool(QtWidgets.QWidget):
             if not k:
                 continue
             elif k == "output_directory":
-                self.Output_LE.setText(
-                    v[6:-1].replace("\\\\", "\\")) if text else None
+                self.Output_LE.setText(v[6:-1].replace("\\\\", "\\")) if text else None
             elif text and k == "output_format":
                 self.FileName_LE.setText(v[1:-1]) if text else None
-            elif k == 'game_mode_override':
+            elif k == "game_mode_override":
                 if v == "None":
                     continue
-                v = v.split("\"")[1]
+                v = v.split('"')[1]
                 v = unreal.load_class(None, v)
                 self.capture_settings.set_editor_property(k, v)
-            elif k == 'custom_frame_rate':
-                numerator, denominator = v.split(',')
-                numerator = numerator.split('=')[1]
-                denominator = denominator.split('=')[1]
+            elif k == "custom_frame_rate":
+                numerator, denominator = v.split(",")
+                numerator = numerator.split("=")[1]
+                denominator = denominator.split("=")[1]
                 v = unreal.FrameRate(int(numerator), int(denominator))
                 self.capture_settings.set_editor_property(k, v)
-            elif k == 'resolution':
-                x, y = v.split(',')
-                x = x.split('=')[1]
-                y = y.split('=')[1]
+            elif k == "resolution":
+                x, y = v.split(",")
+                x = x.split("=")[1]
+                y = y.split("=")[1]
                 v = unreal.CaptureResolution(int(x), int(y))
                 self.capture_settings.set_editor_property(k, v)
             else:
@@ -292,8 +308,11 @@ class SequencerRenderTool(QtWidgets.QWidget):
 
     def batch_render(self):
         # NOTE 获取当前选择的 LevelSequence
-        sequence_list = [asset for asset in unreal.EditorUtilityLibrary.get_selected_assets(
-        ) if isinstance(asset, unreal.LevelSequence)]
+        sequence_list = [
+            asset
+            for asset in unreal.EditorUtilityLibrary.get_selected_assets()
+            if isinstance(asset, unreal.LevelSequence)
+        ]
 
         if not sequence_list:
             toast(u"请选择一个 \n LevelSequence")
@@ -323,7 +342,8 @@ class SequencerRenderTool(QtWidgets.QWidget):
         path = unreal.DirectoryPath(self.output_directory)
         self.capture_settings.set_editor_property("output_directory", path)
         self.capture_settings.set_editor_property(
-            "output_format", self.FileName_LE.text())
+            "output_format", self.FileName_LE.text()
+        )
 
         index = self.Proctocol_Combo.currentIndex()
         protocol = proctocol_dict.get(index)
@@ -338,11 +358,11 @@ class SequencerRenderTool(QtWidgets.QWidget):
                 capture.set_editor_property("settings", self.capture_settings)
                 continue
             elif attr == "custom_end_frame":
-                pattern = re.compile('(\d+)')
+                pattern = re.compile("(\d+)")
                 num = pattern.search(v).group(0)
                 v = unreal.FrameNumber(int(num))
             elif attr == "custom_start_frame":
-                pattern = re.compile('(\d+)')
+                pattern = re.compile("(\d+)")
                 num = pattern.search(v).group(0)
                 v = unreal.FrameNumber(int(num))
             elif attr == "audio_capture_protocol_type":
@@ -351,10 +371,14 @@ class SequencerRenderTool(QtWidgets.QWidget):
                 pass
             elif attr == "image_capture_protocol_type":
                 capture.set_image_capture_protocol_type(protocol)
-                protocol_name = "MovieSceneCaptureUIInstance_ImageProtocol %s" % protocol.__name__
+                protocol_name = (
+                    "MovieSceneCaptureUIInstance_ImageProtocol %s" % protocol.__name__
+                )
                 print(protocol_name)
                 protocol = capture.get_image_capture_protocol()
-                for pro_name, pro_attr in self.json_config.get(protocol_name, {}).items():
+                for pro_name, pro_attr in self.json_config.get(
+                    protocol_name, {}
+                ).items():
                     if not self.config.has_option(protocol_name, pro_name):
                         continue
                     pro_v = self.config.get(protocol_name, pro_name)
@@ -366,9 +390,13 @@ class SequencerRenderTool(QtWidgets.QWidget):
                         pro_v = unreal.SoftObjectPath(pro_v)
                     elif pro_attr == "include_render_passes":
                         # NOTE 获取勾选的 passes
-                        name_list = [cb.text()
-                                     for cb in self.Pass_Container.findChildren(QtWidgets.QCheckBox)
-                                     if cb.isChecked()]
+                        name_list = [
+                            cb.text()
+                            for cb in self.Pass_Container.findChildren(
+                                QtWidgets.QCheckBox
+                            )
+                            if cb.isChecked()
+                        ]
                         print(name_list)
                         pro_v = unreal.CompositionGraphCapturePasses(name_list)
                     else:
@@ -382,7 +410,7 @@ class SequencerRenderTool(QtWidgets.QWidget):
 
     def render(self, sequence_list, i):
 
-        progress = (i/len(sequence_list))*100
+        progress = (i / len(sequence_list)) * 100
         self.ProgressBar.setValue(progress)
         # NOTE 如果超出数组则退出执行
         if i >= len(sequence_list):
@@ -397,9 +425,11 @@ class SequencerRenderTool(QtWidgets.QWidget):
         sequence = sequence_list[i]
         self.capture = self.setup_capture()
         self.capture.set_editor_property(
-            "level_sequence_asset", unreal.SoftObjectPath(sequence.get_path_name()))
+            "level_sequence_asset", unreal.SoftObjectPath(sequence.get_path_name())
+        )
         on_finished_callback = unreal.OnRenderMovieStopped(
-            lambda s: self.render(sequence_list, i+1))
+            lambda s: self.render(sequence_list, i + 1)
+        )
         unreal.SequencerTools.render_movie(self.capture, on_finished_callback)
 
         # # NOTE 设置过滤

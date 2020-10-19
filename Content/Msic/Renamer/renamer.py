@@ -20,9 +20,9 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
-__author__ = 'timmyliang'
-__email__ = '820472580@qq.com'
-__date__ = '2020-8-22 11:15:26'
+__author__ = "timmyliang"
+__email__ = "820472580@qq.com"
+__date__ = "2020-8-22 11:15:26"
 
 import os
 import re
@@ -41,6 +41,7 @@ from Qt.QtCompat import load_ui, QFileDialog
 from UE_Util import error_log, toast
 from dayu_widgets.item_model import MTableModel, MSortFilterModel
 from dayu_widgets.utils import set_obj_value, get_obj_value
+
 util_lib = unreal.EditorUtilityLibrary()
 asset_lib = unreal.EditorAssetLibrary()
 sys_lib = unreal.SystemLibrary()
@@ -54,19 +55,20 @@ except:
 def get_convention():
     DIR = os.path.dirname(__file__)
     json_path = os.path.join(DIR, "convention.json")
-    with open(json_path, 'r') as f:
-        conventions = json.load(f, encoding='utf-8')
+    with open(json_path, "r") as f:
+        conventions = json.load(f, encoding="utf-8")
     return conventions
 
 
 class ReplaceTemplate(Template):
     def substitute(*args, **kws):
         if not args:
-            raise TypeError("descriptor 'substitute' of 'Template' object "
-                            "needs an argument")
+            raise TypeError(
+                "descriptor 'substitute' of 'Template' object " "needs an argument"
+            )
         self, args = args[0], args[1:]  # allow the "self" keyword be passed
         if len(args) > 1:
-            raise TypeError('Too many positional arguments')
+            raise TypeError("Too many positional arguments")
         if not args:
             mapping = kws
         elif kws:
@@ -77,22 +79,25 @@ class ReplaceTemplate(Template):
 
         def convert(mo):
             # Check the most common path first.
-            named = mo.group('named') or mo.group('braced')
+            named = mo.group("named") or mo.group("braced")
             if named is not None:
                 # NOTE 修正默认 Templete 替换报错
-                default = "%s{%s}" % (self.delimiter, named) if mo.group(
-                    'braced') else "%s%s" % (self.delimiter, named)
+                default = (
+                    "%s{%s}" % (self.delimiter, named)
+                    if mo.group("braced")
+                    else "%s%s" % (self.delimiter, named)
+                )
                 val = mapping.get(named, default)
                 # We use this idiom instead of str() because the latter will
                 # fail if val is a Unicode containing non-ASCII characters.
-                return '%s' % (val,)
-            if mo.group('escaped') is not None:
+                return "%s" % (val,)
+            if mo.group("escaped") is not None:
                 return self.delimiter
-            if mo.group('invalid') is not None:
+            if mo.group("invalid") is not None:
                 return self.delimiter
                 # self._invalid(mo)
-            raise ValueError('Unrecognized named group in pattern',
-                             self.pattern)
+            raise ValueError("Unrecognized named group in pattern", self.pattern)
+
         return self.pattern.sub(convert, self.template)
 
 
@@ -113,32 +118,39 @@ class RenamerWinBase(QtWidgets.QWidget):
         self.Replace_LE.setPlaceholderText(u"输入替换文字")
         self.Export_Setting_Action.triggered.connect(self.export_setting)
         self.Import_Setting_Action.triggered.connect(self.import_setting)
-        self.Help_Action.triggered.connect(lambda: webbrowser.open_new_tab(
-            'http://wiki.l0v0.com/PyToolkit/#/msic/2_renamer'))
-        self.Convention_Action.triggered.connect(lambda: webbrowser.open_new_tab(
-            'https://github.com/Allar/ue4-style-guide'))
+        self.Help_Action.triggered.connect(
+            lambda: webbrowser.open_new_tab(
+                "http://wiki.l0v0.com/unreal/PyToolkit/#/msic/2_renamer"
+            )
+        )
+        self.Convention_Action.triggered.connect(
+            lambda: webbrowser.open_new_tab("https://github.com/Allar/ue4-style-guide")
+        )
 
         # NOTE 隐藏左侧配置项
         self.Splitter.splitterMoved.connect(
-            lambda: self.settings.setValue("splitter_size", self.Splitter.sizes()))
+            lambda: self.settings.setValue("splitter_size", self.Splitter.sizes())
+        )
         splitter_size = self.settings.value("splitter_size")
         self.Splitter.setSizes(
-            [int(i) for i in splitter_size] if splitter_size else [0, 1])
+            [int(i) for i in splitter_size] if splitter_size else [0, 1]
+        )
 
         # NOTE 配置 Header
         self.model = MTableModel()
         self.header_list = [
             {
-                'label': data,
-                'key': data,
-                'bg_color': lambda x, y: y.get('bg_color', QtGui.QColor('transparent')),
-                'tooltip': lambda x, y: y.get('asset').get_path_name(),
-                'edit': lambda x, y: x or y.get('asset').get_name(),
-                'display': lambda x, y: x or y.get('asset').get_name(),
-                'editable': i == 1,
-                'draggable': True,
-                'width': 100,
-            } for i, data in enumerate([u"原名称", u"新名称", u"文件类型"])
+                "label": data,
+                "key": data,
+                "bg_color": lambda x, y: y.get("bg_color", QtGui.QColor("transparent")),
+                "tooltip": lambda x, y: y.get("asset").get_path_name(),
+                "edit": lambda x, y: x or y.get("asset").get_name(),
+                "display": lambda x, y: x or y.get("asset").get_name(),
+                "editable": i == 1,
+                "draggable": True,
+                "width": 100,
+            }
+            for i, data in enumerate([u"原名称", u"新名称", u"文件类型"])
         ]
         self.model.set_header_list(self.header_list)
         self.model_sort = MSortFilterModel()
@@ -151,7 +163,8 @@ class RenamerWinBase(QtWidgets.QWidget):
 
     def export_setting(self):
         path, _ = QFileDialog.getSaveFileName(
-            self, caption=u"输出设置", filter=u"ini (*.ini)")
+            self, caption=u"输出设置", filter=u"ini (*.ini)"
+        )
         if not path:
             return
         copyfile(self.settings.fileName(), path)
@@ -159,7 +172,8 @@ class RenamerWinBase(QtWidgets.QWidget):
 
     def import_setting(self):
         path, _ = QFileDialog.getOpenFileName(
-            self, caption=u"获取设置", filter=u"ini (*.ini)")
+            self, caption=u"获取设置", filter=u"ini (*.ini)"
+        )
         # NOTE 如果文件不存在则返回空
         if not path or not os.path.exists(path):
             return
@@ -251,22 +265,29 @@ class RenamerWinBase(QtWidgets.QWidget):
         if not asset_data:
             return
         data_list = self.model.get_data_list()
-        tooltip_list = [data.get("asset").get_path_name()
-                        for data in data_list]
-        asset_list = [unreal.load_asset(
-            path) for path in asset_data if path not in tooltip_list and asset_lib.does_asset_exist(path)]
+        tooltip_list = [data.get("asset").get_path_name() for data in data_list]
+        asset_list = [
+            unreal.load_asset(path)
+            for path in asset_data
+            if path not in tooltip_list and asset_lib.does_asset_exist(path)
+        ]
 
         if not asset_list:
             return
 
         # NOTE 确保不添加重复的 item
-        data_list.extend([{
-            'bg_color': QtGui.QColor("transparent"),
-            'asset': asset,
-            u"原名称": asset.get_name(),
-            u"新名称": "",
-            u"文件类型": type(asset).__name__,
-        } for asset in asset_list])
+        data_list.extend(
+            [
+                {
+                    "bg_color": QtGui.QColor("transparent"),
+                    "asset": asset,
+                    u"原名称": asset.get_name(),
+                    u"新名称": "",
+                    u"文件类型": type(asset).__name__,
+                }
+                for asset in asset_list
+            ]
+        )
         self.model.set_data_list(data_list)
         self.update_table()
 
@@ -293,23 +314,24 @@ class RenamerWinBase(QtWidgets.QWidget):
         super(RenamerWinBase, self).show()
 
         # NOTE 配置 QGroupBox 的样式
-        self.setStyleSheet(self.styleSheet() + """
+        self.setStyleSheet(
+            self.styleSheet()
+            + """
         QGroupBox{
             border: 0.5px solid black;
             padding-top:10px;
         }
-        """)
+        """
+        )
 
     def update_table(self):
         pass
 
 
 class UERenamerWin(RenamerWinBase):
-
     def __init__(self, parent=None):
         super(UERenamerWin, self).__init__(parent)
-        
-        
+
         # NOTE 设置按钮图标
         style = QtWidgets.QApplication.style()
         icon = style.standardIcon(QtWidgets.QStyle.SP_ArrowUp)
@@ -333,7 +355,7 @@ class UERenamerWin(RenamerWinBase):
         icon = style.standardIcon(QtWidgets.QStyle.SP_BrowserReload)
         self.Update_BTN.setIcon(icon)
         self.Update_Action.setIcon(icon)
-        
+
         self.Get_BTN.clicked.connect(self.add_selected_asset)
         self.Find_BTN.clicked.connect(self.locate_item_location)
         self.Drive_BTN.clicked.connect(self.locate_file_location)
@@ -350,7 +372,7 @@ class UERenamerWin(RenamerWinBase):
 
         self.Rename_BTN.clicked.connect(self.rename)
 
-        # NOTE 添加 delete 键删除 
+        # NOTE 添加 delete 键删除
         self.shortcut = QtWidgets.QShortcut(QtGui.QKeySequence("Del"), self)
         self.shortcut.activated.connect(self.remove_items)
         # self.Update_BTN.clicked.connect(lambda: print(self.settings.fileName()))
@@ -366,7 +388,8 @@ class UERenamerWin(RenamerWinBase):
 
         # NOTE 添加右键菜单
         self.Table_View.customContextMenuRequested.connect(
-            lambda: self.Right_Menu.popup(QtGui.QCursor.pos()))
+            lambda: self.Right_Menu.popup(QtGui.QCursor.pos())
+        )
 
         # NOTE 运行添加 drop event
         self.Table_View.setDragEnabled(True)
@@ -391,7 +414,9 @@ class UERenamerWin(RenamerWinBase):
         data_list = self.model.get_data_list()
         drop_row = self.drop_on(event)
         rows_to_move = []
-        for item in sorted(self.Table_View.selectionModel().selectedRows(), reverse=True):
+        for item in sorted(
+            self.Table_View.selectionModel().selectedRows(), reverse=True
+        ):
             row = item.row()
             rows_to_move.append(data_list.pop(row))
             if row < drop_row:
@@ -426,7 +451,13 @@ class UERenamerWin(RenamerWinBase):
         elif rect.bottom() - pos.y() < margin:
             return True
         # noinspection PyTypeChecker
-        return rect.contains(pos, True) and not (int(self.Table_View.model().flags(index)) & QtCore.Qt.ItemIsDropEnabled) and pos.y() >= rect.center().y()
+        return (
+            rect.contains(pos, True)
+            and not (
+                int(self.Table_View.model().flags(index)) & QtCore.Qt.ItemIsDropEnabled
+            )
+            and pos.y() >= rect.center().y()
+        )
 
     def remove_items(self):
         data_list = self.model.get_data_list()
@@ -446,12 +477,13 @@ class UERenamerWin(RenamerWinBase):
         idx_list = {}
         row_list = [index.row() for index in sorted(indexes, reverse=not up)]
         for row in row_list:
-            idx = row-1 if up else row+1
-            idx = len(data_list)-1 if idx == - \
-                1 else 0 if idx == len(data_list) else idx
+            idx = row - 1 if up else row + 1
+            idx = (
+                len(data_list) - 1 if idx == -1 else 0 if idx == len(data_list) else idx
+            )
             idx_list[row] = idx
 
-        if min(row_list) == 0 or max(row_list) == len(data_list)-1:
+        if min(row_list) == 0 or max(row_list) == len(data_list) - 1:
             # NOTE 数组边界上通过 rotate 进行无缝移动 | https://stackoverflow.com/questions/2150108
             data_list = deque(data_list)
             data_list.rotate(-1 if up else 1)
@@ -471,7 +503,7 @@ class UERenamerWin(RenamerWinBase):
 
     def getAlpha(self, value, capital=False):
         # NOTE 从 DT Advance PyQt 教程 截取下来的代码
-        ''' Convert an integer value to a character. a-z then double, aa-zz etc. '''
+        """ Convert an integer value to a character. a-z then double, aa-zz etc. """
 
         # calculate number of characters required
         #
@@ -484,14 +516,14 @@ class UERenamerWin(RenamerWinBase):
 
         # create alpha representation
         #
-        alphas = ['a'] * base_power
+        alphas = ["a"] * base_power
         for index in range(base_power - 1, -1, -1):
             alphas[index] = chr(97 + (base_index % 26))
             base_index /= 26
 
         if capital:
-            return ''.join(alphas).upper()
-        return ''.join(alphas)
+            return "".join(alphas).upper()
+        return "".join(alphas)
 
     def get_index(self, i):
         index = self.Index_Combo.currentIndex()
@@ -515,8 +547,7 @@ class UERenamerWin(RenamerWinBase):
             var_dict["INDEX"] = self.get_index(i)
 
         if self.ORIGIN_NAME_CB.isChecked():
-            var_dict["ORIGIN_NAME"] = os.path.splitext(
-                os.path.basename(path))[0]
+            var_dict["ORIGIN_NAME"] = os.path.splitext(os.path.basename(path))[0]
 
         if self.MATCH_CB.isChecked():
             var_dict["MATCH"] = replace
@@ -592,10 +623,10 @@ class UERenamerWin(RenamerWinBase):
             except:
                 search = False
             if search and reg.search(name):
-                data[u'新名称'] = "%s%s%s" % (prefix, replace, suffix)
+                data[u"新名称"] = "%s%s%s" % (prefix, replace, suffix)
                 data["bg_color"] = QtGui.QColor("purple")
             else:
-                data[u'新名称'] = "%s%s%s" % (prefix, name, suffix)
+                data[u"新名称"] = "%s%s%s" % (prefix, name, suffix)
                 data["bg_color"] = QtGui.QColor("transparent")
 
         self.model.set_data_list(data_list)
@@ -635,13 +666,13 @@ class UERenamerWin(RenamerWinBase):
 
         data_list = self.model.get_data_list()
         for i, data in enumerate(data_list[:]):
-            asset = data['asset']
+            asset = data["asset"]
             name = asset.get_name()
             path = asset.get_path_name()
             if not asset_lib.does_asset_exist(path):
                 data_list.pop(i)
             else:
-                new_name = data[u'新名称']
+                new_name = data[u"新名称"]
                 if new_name != name:
                     util_lib.rename_asset(asset, new_name)
 
@@ -650,21 +681,28 @@ class UERenamerWin(RenamerWinBase):
 
     def add_selected_asset(self):
         data_list = self.model.get_data_list()
-        tooltip_list = [data.get("asset").get_path_name()
-                        for data in data_list]
-        asset_list = [asset for asset in util_lib.get_selected_assets()
-                      if asset.get_path_name() not in tooltip_list]
+        tooltip_list = [data.get("asset").get_path_name() for data in data_list]
+        asset_list = [
+            asset
+            for asset in util_lib.get_selected_assets()
+            if asset.get_path_name() not in tooltip_list
+        ]
         if not asset_list:
             toast(u"没有找到\n不重复的资产")
             return
         # NOTE 确保不添加重复的 item
-        data_list.extend([{
-            'bg_color': QtGui.QColor("transparent"),
-            'asset': asset,
-            u"原名称": asset.get_name(),
-            u"新名称": "",
-            u"文件类型": type(asset).__name__,
-        } for asset in asset_list])
+        data_list.extend(
+            [
+                {
+                    "bg_color": QtGui.QColor("transparent"),
+                    "asset": asset,
+                    u"原名称": asset.get_name(),
+                    u"新名称": "",
+                    u"文件类型": type(asset).__name__,
+                }
+                for asset in asset_list
+            ]
+        )
         self.update_table()
         self.model.set_data_list(data_list)
 
