@@ -167,9 +167,9 @@ def handle_menu(data):
         name = init.get("name", entry_name)
         label = init.get("label", "")
         tooltip = init.get("tooltip", "")
-        menu = menu.add_sub_menu(
+        sub_menu = menu.add_sub_menu(
             owner, section_name, name, label, tooltip)
-        config.setdefault('menu', menu)
+        config.setdefault('menu', sub_menu)
         handle_menu(config)
 
 
