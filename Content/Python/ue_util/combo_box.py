@@ -7,30 +7,33 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
-__author__ = 'timmyliang'
-__email__ = '820472580@qq.com'
-__date__ = '2020-07-18 21:09:23'
+__author__ = "timmyliang"
+__email__ = "820472580@qq.com"
+__date__ = "2020-07-18 21:09:23"
 
 from Qt import QtCore, QtWidgets, QtGui
 from dayu_widgets.combo_box import MComboBox
 from dayu_widgets.mixin import property_mixin, cursor_mixin, focus_shadow_mixin
+
 # class TComboBox(QtWidgets.QComboBox):
 from dayu_widgets import dayu_theme
 
+
 @property_mixin
 class MCompleter(QtWidgets.QCompleter):
-    def __init__(self,parent=None):
+    def __init__(self, parent=None):
         super(MCompleter, self).__init__(parent)
         dayu_theme.apply(self.popup())
         # popup.setStyleSheet(popup.styleSheet() + """
         # border: 0.5px solid black;
         # """)
 
+
 class TComboBox(MComboBox):
 
     popup = QtCore.Signal()
 
-    def __init__(self,  parent=None):
+    def __init__(self, parent=None):
         super(TComboBox, self).__init__(parent)
 
         self.setFocusPolicy(QtCore.Qt.StrongFocus)
@@ -38,8 +41,7 @@ class TComboBox(MComboBox):
         self.completer = MCompleter(self)
 
         # always show all completions
-        self.completer.setCompletionMode(
-            QtWidgets.QCompleter.UnfilteredPopupCompletion)
+        self.completer.setCompletionMode(QtWidgets.QCompleter.UnfilteredPopupCompletion)
         self.pFilterModel = QtCore.QSortFilterProxyModel(self)
         self.pFilterModel.setFilterCaseSensitivity(QtCore.Qt.CaseInsensitive)
         self.pFilterModel.setSourceModel(QtGui.QStandardItemModel())
@@ -52,8 +54,7 @@ class TComboBox(MComboBox):
         edit.setReadOnly(False)
         # NOTE 取消按 Enter 生成新 item 的功能
         edit.returnPressed.disconnect()
-        edit.textEdited[unicode].connect(
-            self.pFilterModel.setFilterFixedString)
+        edit.textEdited.connect(self.pFilterModel.setFilterFixedString)
         self.completer.activated.connect(self.setTextIfCompleterIsClicked)
 
     def clear(self):

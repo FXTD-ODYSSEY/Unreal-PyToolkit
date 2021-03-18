@@ -147,7 +147,7 @@
   <customwidget>
    <class>TComboBox</class>
    <extends>QComboBox</extends>
-   <header>UE_Util.h</header>
+   <header>ue_util.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

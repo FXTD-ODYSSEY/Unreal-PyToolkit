@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>553</width>
-    <height>572</height>
+    <width>934</width>
+    <height>552</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -31,154 +31,514 @@
      <widget class="QWidget" name="verticalWidget_2" native="true">
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <property name="leftMargin">
-        <number>9</number>
+        <number>0</number>
        </property>
        <property name="topMargin">
-        <number>9</number>
+        <number>0</number>
        </property>
        <property name="rightMargin">
-        <number>9</number>
+        <number>0</number>
        </property>
        <property name="bottomMargin">
-        <number>9</number>
+        <number>0</number>
        </property>
        <item>
-        <widget class="QGroupBox" name="Align_Container">
-         <property name="title">
-          <string>对齐工具</string>
+        <widget class="MTabWidget" name="tabWidget">
+         <property name="tabPosition">
+          <enum>QTabWidget::North</enum>
          </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
+         <property name="tabShape">
+          <enum>QTabWidget::Rounded</enum>
          </property>
-         <property name="flat">
-          <bool>true</bool>
+         <property name="currentIndex">
+          <number>0</number>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_3">
-          <item>
-           <widget class="MPushButton" name="Align_BTN">
-            <property name="text">
-             <string>位置对齐</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="Line" name="line_3">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <layout class="QGridLayout" name="gridLayout">
-            <item row="1" column="1">
-             <widget class="MPushButton" name="C_Align_BTN">
-              <property name="text">
-               <string>居中</string>
+         <property name="documentMode">
+          <bool>false</bool>
+         </property>
+         <property name="movable">
+          <bool>false</bool>
+         </property>
+         <widget class="QWidget" name="tab_1">
+          <attribute name="title">
+           <string>对齐功能</string>
+          </attribute>
+          <layout class="QVBoxLayout" name="verticalLayout_5">
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QScrollArea" name="scrollArea">
+             <property name="minimumSize">
+              <size>
+               <width>400</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="frameShape">
+              <enum>QFrame::NoFrame</enum>
+             </property>
+             <property name="horizontalScrollBarPolicy">
+              <enum>Qt::ScrollBarAsNeeded</enum>
+             </property>
+             <property name="widgetResizable">
+              <bool>true</bool>
+             </property>
+             <widget class="QWidget" name="scrollAreaWidgetContents">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>460</width>
+                <height>483</height>
+               </rect>
               </property>
+              <layout class="QVBoxLayout" name="verticalLayout_7">
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="rightMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="QWidget" name="Align_Container" native="true">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <layout class="QVBoxLayout" name="verticalLayout_3">
+                  <item>
+                   <widget class="QWidget" name="Actor_Container" native="true">
+                    <layout class="QHBoxLayout" name="horizontalLayout_6">
+                     <item>
+                      <widget class="QLabel" name="label_3">
+                       <property name="text">
+                        <string>对齐物体</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="MLineEdit" name="Align_LE"/>
+                     </item>
+                     <item>
+                      <widget class="MPushButton" name="Align_Pick_BTN">
+                       <property name="text">
+                        <string>获取场景选择</string>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="MPushButton" name="Align_BTN">
+                    <property name="text">
+                     <string>选择物体 - 位置吸附</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="MPushButton" name="AlignToActor_BTN">
+                    <property name="text">
+                     <string>选择物体 - 位置对齐</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="MPushButton" name="AlignPivotToActor_BTN">
+                    <property name="text">
+                     <string>选择物体 - 枢轴对齐</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="Line" name="line">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="MPushButton" name="SnapOriginToGrid_BTN">
+                    <property name="text">
+                     <string>将原点对齐到网格 (Ctrl + End)</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="MPushButton" name="SnapOriginToGridPerActor_BTN">
+                    <property name="text">
+                     <string>将每个 Actor 的原点对齐到网格</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="MPushButton" name="AlignOriginToGrid_BTN">
+                    <property name="text">
+                     <string>将原点和网格对齐</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="MPushButton" name="SnapToFloor_BTN">
+                    <property name="text">
+                     <string>对齐到地面 (End)</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="MPushButton" name="SnapPivotToFloor_BTN">
+                    <property name="text">
+                     <string>将枢轴对齐到地面 (Alt + End)</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="MPushButton" name="SnapBottomCenterBoundsToFloor_BTN">
+                    <property name="text">
+                     <string>将底部中心边界和地面对齐(Shift + End)</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="Line" name="line_3">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="MPushButton" name="AttachSelectedActors_BTN">
+                    <property name="text">
+                     <string>设置父子关系(Alt + B)</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="verticalSpacer_2">
+                    <property name="orientation">
+                     <enum>Qt::Vertical</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>20</width>
+                      <height>40</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+              </layout>
              </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="MPushButton" name="L_Align_BTN">
-              <property name="text">
-               <string>左对齐</string>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="tab_2">
+          <attribute name="title">
+           <string>变换 - 选择</string>
+          </attribute>
+          <layout class="QVBoxLayout" name="verticalLayout_6">
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QScrollArea" name="scrollArea_2">
+             <property name="frameShape">
+              <enum>QFrame::NoFrame</enum>
+             </property>
+             <property name="widgetResizable">
+              <bool>true</bool>
+             </property>
+             <widget class="QWidget" name="scrollAreaWidgetContents_2">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>460</width>
+                <height>483</height>
+               </rect>
               </property>
+              <layout class="QVBoxLayout" name="verticalLayout_8">
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="rightMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="QGroupBox" name="Align_Container_2">
+                 <property name="title">
+                  <string>变换</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                 <property name="flat">
+                  <bool>true</bool>
+                 </property>
+                 <layout class="QVBoxLayout" name="verticalLayout_4">
+                  <item>
+                   <layout class="QHBoxLayout" name="horizontalLayout_5">
+                    <item>
+                     <widget class="QLabel" name="label_4">
+                      <property name="text">
+                       <string>X</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="MSpinBox" name="TransformX_SB">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="minimum">
+                       <number>-99999</number>
+                      </property>
+                      <property name="maximum">
+                       <number>99999</number>
+                      </property>
+                      <property name="singleStep">
+                       <number>1</number>
+                      </property>
+                      <property name="value">
+                       <number>0</number>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QLabel" name="label_5">
+                      <property name="text">
+                       <string>Y</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="MSpinBox" name="TransformY_SB">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="minimum">
+                       <number>-99999</number>
+                      </property>
+                      <property name="maximum">
+                       <number>99999</number>
+                      </property>
+                      <property name="singleStep">
+                       <number>1</number>
+                      </property>
+                      <property name="value">
+                       <number>0</number>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QLabel" name="label_6">
+                      <property name="text">
+                       <string>Z</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="MSpinBox" name="TransformZ_SB">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="minimum">
+                       <number>-99999</number>
+                      </property>
+                      <property name="maximum">
+                       <number>99999</number>
+                      </property>
+                      <property name="singleStep">
+                       <number>1</number>
+                      </property>
+                      <property name="value">
+                       <number>0</number>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </item>
+                  <item>
+                   <widget class="MPushButton" name="Transform_BTN">
+                    <property name="text">
+                     <string>差量变换</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <layout class="QHBoxLayout" name="horizontalLayout_2">
+                    <item>
+                     <widget class="MRadioButton" name="MirrorActorX_RB">
+                      <property name="text">
+                       <string>X 轴</string>
+                      </property>
+                      <property name="checked">
+                       <bool>true</bool>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="MRadioButton" name="MirrorActorY_RB">
+                      <property name="text">
+                       <string>Y 轴</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="MRadioButton" name="MirrorActorZ_RB">
+                      <property name="text">
+                       <string>Z 轴</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="MPushButton" name="MirrorActor_BTN">
+                      <property name="text">
+                       <string>镜像轴向</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </item>
+                  <item>
+                   <widget class="MPushButton" name="LockActorMovement_BTN">
+                    <property name="text">
+                     <string>切换 - 锁定Actor运动</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+               <item>
+                <widget class="QGroupBox" name="Align_Container_3">
+                 <property name="title">
+                  <string>选择</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                 <property name="flat">
+                  <bool>true</bool>
+                 </property>
+                 <layout class="QVBoxLayout" name="verticalLayout_9">
+                  <item>
+                   <widget class="MPushButton" name="SelectAll_BTN">
+                    <property name="text">
+                     <string>选择所有 (Ctrl + A)</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="MPushButton" name="SelectNone_BTN">
+                    <property name="text">
+                     <string>取消选择 (Escape)</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="MPushButton" name="InvertSelection_BTN">
+                    <property name="text">
+                     <string>反向选择</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="MPushButton" name="SelectImmediateChildren_BTN">
+                    <property name="text">
+                     <string>选择直接子项 (Ctrl + Alt + D)</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="MPushButton" name="SelectAllDescendants_BTN">
+                    <property name="text">
+                     <string>选择所有后代 (Ctrl + Shift + D)</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="MPushButton" name="SelectRelevantLights_BTN">
+                    <property name="text">
+                     <string>选择相关光源</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="MPushButton" name="SelectAllWithSameMaterial_BTN">
+                    <property name="text">
+                     <string>选择所有拥有相同材质的项</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+               <item>
+                <spacer name="verticalSpacer">
+                 <property name="orientation">
+                  <enum>Qt::Vertical</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>20</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
              </widget>
-            </item>
-            <item row="1" column="2">
-             <widget class="MPushButton" name="R_Align_BTN">
-              <property name="text">
-               <string>右对齐</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <widget class="MPushButton" name="Dn_Align_BTN">
-              <property name="text">
-               <string>下对齐</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0">
-             <widget class="MPushButton" name="L_Up_Align_BTN">
-              <property name="text">
-               <string>左上对齐</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0">
-             <widget class="MPushButton" name="L_Dn_Align_BTN">
-              <property name="text">
-               <string>左下对齐</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="2">
-             <widget class="MPushButton" name="R_Dn_Align_BTN">
-              <property name="text">
-               <string>右下对齐</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="2">
-             <widget class="MPushButton" name="R_Up_Align_BTN">
-              <property name="text">
-               <string>右上对齐</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="MPushButton" name="Up_Align_BTN">
-              <property name="text">
-               <string>上对齐</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-         </layout>
+            </widget>
+           </item>
+          </layout>
+         </widget>
         </widget>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="Align_Container_2">
-         <property name="title">
-          <string>复制工具</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-         <property name="flat">
-          <bool>true</bool>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout_4">
-          <item>
-           <widget class="MPushButton" name="pushButton_24">
-            <property name="text">
-             <string>特殊复制</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="MPushButton" name="pushButton_25">
-            <property name="text">
-             <string>模型替换</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
        </item>
       </layout>
      </widget>
@@ -273,24 +633,6 @@
    <property name="nativeMenuBar">
     <bool>true</bool>
    </property>
-   <widget class="QMenu" name="menu">
-    <property name="tearOffEnabled">
-     <bool>true</bool>
-    </property>
-    <property name="title">
-     <string>文件</string>
-    </property>
-    <property name="separatorsCollapsible">
-     <bool>false</bool>
-    </property>
-    <property name="toolTipsVisible">
-     <bool>false</bool>
-    </property>
-    <addaction name="Import_Setting_Action"/>
-    <addaction name="Export_Setting_Action"/>
-    <addaction name="separator"/>
-    <addaction name="Close_Action"/>
-   </widget>
    <widget class="QMenu" name="menu_2">
     <property name="tearOffEnabled">
      <bool>true</bool>
@@ -314,7 +656,6 @@
     <addaction name="Locate_Item_Action"/>
     <addaction name="Open_Item_Action"/>
    </widget>
-   <addaction name="menu"/>
    <addaction name="menu_2"/>
    <addaction name="Item_Right_Menu"/>
   </widget>
@@ -356,14 +697,30 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>MLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>dayu_widgets/line_edit.h</header>
+  </customwidget>
+  <customwidget>
    <class>MPushButton</class>
    <extends>QPushButton</extends>
    <header>dayu_widgets/push_button.h</header>
   </customwidget>
   <customwidget>
-   <class>MLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>dayu_widgets/line_edit.h</header>
+   <class>MSpinBox</class>
+   <extends>QSpinBox</extends>
+   <header>dayu_widgets/spin_box.h</header>
+  </customwidget>
+  <customwidget>
+   <class>MRadioButton</class>
+   <extends>QRadioButton</extends>
+   <header>dayu_widgets/radio_button.h</header>
+  </customwidget>
+  <customwidget>
+   <class>MTabWidget</class>
+   <extends>QTabWidget</extends>
+   <header>dayu_widgets/tab_widget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

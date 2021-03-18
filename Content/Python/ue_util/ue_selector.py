@@ -7,17 +7,18 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
-__author__ = 'timmyliang'
-__email__ = '820472580@qq.com'
-__date__ = '2020-07-18 21:09:23'
+__author__ = "timmyliang"
+__email__ = "820472580@qq.com"
+__date__ = "2020-07-18 21:09:23"
 
 
-from UE_Util import toast
+from ue_util import toast
 from Qt import QtCore, QtWidgets, QtGui
 from Qt.QtCompat import loadUi
 import unreal
 import sys
 import os
+
 MODULE = os.path.dirname(__file__)
 sys.path.insert(0, MODULE) if MODULE not in sys.path else None
 
@@ -49,7 +50,8 @@ class USelector(QtWidgets.QWidget):
         self.UGet.clicked.connect(self.get_asset)
         self.UFind.clicked.connect(self.sync_asset)
         self.UClear.clicked.connect(
-            lambda: self.USelector.setCurrentIndex(self.USelector.count()-1))
+            lambda: self.USelector.setCurrentIndex(self.USelector.count() - 1)
+        )
 
         # TODO 无法获取 thunmnail 暂时隐藏
         self.UThumbnail.hide()
@@ -60,8 +62,9 @@ class USelector(QtWidgets.QWidget):
 
     @class_filter.setter
     def class_filter(self, filter):
-        self._class_filter = filter if isinstance(filter, list) else [
-            filter] if filter else []
+        self._class_filter = (
+            filter if isinstance(filter, list) else [filter] if filter else []
+        )
         if self._class_filter:
             self.list_asset()
 
@@ -89,12 +92,17 @@ class USelector(QtWidgets.QWidget):
         return assets_path
 
     def get_asset(self):
-        selected_asset = [a for a in unreal.EditorUtilityLibrary.get_selected_assets(
-        ) for cls_type in self.class_filter if isinstance(a, cls_type)]
+        selected_asset = [
+            a
+            for a in unreal.EditorUtilityLibrary.get_selected_assets()
+            for cls_type in self.class_filter
+            if isinstance(a, cls_type)
+        ]
 
         if not selected_asset:
-            toast(u'请选择下列类型\n %s' % (
-                "\n".join([c.__name__ for c in self.class_filter])))
+            toast(
+                u"请选择下列类型\n %s" % ("\n".join([c.__name__ for c in self.class_filter]))
+            )
             return
 
         selected_asset = selected_asset[0]
@@ -109,11 +117,11 @@ class USelector(QtWidgets.QWidget):
         path = self.USelector.currentText()
         unreal.EditorAssetLibrary.sync_browser_to_objects([path])
 
-
     def get_path(self):
         text = self.USelector.currentText()
         return None if text == "None" else text
-    
+
+
 def main():
     selector = USelector(class_filter=[unreal.Material])
     selector.show()

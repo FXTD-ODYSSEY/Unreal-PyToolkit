@@ -34,7 +34,7 @@ except:
 
 from Qt.QtCompat import loadUi
 from Qt import QtCore, QtWidgets, QtGui
-from UE_Util import toast, alert
+from ue_util import toast, alert
 
 
 sys_lib = unreal.SystemLibrary()

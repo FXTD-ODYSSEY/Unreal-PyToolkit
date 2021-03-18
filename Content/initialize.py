@@ -65,7 +65,6 @@ MENU_TYPE = {
     "MENU": unreal.MultiBoxType.MENU,
     "MENU_BAR": unreal.MultiBoxType.MENU_BAR,
     "TOOL_BAR": unreal.MultiBoxType.TOOL_BAR,
-    "TOOL_MENU_BAR": unreal.MultiBoxType.TOOL_MENU_BAR,
     "UNIFORM_TOOL_BAR": unreal.MultiBoxType.UNIFORM_TOOL_BAR,
     "VERTICAL_TOOL_BAR": unreal.MultiBoxType.VERTICAL_TOOL_BAR,
 }
@@ -75,11 +74,9 @@ ENTRY_TYPE = {
     "EDITABLE_TEXT": unreal.MultiBlockType.EDITABLE_TEXT,
     "HEADING": unreal.MultiBlockType.HEADING,
     "MENU_ENTRY": unreal.MultiBlockType.MENU_ENTRY,
-    "MENU_SEPARATOR": unreal.MultiBlockType.MENU_SEPARATOR,
     "NONE": unreal.MultiBlockType.NONE,
     "TOOL_BAR_BUTTON": unreal.MultiBlockType.TOOL_BAR_BUTTON,
     "TOOL_BAR_COMBO_BUTTON": unreal.MultiBlockType.TOOL_BAR_COMBO_BUTTON,
-    "TOOL_BAR_SEPARATOR": unreal.MultiBlockType.TOOL_BAR_SEPARATOR,
     "WIDGET": unreal.MultiBlockType.WIDGET,
 }
 

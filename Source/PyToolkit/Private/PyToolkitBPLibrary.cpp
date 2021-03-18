@@ -346,4 +346,76 @@ TArray<uint8> UPyToolkitBPLibrary::GetThumbnial(UObject* MeshObject,int32 _image
 	return _objectThumnail.GetUncompressedImageData();
 }
 
+bool UPyToolkitBPLibrary::ExecLevelEditorAction(FString Action)
+{
+    FLevelEditorModule &LevelEditorModule = FModuleManager::GetModuleChecked<FLevelEditorModule>(TEXT("LevelEditor"));
+    auto Actions = LevelEditorModule.GetGlobalLevelEditorActions();
+    auto Commands = LevelEditorModule.GetLevelEditorCommands();
+
+    TMap<FString, TSharedPtr<FUICommandInfo>> ActionMap;
+
+    ActionMap.Add("SaveAs", Commands.SaveAs);
+
+    // Ctrl + E
+    ActionMap.Add("EditAsset", Commands.EditAsset);
+    // Ctrl + shift +  E
+    ActionMap.Add("EditAssetNoConfirmMultiple", Commands.EditAssetNoConfirmMultiple);
+
+    // Ctrl + End
+    ActionMap.Add("SnapOriginToGrid", Commands.SnapOriginToGrid);
+    ActionMap.Add("SnapOriginToGridPerActor", Commands.SnapOriginToGridPerActor);
+    ActionMap.Add("AlignOriginToGrid", Commands.AlignOriginToGrid);
+    // Ctrl + Space
+    ActionMap.Add("SnapTo2DLayer", Commands.SnapTo2DLayer);
+    // End
+    ActionMap.Add("SnapToFloor", Commands.SnapToFloor);
+    ActionMap.Add("AlignToFloor", Commands.AlignToFloor);
+    // Alt + End
+    ActionMap.Add("SnapPivotToFloor", Commands.SnapPivotToFloor);
+    ActionMap.Add("AlignPivotToFloor", Commands.AlignPivotToFloor);
+    // Shift + End
+    ActionMap.Add("SnapBottomCenterBoundsToFloor", Commands.SnapBottomCenterBoundsToFloor);
+    ActionMap.Add("AlignBottomCenterBoundsToFloor", Commands.AlignBottomCenterBoundsToFloor);
+
+    ActionMap.Add("DeltaTransformToActors", Commands.DeltaTransformToActors);
+    ActionMap.Add("MirrorActorX", Commands.MirrorActorX);
+    ActionMap.Add("MirrorActorY", Commands.MirrorActorY);
+    ActionMap.Add("MirrorActorZ", Commands.MirrorActorZ);
+    ActionMap.Add("LockActorMovement", Commands.LockActorMovement);
+    // alt + B
+    ActionMap.Add("AttachSelectedActors", Commands.AttachSelectedActors);
+
+    ActionMap.Add("SavePivotToPrePivot", Commands.SavePivotToPrePivot);
+    ActionMap.Add("ResetPrePivot", Commands.ResetPrePivot);
+    ActionMap.Add("ResetPivot", Commands.ResetPivot);
+    ActionMap.Add("MovePivotHereSnapped", Commands.MovePivotHereSnapped);
+    ActionMap.Add("MovePivotToCenter", Commands.MovePivotToCenter);
+
+    ActionMap.Add("AlignToActor", Commands.AlignToActor);
+    ActionMap.Add("AlignPivotToActor", Commands.AlignPivotToActor);
+
+    ActionMap.Add("SelectAll", FGenericCommands::Get().SelectAll);
+    // Escape
+    ActionMap.Add("SelectNone", Commands.SelectNone);
+    ActionMap.Add("InvertSelection", Commands.InvertSelection);
+    // Ctrl + Alt + D
+    ActionMap.Add("SelectImmediateChildren", Commands.SelectImmediateChildren);
+    // Ctrl + Shift + D
+    ActionMap.Add("SelectAllDescendants", Commands.SelectAllDescendants);
+
+    ActionMap.Add("SelectRelevantLights", Commands.SelectRelevantLights);
+    ActionMap.Add("SelectAllWithSameMaterial", Commands.SelectAllWithSameMaterial);
+
+    // SLayersView.h
+    bool Available = ActionMap.Contains(Action);
+    if (Available)
+    {
+        auto ActionPtr = ActionMap[Action].ToSharedRef();
+        Available = Actions->CanExecuteAction(ActionPtr);
+        if (Available)
+            Actions->ExecuteAction(ActionPtr);
+    }
+    return Available;
+}
+
 #pragma endregion

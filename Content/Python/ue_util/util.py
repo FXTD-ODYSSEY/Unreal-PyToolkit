@@ -26,3 +26,11 @@ def list_menu(num=1000):
             menu_list.add(menu_name)
     return list(menu_list)
     
+def unreal_progress(tasks,label =u"进度"):
+    with unreal.ScopedSlowTask(len(tasks), label) as task:
+        task.make_dialog(True)
+        for i, item in enumerate(tasks):
+            if task.should_cancel():
+                break
+            task.enter_progress_frame(1, "%s %s/%s" % (label,i, len(tasks)))
+            yield i, item

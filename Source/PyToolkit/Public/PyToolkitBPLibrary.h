@@ -8,7 +8,7 @@
 #include "UnrealEd/Public/Subsystems/AssetEditorSubsystem.h"
 #include "UnrealEd/Public/Toolkits/AssetEditorManager.h"
 #include "Runtime/LevelSequence/Public/LevelSequence.h"
-#include "SequencerScripting/Private/SequencerBindingProxy.h"
+//#include "SequencerScripting/Private/SequencerBindingProxy.h"
 #include "Editor/Sequencer/Public/ISequencer.h"
 #include "Editor/Sequencer/Public/IKeyArea.h"
 
@@ -22,7 +22,6 @@
 #include "Developer/AssetTools/Public/AssetToolsModule.h"
 #include "UnrealEd/Public/PackageTools.h"
 
-
 #include "Engine/SkeletalMeshSocket.h"
 #include "Runtime/Engine/Classes/Animation/Skeleton.h"
 #include "Editor/SkeletonEditor/Private/SkeletonTreeManager.h"
@@ -32,7 +31,7 @@
 
 #include "Runtime/Core/Public/Misc/ConfigCacheIni.h"
 //PublicDependencyModuleNames-> "UnrealEd"
-#include "Editor/UnrealEd/Public/Editor.h" 
+#include "Editor/UnrealEd/Public/Editor.h"
 #include "Editor/UnrealEd/Public/Toolkits/AssetEditorManager.h"
 #include "Editor/UnrealEd/Public/LevelEditorViewport.h"
 // PublicDependencyModuleNames -> "ContentBrowser"
@@ -42,8 +41,10 @@
 #include "Runtime/AssetRegistry/Public/AssetRegistryModule.h"
 // PublicDependencyModuleNames -> "PythonScriptPlugin" && "Python"
 
-#include "PyToolkitBPLibrary.generated.h"
 
+#include "Framework/Commands/GenericCommands.h"
+
+#include "PyToolkitBPLibrary.generated.h"
 
 /*
 *	Function library class.
@@ -67,40 +68,40 @@ class UPyToolkitBPLibrary : public UBlueprintFunctionLibrary
 {
 	GENERATED_UCLASS_BODY()
 
-		//UFUNCTION(BlueprintCallable, meta = (DisplayName = "Execute Sample function", Keywords = "PyToolkit sample test testing"), Category = "PyToolkitTesting")
-		//static float PyToolkitSampleFunction(float Param);
+	//UFUNCTION(BlueprintCallable, meta = (DisplayName = "Execute Sample function", Keywords = "PyToolkit sample test testing"), Category = "PyToolkitTesting")
+	//static float PyToolkitSampleFunction(float Param);
 
-	#pragma region UnrealPythonLibrary
+#pragma region UnrealPythonLibrary
 	// copy from https://github.com/AlexQuevillon/UnrealPythonLibrary
-	UFUNCTION(BlueprintCallable, Category = "Unreal Python")
-		static TArray<FString> GetAllProperties(UClass* Class);
+	UFUNCTION(BlueprintCallable, Category = "PyToolkit|Lib")
+	static TArray<FString> GetAllProperties(UClass *Class);
 
-	UFUNCTION(BlueprintCallable, Category = "Unreal Python")
-		static TArray<FString> GetSelectedFolders();
+	UFUNCTION(BlueprintCallable, Category = "PyToolkit|Lib")
+	static TArray<FString> GetSelectedFolders();
 
-	UFUNCTION(BlueprintCallable, Category = "Unreal Python")
-		static void SetSelectedAssets(TArray<FString> Paths);
+	UFUNCTION(BlueprintCallable, Category = "PyToolkit|Lib")
+	static void SetSelectedAssets(TArray<FString> Paths);
 
-	UFUNCTION(BlueprintCallable, Category = "Unreal Python")
-		static void SetSelectedFolders(TArray<FString> Paths);
+	UFUNCTION(BlueprintCallable, Category = "PyToolkit|Lib")
+	static void SetSelectedFolders(TArray<FString> Paths);
 
-	UFUNCTION(BlueprintCallable, Category = "Unreal Python")
-		static void CloseEditorForAssets(TArray<UObject*> Assets);
+	UFUNCTION(BlueprintCallable, Category = "PyToolkit|Lib")
+	static void CloseEditorForAssets(TArray<UObject *> Assets);
 
-	UFUNCTION(BlueprintCallable, Category = "Unreal Python")
-		static TArray<UObject*> GetAssetsOpenedInEditor();
+	UFUNCTION(BlueprintCallable, Category = "PyToolkit|Lib")
+	static TArray<UObject *> GetAssetsOpenedInEditor();
 
-	UFUNCTION(BlueprintCallable, Category = "Unreal Python")
-		static void SetFolderColor(FString FolderPath, FLinearColor Color);
+	UFUNCTION(BlueprintCallable, Category = "PyToolkit|Lib")
+	static void SetFolderColor(FString FolderPath, FLinearColor Color);
 
-	UFUNCTION(BlueprintCallable, Category = "Unreal Python")
-		static void SetViewportLocationAndRotation(int ViewportIndex, FVector Location, FRotator Rotation);
-	
-	UFUNCTION(BlueprintCallable, Category = "Unreal Python")
-		static int GetActiveViewportIndex();
-	#pragma endregion
+	UFUNCTION(BlueprintCallable, Category = "PyToolkit|Lib")
+	static void SetViewportLocationAndRotation(int ViewportIndex, FVector Location, FRotator Rotation);
 
-	#pragma region SequencerAPI
+	UFUNCTION(BlueprintCallable, Category = "PyToolkit|Lib")
+	static int GetActiveViewportIndex();
+#pragma endregion
+
+#pragma region SequencerAPI
 
 	UFUNCTION(BlueprintCallable, Category = "PyToolkit|SequencerAPI")
 	static ULevelSequence *GetSequencerSequence();
@@ -112,39 +113,43 @@ class UPyToolkitBPLibrary : public UBlueprintFunctionLibrary
 	static TArray<UMovieSceneTrack *> GetSequencerSelectedTracks(ULevelSequence *LevelSeq);
 
 	UFUNCTION(BlueprintCallable, Category = "PyToolkit|SequencerAPI")
-	static TSet<UMovieSceneSection*> GetSequencerSelectedSections(ULevelSequence *LevelSeq);
+	static TSet<UMovieSceneSection *> GetSequencerSelectedSections(ULevelSequence *LevelSeq);
 
 	UFUNCTION(BlueprintCallable, Category = "PyToolkit|SequencerAPI")
-	static TMap<UMovieSceneSection *,FString> GetSequencerSelectedChannels(ULevelSequence *LevelSeq);
+	static TMap<UMovieSceneSection *, FString> GetSequencerSelectedChannels(ULevelSequence *LevelSeq);
 
-	#pragma endregion
+#pragma endregion
 
-	#pragma region SocketAPI
+#pragma region SocketAPI
+	UFUNCTION(BlueprintCallable, Category = "PyToolkit|Socket")
+	static USkeletalMeshSocket *AddSkeletalMeshSocket(USkeleton *InSkeleton, FName InBoneName);
+
+	UFUNCTION(BlueprintCallable, Category = "PyToolkit|Socket")
+	static void DeleteSkeletalMeshSocket(USkeleton *InSkeleton, TArray<USkeletalMeshSocket *> SocketList);
+
+	UFUNCTION(BlueprintCallable, Category = "PyToolkit|Socket")
+	static int32 GetSkeletonBoneNum(USkeleton *InSkeleton);
+
+	UFUNCTION(BlueprintCallable, Category = "PyToolkit|Socket")
+	static FName GetSkeletonBoneName(USkeleton *InSkeleton, int32 BoneIndex);
+#pragma endregion
+
+#pragma region Msic
+
+	UFUNCTION(BlueprintCallable, Category = "PyToolkit|Msic")
+	static bool ExecLevelEditorAction(FString Action);
+
+	UFUNCTION(BlueprintCallable, Category = "PyToolkit|Msic")
+	static UActorComponent *AddComponent(AActor *a, USceneComponent *future_parent, FName name, UClass *NewComponentClass);
+
 	UFUNCTION(BlueprintCallable, Category = "PyToolkit")
-	static USkeletalMeshSocket* AddSkeletalMeshSocket(USkeleton* InSkeleton, FName InBoneName);
+	static UTextureCube *RenderTargetCubeCreateStaticTextureCube(UTextureRenderTargetCube *RenderTarget, FString InName);
 
-	UFUNCTION(BlueprintCallable, Category = "PyToolkit")
-	static void DeleteSkeletalMeshSocket(USkeleton* InSkeleton, TArray<USkeletalMeshSocket*> SocketList);
-	
-	UFUNCTION(BlueprintCallable, Category = "PyToolkit")
-	static int32 GetSkeletonBoneNum(USkeleton* InSkeleton);
-		
-	UFUNCTION(BlueprintCallable, Category = "PyToolkit")
-	static FName GetSkeletonBoneName(USkeleton* InSkeleton,int32 BoneIndex);
-	#pragma endregion
+	UFUNCTION(BlueprintCallable, Category = "PyToolkit|Msic")
+	static FString GetCurrentContentPath();
 
-	#pragma region Msic
-	UFUNCTION(BlueprintCallable, Category = "PyToolkit")
-		static UActorComponent* AddComponent(AActor* a, USceneComponent *future_parent, FName name, UClass* NewComponentClass);
+	UFUNCTION(BlueprintCallable, Category = "PyToolkit|Msic")
+	static TArray<uint8> GetThumbnial(UObject *MeshObject, int32 _imageRes = 128);
 
-	UFUNCTION(BlueprintCallable, Category = "PyToolkit")
-		static UTextureCube* RenderTargetCubeCreateStaticTextureCube(UTextureRenderTargetCube* RenderTarget, FString InName);
-
-	UFUNCTION(BlueprintCallable, Category = "Unreal Python")
-		static FString GetCurrentContentPath();	
-	UFUNCTION(BlueprintCallable, Category = "Unreal Python")
-		static TArray<uint8> GetThumbnial(UObject* MeshObject,int32 _imageRes = 128);
-
-	#pragma endregion
-	
+#pragma endregion
 };

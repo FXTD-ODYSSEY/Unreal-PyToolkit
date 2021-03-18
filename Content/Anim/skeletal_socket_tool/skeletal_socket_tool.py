@@ -25,7 +25,7 @@ from dayu_widgets.item_model import MTableModel, MSortFilterModel
 # from dayu_widgets.message import MMessage
 # from dayu_widgets import dayu_theme
 
-from UE_Util import alert
+from ue_util import alert
 
 py_lib = unreal.PyToolkitBPLibrary()
 
