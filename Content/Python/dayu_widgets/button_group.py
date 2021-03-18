@@ -5,7 +5,7 @@
 # Date  : 2019.2
 # Email : muyanru345@163.com
 ###################################################################
-
+import six
 import functools
 
 from dayu_widgets.check_box import MCheckBox
@@ -39,7 +39,7 @@ class MButtonGroupBase(QWidget):
         raise NotImplementedError()
 
     def add_button(self, data_dict, index=None):
-        if isinstance(data_dict, basestring):
+        if isinstance(data_dict, six.string_types):
             data_dict = {'text': data_dict}
         elif isinstance(data_dict, QIcon):
             data_dict = {'icon': data_dict}
@@ -57,6 +57,8 @@ class MButtonGroupBase(QWidget):
             button.setProperty('shortcut', data_dict.get('shortcut'))
         if data_dict.get('tooltip'):
             button.setProperty('toolTip', data_dict.get('tooltip'))
+        if data_dict.get('checkable'):
+            button.setProperty('checkable', data_dict.get('checkable'))
         if data_dict.get('clicked'):
             button.clicked.connect(data_dict.get('clicked'))
         if data_dict.get('toggled'):
@@ -78,11 +80,10 @@ class MButtonGroupBase(QWidget):
             button = self.add_button(data_dict, index)
             if index == 0:
                 button.setProperty('position', 'left')
-            elif index  == len(button_list) -1:
+            elif index == len(button_list) - 1:
                 button.setProperty('position', 'right')
             else:
                 button.setProperty('position', 'center')
-
 
 
 class MPushButtonGroup(MButtonGroupBase):
@@ -127,7 +128,7 @@ class MCheckBoxGroup(MButtonGroupBase):
         self.customContextMenuRequested.connect(self._slot_context_menu)
 
         self._button_group.buttonClicked[int].connect(self._slot_map_signal)
-        self.set_value([])
+        self._dayu_checked = []
 
     def create_button(self, data_dict):
         return MCheckBox()
@@ -159,21 +160,25 @@ class MCheckBoxGroup(MButtonGroupBase):
             [check_box.text() for check_box in self._button_group.buttons() if
              check_box.isChecked()])
 
-    def set_value(self, value):
+    def set_dayu_checked(self, value):
         if not isinstance(value, list):
             value = [value]
-        self.setProperty('value', value)
+        if value == self.get_dayu_checked():
+            return
 
-    def _set_value(self, value):
-        edit_from_code = False
+        self._dayu_checked = value
         for check_box in self._button_group.buttons():
             flag = Qt.Checked if check_box.text() in value else Qt.Unchecked
             if flag != check_box.checkState():
-                # 更新来自代码
-                edit_from_code = True
                 check_box.setCheckState(flag)
-        if edit_from_code:
-            self.sig_checked_changed.emit(value)
+        self.sig_checked_changed.emit(value)
+
+    def get_dayu_checked(self):
+        return [check_box.text() for check_box in self._button_group.buttons() if
+                              check_box.isChecked()]
+
+    # TODO: pyside 的 Property 不直接支持 list，需要寻求解决办法
+    dayu_checked = Property('QVariantList', get_dayu_checked, set_dayu_checked, notify=sig_checked_changed)
 
 
 class MRadioButtonGroup(MButtonGroupBase):
@@ -193,12 +198,14 @@ class MRadioButtonGroup(MButtonGroupBase):
         return MRadioButton()
 
     def set_dayu_checked(self, value):
+        if value == self.get_dayu_checked():
+            return
         button = self._button_group.button(value)
         if button:
             button.setChecked(True)
             self.sig_checked_changed.emit(value)
         else:
-            print 'error'
+            print('error')
 
     def get_dayu_checked(self):
         return self._button_group.checkedId()
@@ -232,15 +239,16 @@ class MToolButtonGroup(MButtonGroupBase):
         return button
 
     def set_dayu_checked(self, value):
+        if value == self.get_dayu_checked():
+            return
         button = self._button_group.button(value)
         if button:
             button.setChecked(True)
             self.sig_checked_changed.emit(value)
         else:
-            print 'error'
+            print('error')
 
     def get_dayu_checked(self):
         return self._button_group.checkedId()
 
     dayu_checked = Property(int, get_dayu_checked, set_dayu_checked, notify=sig_checked_changed)
-
