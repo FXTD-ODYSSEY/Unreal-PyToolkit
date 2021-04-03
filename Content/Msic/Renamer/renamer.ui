@@ -612,7 +612,7 @@
           <item>
            <widget class="MTableView" name="Table_View">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -669,7 +669,7 @@
              <bool>false</bool>
             </attribute>
             <attribute name="horizontalHeaderStretchLastSection">
-             <bool>true</bool>
+             <bool>false</bool>
             </attribute>
             <attribute name="verticalHeaderCascadingSectionResizes">
              <bool>false</bool>
@@ -753,7 +753,7 @@
               </widget>
              </item>
              <item>
-              <spacer name="verticalSpacer_4">
+              <spacer name="verticalSpacer_5">
                <property name="orientation">
                 <enum>Qt::Vertical</enum>
                </property>
@@ -766,7 +766,7 @@
               </spacer>
              </item>
              <item>
-              <widget class="MPushButton" name="Get_BTN">
+              <widget class="MPushButton" name="Get_Actor_BTN">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                  <horstretch>0</horstretch>
@@ -792,6 +792,47 @@
                 <string/>
                </property>
               </widget>
+             </item>
+             <item>
+              <widget class="MPushButton" name="Get_Asset_BTN">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>25</width>
+                 <height>25</height>
+                </size>
+               </property>
+               <property name="baseSize">
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;获取文件&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="verticalSpacer_4">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
              </item>
              <item>
               <widget class="MPushButton" name="Find_BTN">
@@ -1060,7 +1101,8 @@ font-size:18px;</string>
     </property>
     <addaction name="Update_Action"/>
     <addaction name="separator"/>
-    <addaction name="Get_Action"/>
+    <addaction name="Get_Actor_Action"/>
+    <addaction name="Get_Asset_Action"/>
     <addaction name="Find_Action"/>
     <addaction name="Drive_Action"/>
     <addaction name="Del_Action"/>
@@ -1097,9 +1139,9 @@ font-size:18px;</string>
     <string>命名规范</string>
    </property>
   </action>
-  <action name="Get_Action">
+  <action name="Get_Asset_Action">
    <property name="text">
-    <string>获取文件</string>
+    <string>获取资产</string>
    </property>
   </action>
   <action name="Find_Action">
@@ -1130,6 +1172,11 @@ font-size:18px;</string>
   <action name="Dn_Action">
    <property name="text">
     <string>下移</string>
+   </property>
+  </action>
+  <action name="Get_Actor_Action">
+   <property name="text">
+    <string>获取Actor</string>
    </property>
   </action>
  </widget>
