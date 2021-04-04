@@ -45,7 +45,7 @@ import unreal
 
 from Qt import QtCore, QtWidgets, QtGui
 from Qt.QtCompat import load_ui, QFileDialog
-from UE_Util import error_log, toast
+from ue_util import error_log, toast
 from dayu_widgets.item_model import MTableModel, MSortFilterModel
 
 util_lib = unreal.EditorUtilityLibrary()
@@ -488,7 +488,8 @@ class UERenamerWin(RenamerWinBase):
         row_list = [index.row() for index in sorted(indexes, reverse=not up)]
         for row in row_list:
             idx = row-1 if up else row+1
-            idx = len(data_list)-1 if idx == -1 else 0 if idx == len(data_list) else idx
+            idx = len(data_list)-1 if idx == - \
+                1 else 0 if idx == len(data_list) else idx
             idx_list[row] = idx
 
         if min(row_list) == 0 or max(row_list) == len(data_list)-1:

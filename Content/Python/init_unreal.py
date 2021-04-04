@@ -13,7 +13,6 @@ __date__ = '2020-05-30 21:47:47'
 
 import os
 import sys
-import ast
 import json
 import time
 import posixpath
@@ -25,7 +24,7 @@ try:
     from Queue import Queue
 except:
     from queue import Queue
-import threading
+    
 from pynput import keyboard
 from ctypes import wintypes,byref
 
@@ -34,14 +33,9 @@ from Qt import QtCore, QtWidgets, QtGui
 from dayu_widgets import dayu_theme
 
 
-DIR = os.path.dirname(__file__)
-sys.path.insert(0 , DIR) if DIR not in sys.path else None
-import hotkey
+DIR = os.path.dirname(os.path.dirname(__file__))
 
 menus = unreal.ToolMenus.get()
-
-global last_tick
-last_tick = time.time()
 
 FORMAT_ARGS = {
     "Content": DIR
@@ -88,6 +82,10 @@ ACTION_TYPE = {
     "RADIO_BUTTON": unreal.UserInterfaceActionType.RADIO_BUTTON,
     "TOGGLE_BUTTON": unreal.UserInterfaceActionType.TOGGLE_BUTTON,
 }
+
+
+sys.path.insert(0 , DIR) if DIR not in sys.path else None
+import hotkey
 
 HOTKEY_TYPE = {
     "COMMAND":lambda command: partial(unreal.SystemLibrary.execute_console_command,None,command),
@@ -199,39 +197,7 @@ def create_menu():
     # NOTE 刷新组件
     menus.refresh_all_widgets()
 
-    # NOTE 获取当前不存在的菜单 | 设置定时任务嵌入
-    if fail_menus:
-        def timer_add_menu(menu_dict, timer):
-            # NOTE 判断当前是否卡顿状态 | 如果卡顿就跳过执行
-            # NOTE 避免处于加载状态导致引擎崩溃 !FUObjectThreadContext::Get().IsRoutingPostLoad -> Cannot call UnrealScript while PostLoading objects
-            global last_tick
-            tick_elapsed = time.time() - last_tick
-            if (tick_elapsed > 0.05):
-                return
-
-            # NOTE 如果 menu_dict 清空则停止计时器
-            if not menu_dict:
-                timer.stop()
-                del timer
-                return
-
-            flag = False
-            for tool_menu, config in menu_dict.items():
-                menu = menus.find_menu(tool_menu)
-                if not menu:
-                    continue
-                # NOTE 清除找到的menu
-                menu_dict.pop(tool_menu)
-                flag = True
-                config.setdefault('menu', menu)
-                handle_menu(config)
-
-            if flag:
-                menus.refresh_all_widgets()
-        timer = QtCore.QTimer()
-        timer.timeout.connect(partial(timer_add_menu, fail_menus, timer))
-        timer.start(1000)
-
+    return fail_menus
 
 def register_BP():
     # NOTE 执行 BP 目录下所有的 python 脚本 注册蓝图
@@ -258,6 +224,7 @@ def message_itr(self):
             elasped = delta_queue.get()
             # NOTE 如果虚幻阻塞 去掉 键盘监听
             if elasped > 0.1:
+                listener and listener.stop()
                 listener = None
                 break
             
@@ -277,7 +244,7 @@ def message_itr(self):
         self.thread = None
 
 
-def handle_hotkey():
+def get_hotkey():
     json_path = posixpath.join(DIR, "hotkey.json")
     key_data = read_json(json_path)
     key_map = {}
@@ -292,21 +259,9 @@ def handle_hotkey():
         key_map[k] = func(command)
     return key_map
 
-# This function will receive the tick from Unreal
-def __QtAppTick__(delta_seconds):
-    # NOTE 不添加事件处理 Qt 的窗口运行正常 | 添加反而会让 imgui 失去焦点
-    # QtWidgets.QApplication.processEvents()
-    # NOTE 处理 deleteDeferred 事件
-    QtWidgets.QApplication.sendPostedEvents()
-    
-    # NOTE 获取时间，判断是否是卡顿状态
-    global last_tick
-    last_tick = time.time()
-    
-    # NOTE 键盘监听
-    
-    global listener,key_map,hotkey
-    if not hotkey:
+def __key_listener__(delta_seconds):
+    global listener,key_map,hotkey_enabled
+    if not hotkey_enabled:
         return
     if delta_queue.empty():
         delta_queue.put(delta_seconds)
@@ -318,19 +273,13 @@ def __QtAppTick__(delta_seconds):
         listener_list.append(listener)
         if not listener.is_alive():
             listener.start()
-        
-#     key_handler(delta_seconds)
 
-# def key_handler(delta_seconds):
-#     if delta_seconds > .1:
-#         return
-    
-#     with keyboard.Events() as events:
-#         # Block at most one second
-#         event = events.get(.1)
-#         if event:
-#             print('Received event {}'.format(event))
 
+def __QtAppTick__(delta_seconds):
+    # NOTE 不添加事件处理 Qt 的窗口运行正常 | 添加反而会让 imgui 失去焦点
+    # QtWidgets.QApplication.processEvents()
+    # NOTE 处理 deleteDeferred 事件
+    QtWidgets.QApplication.sendPostedEvents()
 
 def slate_deco(func):
     def wrapper(self, single=True, *args, **kwargs):
@@ -354,34 +303,85 @@ def slate_deco(func):
     return wrapper
 
 
-# This part is for the initial setup. Need to run once to spawn the application.
-unreal_app = QtWidgets.QApplication.instance()
-if not unreal_app:
-    unreal_app = QtWidgets.QApplication([])
-    tick_handle = unreal.register_slate_post_tick_callback(__QtAppTick__)
-    __QtAppQuit__ = partial(
-        unreal.unregister_slate_post_tick_callback, tick_handle)
-    unreal_app.aboutToQuit.connect(__QtAppQuit__)
+if __name__ == "__main__":
+        
+    # This part is for the initial setup. Need to run once to spawn the application.
+    unreal_app = QtWidgets.QApplication.instance()
+    if not unreal_app:
+        unreal_app = QtWidgets.QApplication([])
+        tick_handle = unreal.register_slate_post_tick_callback(__QtAppTick__)
+        __QtAppQuit__ = partial(
+            unreal.unregister_slate_post_tick_callback, tick_handle)
+        unreal_app.aboutToQuit.connect(__QtAppQuit__)
 
-    with open(os.path.join(DIR, "main.css"), 'r') as f:
-        unreal_app.setStyleSheet(f.read())
+        with open(os.path.join(DIR, "main.css"), 'r') as f:
+            unreal_app.setStyleSheet(f.read())
 
-    # NOTE 重载 show 方法
-    QtWidgets.QWidget.show = slate_deco(QtWidgets.QWidget.show)
+        # NOTE 重载 show 方法
+        QtWidgets.QWidget.show = slate_deco(QtWidgets.QWidget.show)
 
-    create_menu()
+    fail_menus = create_menu()
+    if fail_menus:
+        global __tick_menu_elapsed__
+        __tick_menu_elapsed__ = 0
+        def timer_add_menu(menu_dict, delta):
+            global __tick_menu_elapsed__
+            __tick_menu_elapsed__ += delta
+
+            # NOTE 大于 .5s 执行 | 避免频繁执行
+            if __tick_menu_elapsed__ < .5:
+                return
+
+            __tick_menu_elapsed__ = 0
+
+            # NOTE 如果 menu_dict 清空则停止计时器
+            if not menu_dict:
+                global __py_add_menu_tick__
+                unreal.unregister_slate_post_tick_callback(__py_add_menu_tick__)
+                return
+
+            flag = False
+            menu_list = []
+            for tool_menu, config in menu_dict.items():
+                menu = menus.find_menu(tool_menu)
+                if not menu:
+                    continue
+                # NOTE 清除找到的menu
+                menu_list.append(tool_menu)
+                flag = True
+                config.setdefault("menu", menu)
+                handle_menu(config)
+
+            if flag:
+                [menu_dict.pop(m) for m in menu_list]
+                menus.refresh_all_widgets()
+        
+        # NOTE 注册添加菜单功能
+        callback = partial(timer_add_menu, fail_menus)
+        global __py_add_menu_tick__
+        __py_add_menu_tick__ = unreal.register_slate_post_tick_callback(callback)
+        __QtAppQuit__ = partial(unreal.unregister_slate_post_tick_callback, __py_add_menu_tick__)
+        unreal_app.aboutToQuit.connect(__QtAppQuit__)
+        
     json_path = posixpath.join(DIR, "setting.json")
     setting = read_json(json_path)
-    
+
     if setting.get("blueprint"):
         register_BP()
-    
+
     # NOTE 初始化键盘事件
-    hotkey = setting.get("hotkey")
-    if hotkey:
+    global listener,hotkey_enabled,key_map
+    hotkey_enabled = setting.get("hotkey")
+    if hotkey_enabled:
+        tick_handle = unreal.register_slate_pre_tick_callback(__key_listener__)
+        unreal_app.aboutToQuit.connect(partial(unreal.unregister_slate_post_tick_callback, tick_handle))
+        
         delta_queue = Queue(1)
         from pynput._util import win32
         win32.MessageLoop.__iter__ = message_itr
-        key_map = handle_hotkey()
+        key_map = get_hotkey()
         listener = None
         listener_list = []
+        
+        
+        

@@ -13,7 +13,6 @@ void FPyToolkitModule::StartupModule()
 {
 	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
 
-	// NOTE ��ȡ json ����
 	PluginName = "PyToolkit";
 	Content = FPaths::ProjectPluginsDir() / PluginName + TEXT("/Content");
 
@@ -50,15 +49,17 @@ void FPyToolkitModule::Tick(const float InDeltaTime)
 
 		static FFormatNamedArguments Arguments;
 		Arguments.Add(TEXT("Content"), FText::FromString(Content));
-		FText InitScript = FText::Format(FTextFormat::FromString(SettingObject->GetStringField("initialize")), Arguments);
-		GEngine->Exec(NULL, InitScript.ToString().GetCharArray().GetData());
+		// FText InitScript = FText::Format(FTextFormat::FromString(SettingObject->GetStringField("initialize")), Arguments);
+		// GEngine->Exec(NULL, InitScript.ToString().GetCharArray().GetData());
 
 		// NOTE Register Launcher Key Event
 		FLevelEditorModule &LevelEditorModule = FModuleManager::LoadModuleChecked<FLevelEditorModule>("LevelEditor");
 		TSharedPtr<ILevelEditor> LevelEditor = LevelEditorModule.GetFirstLevelEditor();
+		// NOTE 说明当前是命令行模式 跳过执行
+		if (!LevelEditor.IsValid())
+			return;
 
 		TSharedRef<FUICommandList> CommandList = LevelEditorModule.GetGlobalLevelEditorActions();
-		//TSharedRef<FUICommandList> CommandList = MakeShareable(new FUICommandList);
 
 		static FString Launcher = SettingObject->GetStringField("launcher");
 		struct Callback

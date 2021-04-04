@@ -41,6 +41,10 @@
 #include "Runtime/AssetRegistry/Public/AssetRegistryModule.h"
 // PublicDependencyModuleNames -> "PythonScriptPlugin" && "Python"
 
+// Material
+#include "Materials/Material.h"
+#include "Materials/MaterialInstance.h"
+#include "MaterialEditor/MaterialEditorInstanceConstant.h"
 
 #include "Framework/Commands/GenericCommands.h"
 
@@ -132,6 +136,21 @@ class UPyToolkitBPLibrary : public UBlueprintFunctionLibrary
 
 	UFUNCTION(BlueprintCallable, Category = "PyToolkit|Socket")
 	static FName GetSkeletonBoneName(USkeleton *InSkeleton, int32 BoneIndex);
+#pragma endregion
+
+#pragma region Material>
+
+	UFUNCTION(BlueprintCallable, Category = "RedArtToolkit|Material")
+	static UMaterialInstanceConstant *GetMaterialEditorSourceInstance(UMaterialEditorInstanceConstant *Editor);
+
+	UFUNCTION(BlueprintCallable, Category = "RedArtToolkit|Material")
+	static void SetMaterialInstanceStaticSwitchParameterValue(UMaterialInstance *Instance, FName ParameterName, bool Value);
+	UFUNCTION(BlueprintCallable, Category = "RedArtToolkit|Material")
+	static TArray<UMaterialExpression *> GetMaterialExpressions(UMaterial *Material);
+
+	UFUNCTION(BlueprintCallable, Category = "RedArtToolkit|Material")
+	static TArray<UMaterialExpression *> GetMaterialFunctionExpressions(UMaterialFunction *Function);
+
 #pragma endregion
 
 #pragma region Msic

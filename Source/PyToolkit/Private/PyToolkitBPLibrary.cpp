@@ -259,6 +259,40 @@ FName UPyToolkitBPLibrary::GetSkeletonBoneName(USkeleton *InSkeleton, int32 Bone
 
 #pragma endregion
 
+#pragma region Material
+
+UMaterialInstanceConstant *UPyToolkitBPLibrary::GetMaterialEditorSourceInstance(UMaterialEditorInstanceConstant *Editor)
+{
+    return Editor->SourceInstance;
+}
+
+void UPyToolkitBPLibrary::SetMaterialInstanceStaticSwitchParameterValue(UMaterialInstance *Instance, FName ParameterName, bool Value)
+{
+    FStaticParameterSet StaticParameters = Instance->GetStaticParameters();
+    for (auto &SwitchParameter : StaticParameters.StaticSwitchParameters)
+    {
+        if (SwitchParameter.ParameterInfo.Name == ParameterName)
+        {
+            SwitchParameter.Value = Value;
+            break;
+            ;
+        }
+    }
+    Instance->UpdateStaticPermutation(StaticParameters);
+}
+
+TArray<UMaterialExpression *> UPyToolkitBPLibrary::GetMaterialExpressions(UMaterial *Material)
+{
+    return Material->Expressions;
+}
+
+TArray<UMaterialExpression *> UPyToolkitBPLibrary::GetMaterialFunctionExpressions(UMaterialFunction *Function)
+{
+    return Function->FunctionExpressions;
+}
+
+#pragma endregion
+
 #pragma region Msic
 
 // https://forums.unrealengine.com/development-discussion/python-scripting/1703959-how-to-add-component-to-existing-actor-in-level-with-python-blueprint
