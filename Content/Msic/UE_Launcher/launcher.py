@@ -1,5 +1,20 @@
 # -*- coding: utf-8 -*-
 """
+UE 启动器
+- [x] 资源路径定位
+- [ ] 资源搜索 | 当前文件夹内搜索
+- [ ] 配合 shift 键 打开资源
+- [ ] Actor 搜索
+- [ ] 菜单栏搜索
+- [ ] Python API 搜索
+- [ ] C++ API 搜索
+- [ ] 搜索引擎 bing gg bd
+- [ ] 支持下来菜单配置 置顶 | 收藏夹
+- [ ] Cmd 命令触发
+- [ ] ~python 多行模式支持 | 代码高亮~
+- [ ] ~Unreal 内置命令整合 (保存资源之类)~
+
+- [ ] 学习参考 Maya cosmos 插件
 
 """
 
@@ -32,6 +47,9 @@ def error_display(func):
             self.LineEdit.setStyleSheet("border-color:red")
     return wrapper
     
+
+asset_lib = unreal.EditorAssetLibrary
+py_lib = unreal.PyToolkitBPLibrary
 class Launcher(QtWidgets.QWidget):
 
     """A menu to find and execute Maya commands and user scripts."""
@@ -58,7 +76,7 @@ class Launcher(QtWidgets.QWidget):
         
 
         # TODO 设置状态标签
-
+        
         self.setWindowFlags(QtCore.Qt.Popup|QtCore.Qt.FramelessWindowHint)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
         # self.setFlags(QtCore.Qt.WA_TranslucentBackground)
@@ -82,7 +100,7 @@ class Launcher(QtWidgets.QWidget):
         
     def check_path(self,path):
         if not path:
-            return False
+            return
         
         # NOTE 如果路径带了前后引号
         if ((path.startswith('"') and path.endswith('"'))
@@ -99,7 +117,7 @@ class Launcher(QtWidgets.QWidget):
         
         path,_ = os.path.splitext(path)
         if not search:
-            return False
+            return
         return path
     
     def show(self):
@@ -124,26 +142,31 @@ class Launcher(QtWidgets.QWidget):
         if not path:
             raise RuntimeError(u"不是正确的路径")
         
-        if unreal.EditorAssetLibrary.does_asset_exist(path):
-            unreal.EditorAssetLibrary.sync_browser_to_objects([path])
-        elif unreal.EditorAssetLibrary.does_directory_exist(path):
-            unreal.PyToolkitBPLibrary.set_selected_folders([path])
+        if asset_lib.does_asset_exist(path):
+            asset = unreal.load_asset(path)
+            if isinstance(asset,unreal.World):
+                py_lib.set_selected_folders([os.path.dirname(path)])
+            else:
+                asset_lib.sync_browser_to_objects([path])
+        elif asset_lib.does_directory_exist(path):
+            py_lib.set_selected_folders([path])
         else:
             raise RuntimeError(u"路径文件不存在")
         
         self.hide()
-
-def show():
-    global launcher
-    launcher = Launcher()
-    # clear out, move and show
-    position_window(launcher)
 
 def position_window(window):
     """Position window to mouse cursor"""
     pos = QtGui.QCursor.pos()
     window.move(pos.x(), pos.y())
 
+def show():
+    global launcher
+    launcher = Launcher()
+    # clear out, move and show
+    position_window(launcher)
+    
+    
 if __name__ == "__main__":
     show()
 
