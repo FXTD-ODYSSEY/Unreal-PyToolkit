@@ -7,39 +7,42 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
-__author__ = 'timmyliang'
-__email__ = '820472580@qq.com'
-__date__ = '2020-05-30 21:47:47'
+__author__ = "timmyliang"
+__email__ = "820472580@qq.com"
+__date__ = "2020-05-30 21:47:47"
 
 import os
 import sys
 import json
 import time
+import platform
+import traceback
 import posixpath
-
+from subprocess import PIPE, Popen
+from threading import Thread
 from functools import partial
 from collections import OrderedDict
 
 try:
-    from Queue import Queue
-except:
-    from queue import Queue
-    
-from pynput import keyboard
-from ctypes import wintypes,byref
+    from queue import Queue, Empty
+except ImportError:
+    from Queue import Queue, Empty  # python 2.x
+
+import six
 
 import unreal
 from Qt import QtCore, QtWidgets, QtGui
 from dayu_widgets import dayu_theme
 
 
-DIR = os.path.dirname(os.path.dirname(__file__))
+sys_lib = unreal.SystemLibrary
+DIR = os.path.dirname(__file__)
+CONTENT = os.path.dirname(DIR)
+CONFIG = os.path.join(CONTENT, "_config")
 
 menus = unreal.ToolMenus.get()
 
-FORMAT_ARGS = {
-    "Content": DIR
-}
+FORMAT_ARGS = {"Content": CONTENT}
 
 COMMAND_TYPE = {
     "COMMAND": unreal.ToolMenuStringCommandType.COMMAND,
@@ -84,15 +87,6 @@ ACTION_TYPE = {
 }
 
 
-sys.path.insert(0 , DIR) if DIR not in sys.path else None
-import hotkey
-
-HOTKEY_TYPE = {
-    "COMMAND":lambda command: partial(unreal.SystemLibrary.execute_console_command,None,command),
-    "PYTHON": lambda command: partial(lambda c:eval(compile(c, '<string>', 'exec')),command),
-    "SCRIPT":lambda command: getattr(hotkey,command) if hasattr(hotkey,command) else partial(unreal.SystemLibrary.execute_console_command,None,"Hotkey 配置失败 -> %s 找不到" % command),
-}
-
 def handle_menu(data):
     """
     handle_menu 递归生成菜单
@@ -125,14 +119,15 @@ def handle_menu(data):
         for k, v in prop.items():
             # NOTE 跳过 owner 和 script_object
             prop.pop("owner") if not prop.get("owner") is None else None
-            prop.pop("script_object") if not prop.get(
-                "script_object") is None else None
+            prop.pop("script_object") if not prop.get("script_object") is None else None
 
-            if v == '':
+            if v == "":
                 prop.pop(k)
             elif k == "insert_position":
                 position = INSERT_TYPE.get(v.get("position", "").upper())
-                v["position"] = position if position else unreal.ToolMenuInsertType.FIRST
+                v["position"] = (
+                    position if position else unreal.ToolMenuInsertType.FIRST
+                )
                 v["name"] = v.get("name", "")
                 prop[k] = unreal.ToolMenuInsert(**v)
             elif k == "type":
@@ -145,15 +140,15 @@ def handle_menu(data):
         prop.setdefault("name", entry_name)
         prop.setdefault("type", unreal.MultiBlockType.MENU_ENTRY)
         entry = unreal.ToolMenuEntry(**prop)
-        tooltip = config.get('tooltip')
+        tooltip = config.get("tooltip")
         entry.set_tool_tip(tooltip) if tooltip else None
 
-        entry.set_label(config.get('label', "untitle"))
+        entry.set_label(config.get("label", "untitle"))
         typ = COMMAND_TYPE.get(config.get("type", "").upper(), 0)
 
-        command = config.get('command', '').format(**FORMAT_ARGS)
+        command = config.get("command", "").format(**FORMAT_ARGS)
         entry.set_string_command(typ, "", string=command)
-        menu.add_menu_entry(config.get('section', ''), entry)
+        menu.add_menu_entry(config.get("section", ""), entry)
 
     for entry_name, config in data.get("sub_menu", {}).items():
         init = config.get("init", {})
@@ -162,17 +157,15 @@ def handle_menu(data):
         name = init.get("name", entry_name)
         label = init.get("label", "")
         tooltip = init.get("tooltip", "")
-        sub_menu = menu.add_sub_menu(
-            owner, section_name, name, label, tooltip)
-        config.setdefault('menu', sub_menu)
+        sub_menu = menu.add_sub_menu(owner, section_name, name, label, tooltip)
+        config.setdefault("menu", sub_menu)
         handle_menu(config)
 
 
 def read_json(json_path):
     try:
-        with open(json_path, 'r') as f:
-            data = json.load(
-                f, object_pairs_hook=OrderedDict, encoding='utf-8')
+        with open(json_path, "r") as f:
+            data = json.load(f, object_pairs_hook=OrderedDict, encoding="utf-8")
     except:
         data = {}
     return data
@@ -180,7 +173,7 @@ def read_json(json_path):
 
 def create_menu():
     # NOTE 读取 menu json 配置
-    json_path = posixpath.join(DIR, "menu.json")
+    json_path = posixpath.join(CONFIG, "menu.json")
     menu_json = read_json(json_path)
 
     fail_menus = {}
@@ -191,7 +184,7 @@ def create_menu():
         if not menu:
             fail_menus.update({tool_menu: config})
             continue
-        config.setdefault('menu', menu)
+        config.setdefault("menu", menu)
         handle_menu(config)
 
     # NOTE 刷新组件
@@ -199,9 +192,10 @@ def create_menu():
 
     return fail_menus
 
+
 def register_BP():
     # NOTE 执行 BP 目录下所有的 python 脚本 注册蓝图
-    path = os.path.join(DIR, "BP")
+    path = os.path.join(CONTENT, "BP")
     if not os.path.exists(path):
         return
     for root, _, files in os.walk(path):
@@ -211,75 +205,13 @@ def register_BP():
             command = 'py "%s"' % posixpath.join(root, f).replace("\\", "/")
             unreal.SystemLibrary.execute_console_command(None, command)
 
-# NOTE 键盘监听处理 ---------------
-
-def message_itr(self):
-    global listener
-    assert self._threadid is not None
-    try:
-        # Pump messages until WM_STOP
-        while True:
-            if delta_queue.empty():
-                continue
-            elasped = delta_queue.get()
-            # NOTE 如果虚幻阻塞 去掉 键盘监听
-            if elasped > 0.1:
-                listener and listener.stop()
-                listener = None
-                break
-            
-            # print('start capture key ...')
-            msg = wintypes.MSG()
-            lpmsg = byref(msg)
-            # NOTE _PeekMessage 队列不阻塞
-            r = self._PeekMessage(lpmsg, None, 0, 0 , 0x0001)
-            if r <= 0:
-                continue
-            elif msg.message == self.WM_STOP:
-                break
-            else:
-                yield msg
-    finally:
-        self._threadid = None
-        self.thread = None
-
-
-def get_hotkey():
-    json_path = posixpath.join(DIR, "hotkey.json")
-    key_data = read_json(json_path)
-    key_map = {}
-    for k,v in key_data.items():
-        v = v if isinstance(v, dict) else {"command":v,"type":"COMMAND"}
-        command = v.get("command")
-        typ = v.get("type","").upper()
-        func = HOTKEY_TYPE.get(typ)
-        if not func:
-            continue
-
-        key_map[k] = func(command)
-    return key_map
-
-def __key_listener__(delta_seconds):
-    global listener,key_map,hotkey_enabled
-    if not hotkey_enabled:
-        return
-    if delta_queue.empty():
-        delta_queue.put(delta_seconds)
-    elif listener is None:
-        # NOTE 重新构建 键盘 监听
-        listener = keyboard.GlobalHotKeys(key_map)
-    elif listener not in listener_list:
-        del listener_list[:]
-        listener_list.append(listener)
-        if not listener.is_alive():
-            listener.start()
-
 
 def __QtAppTick__(delta_seconds):
     # NOTE 不添加事件处理 Qt 的窗口运行正常 | 添加反而会让 imgui 失去焦点
     # QtWidgets.QApplication.processEvents()
     # NOTE 处理 deleteDeferred 事件
     QtWidgets.QApplication.sendPostedEvents()
+
 
 def slate_deco(func):
     def wrapper(self, single=True, *args, **kwargs):
@@ -300,37 +232,38 @@ def slate_deco(func):
         # NOTE 添加 dayu_widget 的样式
         dayu_theme.apply(self)
         return res
+
     return wrapper
 
 
 if __name__ == "__main__":
-        
+
     # This part is for the initial setup. Need to run once to spawn the application.
     unreal_app = QtWidgets.QApplication.instance()
-    
+
     if not unreal_app:
         unreal_app = QtWidgets.QApplication([])
         tick_handle = unreal.register_slate_post_tick_callback(__QtAppTick__)
-        __QtAppQuit__ = partial(
-            unreal.unregister_slate_post_tick_callback, tick_handle)
+        __QtAppQuit__ = partial(unreal.unregister_slate_post_tick_callback, tick_handle)
         unreal_app.aboutToQuit.connect(__QtAppQuit__)
 
         # NOTE 重载 show 方法
         QtWidgets.QWidget.show = slate_deco(QtWidgets.QWidget.show)
 
-    with open(os.path.join(DIR, "main.css"), 'r') as f:
+    with open(os.path.join(CONFIG, "main.css"), "r") as f:
         unreal_app.setStyleSheet(f.read())
-        
+
     fail_menus = create_menu()
     if fail_menus:
         global __tick_menu_elapsed__
         __tick_menu_elapsed__ = 0
+
         def timer_add_menu(menu_dict, delta):
             global __tick_menu_elapsed__
             __tick_menu_elapsed__ += delta
 
             # NOTE 大于 .5s 执行 | 避免频繁执行
-            if __tick_menu_elapsed__ < .5:
+            if __tick_menu_elapsed__ < 0.5:
                 return
 
             __tick_menu_elapsed__ = 0
@@ -356,33 +289,110 @@ if __name__ == "__main__":
             if flag:
                 [menu_dict.pop(m) for m in menu_list]
                 menus.refresh_all_widgets()
-        
+
         # NOTE 注册添加菜单功能
         callback = partial(timer_add_menu, fail_menus)
         global __py_add_menu_tick__
         __py_add_menu_tick__ = unreal.register_slate_post_tick_callback(callback)
-        __QtAppQuit__ = partial(unreal.unregister_slate_post_tick_callback, __py_add_menu_tick__)
+        __QtAppQuit__ = partial(
+            unreal.unregister_slate_post_tick_callback, __py_add_menu_tick__
+        )
         unreal_app.aboutToQuit.connect(__QtAppQuit__)
-        
-    json_path = posixpath.join(DIR, "setting.json")
+
+    json_path = posixpath.join(CONFIG, "setting.json")
     setting = read_json(json_path)
 
     if setting.get("blueprint"):
         register_BP()
 
     # NOTE 初始化键盘事件
-    global listener,hotkey_enabled,key_map
     hotkey_enabled = setting.get("hotkey")
     if hotkey_enabled:
-        tick_handle = unreal.register_slate_pre_tick_callback(__key_listener__)
-        unreal_app.aboutToQuit.connect(partial(unreal.unregister_slate_post_tick_callback, tick_handle))
-        
-        delta_queue = Queue(1)
-        from pynput._util import win32
-        win32.MessageLoop.__iter__ = message_itr
-        key_map = get_hotkey()
-        listener = None
-        listener_list = []
-        
-        
-        
+        os_config = {
+            "Windows": "Win64",
+            "Linux": "Linux",
+            "Darwin": "Mac",
+        }
+        os_platform = os_config.get(platform.system())
+        if not os_platform:
+            raise OSError("Unsupported platform '{}'".format(platform.system()))
+
+        PYTHON = "Python" if six.PY2 else "Python3"
+        ThirdParty = os.path.join(sys.executable, "..", "..", "ThirdParty")
+        interpreter = os.path.join(ThirdParty, PYTHON, os_platform, "python.exe")
+        interpreter = os.path.abspath(interpreter)
+
+        exec_file = os.path.join(CONTENT, "_key_listener", "__listener__.py")
+        msg = "lost path \n%s\n%s" % (interpreter, exec_file)
+        assert os.path.exists(interpreter) and os.path.exists(exec_file), msg
+
+        # NOTE 开一个 Python 子进程进行键盘监听
+        # NOTE https://stackoverflow.com/a/4896288
+        ON_POSIX = "posix" in sys.builtin_module_names
+        p = Popen(
+            [interpreter, exec_file],
+            shell=True,
+            stdout=PIPE,
+            stderr=PIPE,
+            bufsize=1,
+            close_fds=ON_POSIX,
+        )
+        unreal_app.aboutToQuit.connect(p.terminate)
+
+        def enqueue_output(p, queue):
+            for line in iter(p.stdout.readline, b""):
+                queue.put(line)
+            p.stdout.close()
+
+        q = Queue()
+        t = Thread(target=enqueue_output, args=(p, q))
+        t.daemon = True  # thread dies with the program
+        t.start()
+
+        hotkey_path = posixpath.join(CONFIG, "hotkey.json")
+        hotkey_config = read_json(hotkey_path)
+        callbacks = {
+            "COMMAND": lambda command: sys_lib.execute_console_command(None, command),
+            "PYTHON": lambda command: eval(command),
+        }
+
+        def get_foreground_window_pid():
+            from ctypes import wintypes, windll, byref
+
+            # NOTE https://stackoverflow.com/a/56572696
+            h_wnd = windll.user32.GetForegroundWindow()
+            pid = wintypes.DWORD()
+            windll.user32.GetWindowThreadProcessId(h_wnd, byref(pid))
+            return pid.value
+
+        def __red_key_tick__(delta_seconds):
+            try:
+                line = q.get_nowait()
+            except Empty:
+                return
+
+            if not line or delta_seconds > 0.1:
+                return
+
+            if platform.system() == "Windows":
+                pid = get_foreground_window_pid()
+                if pid != os.getpid():
+                    return
+
+            # line = str(line.strip(), "utf-8")
+            line = line.strip() if six.PY2 else str(line.strip(), "utf-8")
+            config = hotkey_config.get(line)
+            if not config:
+                return
+
+            typ = config.get("type", "").upper()
+            callback = callbacks.get(typ)
+            if not callback:
+                return
+
+            command = config.get("command", "").format(**FORMAT_ARGS)
+            callback(command)
+
+        tick_handle = unreal.register_slate_post_tick_callback(__red_key_tick__)
+        __QtAppQuit__ = partial(unreal.unregister_slate_post_tick_callback, tick_handle)
+        unreal_app.aboutToQuit.connect(__QtAppQuit__)

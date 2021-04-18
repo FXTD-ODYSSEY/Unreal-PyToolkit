@@ -1,5 +1,5 @@
 {
-    "hotkey":false,
+    "hotkey":true,
     "blueprint":true,
     "script":{
         "initialize": "py \"{Content}/initialize.py\"",

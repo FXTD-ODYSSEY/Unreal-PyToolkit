@@ -87,6 +87,12 @@
                         "type": "COMMAND",
                         "command": "py \"{Content}/Msic/Renamer/renamer.py\""
                     },
+                    "restart": {
+                        "section": "Msic",
+                        "label": "引擎重启",
+                        "type": "COMMAND",
+                        "command": "py \"{Content}/Msic/restart_engine.py\""
+                    },
                     "document": {
                         "section": "Help",
                         "label": "帮助文档",
