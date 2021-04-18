@@ -79,7 +79,13 @@
                         "section": "Msic",
                         "label": "UE启动器",
                         "type": "COMMAND",
-                        "command": "py \"{Content}/Msic/UE_Launcher/launcher.py\""
+                        "command": "py \"{Content}/_key_listener/ue_launcher/launcher.py\""
+                    },
+                    "property_transfer": {
+                        "section": "Msic",
+                        "label": "属性传递工具",
+                        "type": "COMMAND",
+                        "command": "py \"{Content}/Msic/property_transfer/property_transfer_tool.py\""
                     },
                     "renamer": {
                         "section": "Msic",

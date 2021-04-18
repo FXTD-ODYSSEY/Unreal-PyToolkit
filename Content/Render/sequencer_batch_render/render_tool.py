@@ -27,10 +27,12 @@ import webbrowser
 from functools import partial
 from collections import OrderedDict
 
-try:
+import six
+
+if six.PY2:
     from ConfigParser import ConfigParser
-except:
-    from configParser import ConfigParser
+else:
+    from configparser import ConfigParser
 
 from Qt.QtCompat import loadUi
 from Qt import QtCore, QtWidgets, QtGui
@@ -255,12 +257,17 @@ class SequencerRenderTool(QtWidgets.QWidget):
             self.Config_LE.setText("")
             return
 
-        self.config = ConfigParser()
+        # print(self.ini_file)
+
+        self.config = ConfigParser() if six.PY2 else ConfigParser(strict=False)
         self.config.read(self.ini_file)
 
         section = "MovieSceneCaptureUIInstance AutomatedLevelSequenceCapture"
         option = "Settings"
-        capture_settings = self.config.get(section, option)
+        try:
+            capture_settings = self.config.get(section, option)
+        except:
+            return
         capture_settings_dict = self.json_config[section][option]
         capture_settings = capture_settings[1:-1]
         pattern = re.compile("\((.+?)\)")

@@ -229,7 +229,7 @@ class RenamerWinBase(QtWidgets.QWidget):
         for B in self.check_loop(CB_list + RB_list):
             val = self.settings.value(B.objectName())
             if val is not None:
-                val = True if val == "true" else False
+                val = True if str(val).lower() == "true" else False
                 widget_dict[B.setChecked] = val
 
         for LE in self.check_loop(LE_list):

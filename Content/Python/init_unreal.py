@@ -239,26 +239,25 @@ def register_BP():
             command = 'py "%s"' % posixpath.join(root, f).replace("\\", "/")
             unreal.SystemLibrary.execute_console_command(None, command)
 
-
 def slate_deco(func):
-    def wrapper(self, single=True):
-        # NOTE keep one window open
+    def wrapper(self, single=True, *args, **kwargs):
         if single:
-            for win in QtWidgets.QApplication.topLevelWidgets():
+            # TODO crash 
+            for win in QtWidgets.QApplication.allWidgets():
                 if win is self:
                     continue
                 elif self.__class__.__name__ in str(type(win)):
                     win.deleteLater()
-                    # win.setParent(None)
                     win.close()
 
+        res = func(self, *args, **kwargs)
         # NOTE https://forums.unrealengine.com/unreal-engine/unreal-studio/1526501-how-to-get-the-main-window-of-the-editor-to-parent-qt-or-pyside-application-to-it
-        res = func(self)
         unreal.parent_external_window_to_slate(self.winId())
         dayu_theme.apply(self)
         return res
 
     return wrapper
+
 
 
 if __name__ == "__main__":
