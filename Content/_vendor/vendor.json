@@ -1,0 +1,70 @@
+{
+    "singledispatch": {
+        "module": "singledispatch",
+        "folders": [
+            "."
+        ]
+    },
+    "dayu_path": {
+        "module": "dayu_path",
+        "folders": [
+            "."
+        ]
+    },
+    "dayu_widgets": {
+        "module": "dayu_widgets",
+        "folders": [
+            "."
+        ]
+    },
+    "dayu_widgets_overlay": {
+        "module": "dayu_widgets_overlay",
+        "folders": [
+            "."
+        ]
+    },
+    "keyboard": {
+        "module": "keyboard",
+        "folders": [
+            "."
+        ]
+    },
+    "Qt.py": {
+        "module": "Qt",
+        "folders": [
+            "."
+        ]
+    },
+    "six": {
+        "module": "six",
+        "folders": [
+            "."
+        ]
+    },
+    "tk-framework-unrealqt": {
+        "module": "PySide2",
+        "py2.7": {
+            "folders": [
+                "resources/pyside2-5.9.0a1"
+            ]
+        },
+        "py3.7": {
+            "folders": [
+                "resources/pyside2-5.15.2"
+            ]
+        }
+    },
+    "fbx_python_bindings": {
+        "module": "fbx",
+        "py2.7": {
+            "folders": [
+                "2.7"
+            ]
+        },
+        "py3.7": {
+            "files": [
+                "3.7"
+            ]
+        }
+    }
+}

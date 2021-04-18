@@ -21,10 +21,11 @@ from functools import partial
 DIR = os.path.dirname(__file__)
 CONTENT = os.path.dirname(DIR)
 CONFIG = os.path.join(CONTENT, "_config")
+VENDOR = os.path.join(CONTENT, "_vendor")
 
-MODULE = DIR
-sys.path.insert(0, MODULE) if MODULE not in sys.path else None
-MODULE = os.path.join(CONTENT, "Python")
+# MODULE = DIR
+# sys.path.insert(0, MODULE) if MODULE not in sys.path else None
+MODULE = os.path.join(VENDOR, "keyboard")
 sys.path.insert(0, MODULE) if MODULE not in sys.path else None
 
 import keyboard

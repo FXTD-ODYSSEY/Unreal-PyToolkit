@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-初始化 unreal Qt 环境
+Initialize unreal Qt Environment
 """
 
 from __future__ import division
@@ -15,29 +15,81 @@ import os
 import sys
 import json
 import time
+import codecs
 import platform
-import traceback
 import posixpath
+import traceback
 from subprocess import PIPE, Popen
 from threading import Thread
 from functools import partial
-from collections import OrderedDict
+from collections import OrderedDict, defaultdict
 
 try:
     from queue import Queue, Empty
 except ImportError:
     from Queue import Queue, Empty  # python 2.x
 
-import six
-
 import unreal
-from Qt import QtCore, QtWidgets, QtGui
-from dayu_widgets import dayu_theme
 
-sys_lib = unreal.SystemLibrary
 DIR = os.path.dirname(__file__)
 CONTENT = os.path.dirname(DIR)
 CONFIG = os.path.join(CONTENT, "_config")
+VENDOR = os.path.join(CONTENT, "_vendor")
+PYTHON = os.path.join(CONTENT, "Python")
+
+def can_import(module):
+    try:
+        __import__(module)
+    except ImportError:
+        return False
+    return True
+
+
+def read_json(json_path):
+    import codecs
+
+    try:
+        with codecs.open(json_path, "r", encoding="utf-8") as f:
+            data = json.load(f, object_pairs_hook=OrderedDict)
+    except:
+        import traceback
+
+        traceback.print_exc()
+        data = {}
+    return data
+
+def read_config_json(config):
+    return read_json(os.path.join(CONFIG, "%s.json" % config))
+
+def add_vendor_path():
+    config_path = os.path.join(VENDOR, "vendor.json")
+    vendor = read_json(config_path)
+    version = "py%s" % sys.version[:3]
+    module_data = defaultdict(list)
+    for package, collections in vendor.items():
+        module = collections.get("module")
+        package_folder = os.path.join(VENDOR, package)
+        for f in collections.get("folders", {}):
+            path = os.path.join(package_folder, f)
+            module_data[module].append(os.path.abspath(path))
+        if [k for k in collections if k.startswith("py")]:
+            collections = collections.get(version)
+            if collections:
+                for f in collections.get("folders", {}):
+                    path = os.path.join(package_folder, f)
+                    module_data[module].append(os.path.abspath(path))
+
+    for module, paths in module_data.items():
+        if not can_import(module):
+            sys.path.extend(paths)
+
+add_vendor_path()
+
+from Qt import QtCore, QtWidgets, QtGui
+from dayu_widgets import dayu_theme
+import six
+
+sys_lib = unreal.SystemLibrary
 
 menus = unreal.ToolMenus.get()
 
@@ -88,7 +140,7 @@ ACTION_TYPE = {
 
 def handle_menu(data):
     """
-    handle_menu 递归生成菜单
+    handle_menu recursive menu generation
     """
     menu = data.get("menu")
     if not menu:
@@ -97,7 +149,6 @@ def handle_menu(data):
     for section, config in data.get("section", {}).items():
         config = config if isinstance(config, dict) else {"label": config}
         config.setdefault("label", "untitle")
-        # NOTE 如果存在 insert_type 需要将字符串转换
         insert = INSERT_TYPE.get(config.get("insert_type", "").upper())
         if insert:
             config["insert_type"] = insert
@@ -116,7 +167,6 @@ def handle_menu(data):
         prop = config.get("property", {})
 
         for k, v in prop.items():
-            # NOTE 跳过 owner 和 script_object
             prop.pop("owner") if not prop.get("owner") is None else None
             prop.pop("script_object") if not prop.get("script_object") is None else None
 
@@ -160,27 +210,12 @@ def handle_menu(data):
         config.setdefault("menu", sub_menu)
         handle_menu(config)
 
-
-def read_json(json_path):
-    import codecs
-    try:
-        with codecs.open(json_path, "r", encoding="utf-8") as f:
-            data = json.load(f, object_pairs_hook=OrderedDict)
-    except:
-        import traceback
-        traceback.print_exc()
-        data = {}
-    return data
-
-
 def create_menu():
-    # NOTE 读取 menu json 配置
-    json_path = posixpath.join(CONFIG, "menu.json")
-    menu_json = read_json(json_path)
+    # NOTE Read menu json settings
+    menu_json = read_config_json("menu")
     fail_menus = {}
     # NOTE https://forums.unrealengine.com/development-discussion/python-scripting/1767113-making-menus-in-py
     for tool_menu, config in menu_json.items():
-        # NOTE 获取主界面的主菜单位置
         menu = menus.find_menu(tool_menu)
         if not menu:
             fail_menus.update({tool_menu: config})
@@ -188,14 +223,12 @@ def create_menu():
         config.setdefault("menu", menu)
         handle_menu(config)
 
-    # NOTE 刷新组件
     menus.refresh_all_widgets()
 
     return fail_menus
 
 
 def register_BP():
-    # NOTE 执行 BP 目录下所有的 python 脚本 注册蓝图
     path = os.path.join(CONTENT, "BP")
     if not os.path.exists(path):
         return
@@ -207,16 +240,9 @@ def register_BP():
             unreal.SystemLibrary.execute_console_command(None, command)
 
 
-def __QtAppTick__(delta_seconds):
-    # NOTE 不添加事件处理 Qt 的窗口运行正常 | 添加反而会让 imgui 失去焦点
-    # QtWidgets.QApplication.processEvents()
-    # NOTE 处理 deleteDeferred 事件
-    QtWidgets.QApplication.sendPostedEvents()
-
-
 def slate_deco(func):
-    def wrapper(self, single=True, *args, **kwargs):
-        # NOTE 只保留一个当前类窗口
+    def wrapper(self, single=True):
+        # NOTE keep one window open
         if single:
             for win in QtWidgets.QApplication.topLevelWidgets():
                 if win is self:
@@ -227,10 +253,8 @@ def slate_deco(func):
                     win.close()
 
         # NOTE https://forums.unrealengine.com/unreal-engine/unreal-studio/1526501-how-to-get-the-main-window-of-the-editor-to-parent-qt-or-pyside-application-to-it
-        # NOTE 让窗口嵌入到 unreal 内部
+        res = func(self)
         unreal.parent_external_window_to_slate(self.winId())
-        res = func(self, *args, **kwargs)
-        # NOTE 添加 dayu_widget 的样式
         dayu_theme.apply(self)
         return res
 
@@ -239,16 +263,20 @@ def slate_deco(func):
 
 if __name__ == "__main__":
 
-    # This part is for the initial setup. Need to run once to spawn the application.
+    # NOTE This part is for the initial setup. Need to run once to spawn the application.
     unreal_app = QtWidgets.QApplication.instance()
 
     if not unreal_app:
         unreal_app = QtWidgets.QApplication([])
+
+        def __QtAppTick__(delta_seconds):
+            QtWidgets.QApplication.sendPostedEvents()
+
         tick_handle = unreal.register_slate_post_tick_callback(__QtAppTick__)
         __QtAppQuit__ = partial(unreal.unregister_slate_post_tick_callback, tick_handle)
         unreal_app.aboutToQuit.connect(__QtAppQuit__)
 
-        # NOTE 重载 show 方法
+        # NOTE override show method
         QtWidgets.QWidget.show = slate_deco(QtWidgets.QWidget.show)
 
     with open(os.path.join(CONFIG, "main.css"), "r") as f:
@@ -263,13 +291,13 @@ if __name__ == "__main__":
             global __tick_menu_elapsed__
             __tick_menu_elapsed__ += delta
 
-            # NOTE 大于 .5s 执行 | 避免频繁执行
+            # NOTE avoid frequently executing
             if __tick_menu_elapsed__ < 0.5:
                 return
 
             __tick_menu_elapsed__ = 0
 
-            # NOTE 如果 menu_dict 清空则停止计时器
+            # NOTE all menu added the clear the tick callback
             if not menu_dict:
                 global __py_add_menu_tick__
                 unreal.unregister_slate_post_tick_callback(__py_add_menu_tick__)
@@ -281,7 +309,6 @@ if __name__ == "__main__":
                 menu = menus.find_menu(tool_menu)
                 if not menu:
                     continue
-                # NOTE 清除找到的menu
                 menu_list.append(tool_menu)
                 flag = True
                 config.setdefault("menu", menu)
@@ -291,7 +318,7 @@ if __name__ == "__main__":
                 [menu_dict.pop(m) for m in menu_list]
                 menus.refresh_all_widgets()
 
-        # NOTE 注册添加菜单功能
+        # NOTE register custom menu
         callback = partial(timer_add_menu, fail_menus)
         global __py_add_menu_tick__
         __py_add_menu_tick__ = unreal.register_slate_post_tick_callback(callback)
@@ -300,13 +327,11 @@ if __name__ == "__main__":
         )
         unreal_app.aboutToQuit.connect(__QtAppQuit__)
 
-    json_path = posixpath.join(CONFIG, "setting.json")
-    setting = read_json(json_path)
+    setting = read_config_json("setting")
 
     if setting.get("blueprint"):
         register_BP()
 
-    # NOTE 初始化键盘事件
     hotkey_enabled = setting.get("hotkey")
     if hotkey_enabled:
         os_config = {
@@ -327,7 +352,7 @@ if __name__ == "__main__":
         msg = "lost path \n%s\n%s" % (interpreter, exec_file)
         assert os.path.exists(interpreter) and os.path.exists(exec_file), msg
 
-        # NOTE 开一个 Python 子进程进行键盘监听
+        # NOTE spawn a Python process for keyboard listening
         # NOTE https://stackoverflow.com/a/4896288
         ON_POSIX = "posix" in sys.builtin_module_names
         p = Popen(
@@ -350,8 +375,8 @@ if __name__ == "__main__":
         t.daemon = True  # thread dies with the program
         t.start()
 
-        hotkey_path = posixpath.join(CONFIG, "hotkey.json")
-        hotkey_config = read_json(hotkey_path)
+        hotkey_config = read_config_json("hotkey")
+
         callbacks = {
             "COMMAND": lambda command: sys_lib.execute_console_command(None, command),
             "PYTHON": lambda command: eval(command),
@@ -366,7 +391,7 @@ if __name__ == "__main__":
             windll.user32.GetWindowThreadProcessId(h_wnd, byref(pid))
             return pid.value
 
-        def __red_key_tick__(delta_seconds):
+        def __hotkey_tick__(delta_seconds):
             try:
                 line = q.get_nowait()
             except Empty:
@@ -394,6 +419,6 @@ if __name__ == "__main__":
             command = config.get("command", "").format(**FORMAT_ARGS)
             callback(command)
 
-        tick_handle = unreal.register_slate_post_tick_callback(__red_key_tick__)
+        tick_handle = unreal.register_slate_post_tick_callback(__hotkey_tick__)
         __QtAppQuit__ = partial(unreal.unregister_slate_post_tick_callback, tick_handle)
         unreal_app.aboutToQuit.connect(__QtAppQuit__)
