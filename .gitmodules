@@ -1,0 +1,27 @@
+[submodule "Content/_vendor/tk-framework-unrealqt"]
+	path = Content/_vendor/tk-framework-unrealqt
+	url = https://github.com/ue4plugins/tk-framework-unrealqt.git
+[submodule "Content/_vendor/dayu_widgets"]
+	path = Content/_vendor/dayu_widgets
+	url = https://github.com/phenom-films/dayu_widgets.git
+[submodule "Content/_vendor/dayu_path"]
+	path = Content/_vendor/dayu_path
+	url = https://github.com/phenom-films/dayu_path.git
+[submodule "Content/_vendor/singledispatch"]
+	path = Content/_vendor/singledispatch
+	url = https://github.com/ambv/singledispatch.git
+[submodule "Content/_vendor/six"]
+	path = Content/_vendor/six
+	url = https://github.com/benjaminp/six.git
+[submodule "Content/_vendor/keyboard"]
+	path = Content/_vendor/keyboard
+	url = https://github.com/boppreh/keyboard.git
+[submodule "Content/_vendor/Qt.py"]
+	path = Content/_vendor/Qt.py
+	url = https://github.com/mottosso/Qt.py.git
+[submodule "Content/_vendor/dayu_widgets_overlay"]
+	path = Content/_vendor/dayu_widgets_overlay
+	url = https://github.com/FXTD-ODYSSEY/dayu_widgets_overlay.git
+[submodule "Content/_vendor/fbx_python_bindings"]
+	path = Content/_vendor/fbx_python_bindings
+	url = https://github.com/FXTD-ODYSSEY/fbx_python_bindings.git
