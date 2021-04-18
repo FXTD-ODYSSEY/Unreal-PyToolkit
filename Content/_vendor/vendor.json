@@ -23,6 +23,12 @@
             "."
         ]
     },
+    "QBinder": {
+        "module": "QBinder",
+        "folders": [
+            "."
+        ]
+    },
     "keyboard": {
         "module": "keyboard",
         "folders": [
