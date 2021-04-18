@@ -34,7 +34,6 @@ import unreal
 from Qt import QtCore, QtWidgets, QtGui
 from dayu_widgets import dayu_theme
 
-
 sys_lib = unreal.SystemLibrary
 DIR = os.path.dirname(__file__)
 CONTENT = os.path.dirname(DIR)
@@ -163,10 +162,13 @@ def handle_menu(data):
 
 
 def read_json(json_path):
+    import codecs
     try:
-        with open(json_path, "r") as f:
-            data = json.load(f, object_pairs_hook=OrderedDict, encoding="utf-8")
+        with codecs.open(json_path, "r", encoding="utf-8") as f:
+            data = json.load(f, object_pairs_hook=OrderedDict)
     except:
+        import traceback
+        traceback.print_exc()
         data = {}
     return data
 
@@ -175,7 +177,6 @@ def create_menu():
     # NOTE 读取 menu json 配置
     json_path = posixpath.join(CONFIG, "menu.json")
     menu_json = read_json(json_path)
-
     fail_menus = {}
     # NOTE https://forums.unrealengine.com/development-discussion/python-scripting/1767113-making-menus-in-py
     for tool_menu, config in menu_json.items():
