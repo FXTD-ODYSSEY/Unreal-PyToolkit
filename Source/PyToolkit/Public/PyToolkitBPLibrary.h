@@ -78,6 +78,9 @@ class UPyToolkitBPLibrary : public UBlueprintFunctionLibrary
 #pragma region UnrealPythonLibrary
 	// copy from https://github.com/AlexQuevillon/UnrealPythonLibrary
 	UFUNCTION(BlueprintCallable, Category = "PyToolkit|Lib")
+	static TArray<UObject *> GetAllObjects();
+
+	UFUNCTION(BlueprintCallable, Category = "PyToolkit|Lib")
 	static TArray<FString> GetAllProperties(UClass *Class);
 
 	UFUNCTION(BlueprintCallable, Category = "PyToolkit|Lib")

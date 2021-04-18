@@ -11,6 +11,16 @@ UPyToolkitBPLibrary::UPyToolkitBPLibrary(const FObjectInitializer &ObjectInitial
 #pragma region UnrealPythonLibrary
 // copy from https://github.com/AlexQuevillon/UnrealPythonLibrary
 
+TArray<UObject *> UPyToolkitBPLibrary::GetAllObjects()
+{
+    TArray<UObject *> Array;
+    for (TObjectIterator<UObject> Itr; Itr; ++Itr)
+    {
+        Array.Add(*Itr);
+    }
+    return Array;
+}
+
 TArray<FString> UPyToolkitBPLibrary::GetAllProperties(UClass *Class)
 {
     TArray<FString> Ret;

@@ -307,6 +307,7 @@ if __name__ == "__main__":
         
     # This part is for the initial setup. Need to run once to spawn the application.
     unreal_app = QtWidgets.QApplication.instance()
+    
     if not unreal_app:
         unreal_app = QtWidgets.QApplication([])
         tick_handle = unreal.register_slate_post_tick_callback(__QtAppTick__)
@@ -314,12 +315,12 @@ if __name__ == "__main__":
             unreal.unregister_slate_post_tick_callback, tick_handle)
         unreal_app.aboutToQuit.connect(__QtAppQuit__)
 
-        with open(os.path.join(DIR, "main.css"), 'r') as f:
-            unreal_app.setStyleSheet(f.read())
-
         # NOTE 重载 show 方法
         QtWidgets.QWidget.show = slate_deco(QtWidgets.QWidget.show)
 
+    with open(os.path.join(DIR, "main.css"), 'r') as f:
+        unreal_app.setStyleSheet(f.read())
+        
     fail_menus = create_menu()
     if fail_menus:
         global __tick_menu_elapsed__
