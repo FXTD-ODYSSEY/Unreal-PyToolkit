@@ -230,7 +230,7 @@ def create_menu():
 
 def register_BP():
     path = os.path.join(CONTENT, "BP")
-    if not os.path.exists(path):
+    if not os.path.isdir(path):
         return
     for root, _, files in os.walk(path):
         for f in files:

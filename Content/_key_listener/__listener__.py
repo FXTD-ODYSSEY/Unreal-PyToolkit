@@ -23,8 +23,6 @@ CONTENT = os.path.dirname(DIR)
 CONFIG = os.path.join(CONTENT, "_config")
 VENDOR = os.path.join(CONTENT, "_vendor")
 
-# MODULE = DIR
-# sys.path.insert(0, MODULE) if MODULE not in sys.path else None
 MODULE = os.path.join(VENDOR, "keyboard")
 sys.path.insert(0, MODULE) if MODULE not in sys.path else None
 
@@ -44,7 +42,6 @@ def main():
             keyboard.add_hotkey(hotkey, print, args=(hotkey,))
 
         while True:
-            print('line')
             time.sleep(0.1)
             sys.stdout.flush()
     except:
