@@ -79,19 +79,19 @@
     "TextureRenderTargetCube": "RTC_",
     "TextureLightProfile": "TLP",
     "CurveLinearColor": {
-        "Prefix": "Curve_",
+        "prefix": "Curve_",
         "suffix": "_Color"
     },
     "CurveTable": {
-        "Prefix": "Curve_",
+        "prefix": "Curve_",
         "suffix": "_Table"
     },
     "CurveFloat": {
-        "Prefix": "Curve_",
+        "prefix": "Curve_",
         "suffix": "_Float"
     },
     "CurveVector": {
-        "Prefix": "Curve_",
+        "prefix": "Curve_",
         "suffix": "_Vector"
     },
     "*AnimatedVectorField": "VFA_",
