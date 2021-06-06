@@ -17,13 +17,13 @@
 	"Modules": [
 		{
 			"Name": "PyToolkit",
-			"Type": "Editor",
+			"Type": "EditorNoCommandlet",
 			"LoadingPhase": "PreLoadingScreen"
 		}
 	],
 	"Plugins": [
 		{
-			"Name": "LevelSequenceEditor",
+			"Name": "EditorScriptingUtilities",
 			"Enabled": true
 		},
 		{
