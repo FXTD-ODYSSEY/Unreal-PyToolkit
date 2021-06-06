@@ -1,75 +1,313 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Launcher_Container</class>
- <widget class="QWidget" name="Launcher_Container">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>296</width>
-    <height>58</height>
+    <width>440</width>
+    <height>163</height>
    </rect>
   </property>
-  <property name="maximumSize">
+  <property name="minimumSize">
    <size>
-    <width>16777215</width>
-    <height>16777215</height>
+    <width>400</width>
+    <height>0</height>
    </size>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <property name="styleSheet">
-   <string notr="true"/>
-  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="topMargin">
+    <number>0</number>
+   </property>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <property name="spacing">
+      <number>6</number>
+     </property>
      <item>
-      <widget class="QLabel" name="Label">
-       <property name="minimumSize">
+      <widget class="QWidget" name="Loading_Container" native="true">
+       <property name="styleSheet">
+        <string notr="true">background:transparent</string>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout_6">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="Loading_Icon">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="baseSize">
+           <size>
+            <width>30</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">background:transparent</string>
+          </property>
+          <property name="text">
+           <string>Loading Icon</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="Loading_Label">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">background:transparent</string>
+          </property>
+          <property name="text">
+           <string>Loading Info ...</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
         <size>
-         <width>35</width>
+         <width>40</width>
          <height>20</height>
         </size>
        </property>
-       <property name="text">
+      </spacer>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="StateGroup">
+       <property name="styleSheet">
+        <string notr="true">QGroupBox{
+border:none;
+background:transparent;
+}
+QRadioButton::indicator {
+image:none;
+width: 0px;
+}
+
+
+QRadioButton{
+background:transparent;
+text-align:center;
+padding-right:3px;
+
+}
+QRadioButton::hover {
+border:1px solid rgba(175, 47, 47, 0.4);
+}
+QRadioButton::checked{
+border:1px solid rgba(175, 47, 47, 0.8);
+font-weight:bold;
+color:rgb(250, 140, 22);
+}</string>
+       </property>
+       <property name="title">
         <string/>
        </property>
-       <property name="pixmap">
-        <pixmap>SP_FileDialogContentsView</pixmap>
+       <property name="flat">
+        <bool>false</bool>
        </property>
-       <property name="scaledContents">
-        <bool>true</bool>
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QRadioButton" name="AllState">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
+          <property name="text">
+           <string>最近使用</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="ActiveState">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>收藏夹</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="CompletedState">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>黑名单</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <property name="spacing">
+      <number>6</number>
+     </property>
+     <item>
+      <widget class="MToolButton" name="Settings_BTN">
+       <property name="text">
+        <string>Settings Icon</string>
+       </property>
+       <property name="popupMode">
+        <enum>QToolButton::DelayedPopup</enum>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="MLineEdit" name="LineEdit">
+      <widget class="MComboBox" name="Search_Combo">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <item>
+        <property name="text">
+         <string>Python</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>C++</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item>
+      <widget class="MLineEdit" name="Search_LE">
        <property name="text">
         <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="Search_Label">
+       <property name="styleSheet">
+        <string notr="true">background:transparent</string>
+       </property>
+       <property name="text">
+        <string>Search Info</string>
        </property>
       </widget>
      </item>
     </layout>
    </item>
    <item>
-    <widget class="QLabel" name="Error_Label">
-     <property name="styleSheet">
-      <string notr="true">color:red</string>
-     </property>
-     <property name="text">
-      <string>TextLabel</string>
-     </property>
-    </widget>
+    <widget class="QListWidget" name="Search_List"/>
    </item>
   </layout>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>9999</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="defaultUp">
+    <bool>false</bool>
+   </property>
+   <property name="nativeMenuBar">
+    <bool>true</bool>
+   </property>
+   <widget class="QMenu" name="Settings_Menu">
+    <property name="tearOffEnabled">
+     <bool>false</bool>
+    </property>
+    <property name="title">
+     <string/>
+    </property>
+    <property name="separatorsCollapsible">
+     <bool>true</bool>
+    </property>
+    <property name="toolTipsVisible">
+     <bool>true</bool>
+    </property>
+    <addaction name="actionTest"/>
+   </widget>
+   <addaction name="Settings_Menu"/>
+  </widget>
+  <action name="actionTest">
+   <property name="text">
+    <string>test</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
    <class>MLineEdit</class>
    <extends>QLineEdit</extends>
    <header>dayu_widgets/line_edit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>MComboBox</class>
+   <extends>QComboBox</extends>
+   <header>dayu_widgets/combo_box.h</header>
+  </customwidget>
+  <customwidget>
+   <class>MToolButton</class>
+   <extends>QToolButton</extends>
+   <header>dayu_widgets.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
