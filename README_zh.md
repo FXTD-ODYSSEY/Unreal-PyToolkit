@@ -22,8 +22,9 @@
 
 ## Python 库依赖
 
-Content 目录下的 Python 目录默认会添加到 Python sys.path 里面   
-Python 目录里面添加的依赖库如下:    
+Python 库依赖在 `Content/_vendor` 目录下
+默认通过 `Content/Python/init_unreal.py` 自动添加到 Python sys.path  
+ 
 + [tk-framework-unrealqt](https://github.com/ue4plugins/tk-framework-unrealqt) 
 + [keyboard](https://github.com/boppreh/keyboard) 
 + [fbx_python_bindings](https://github.com/FXTD-ODYSSEY/fbx_python_bindings)

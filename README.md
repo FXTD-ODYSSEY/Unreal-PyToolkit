@@ -19,7 +19,7 @@
 ## Python Dependency
 
 `Content/_vender` directory Contain all the related dependency module   
-they will add to python path base on `Python/init_unreal.py`     
+they will add to python `sys.path` base on `Content/Python/init_unreal.py`     
 + [tk-framework-unrealqt](https://github.com/ue4plugins/tk-framework-unrealqt) 
 + [keyboard](https://github.com/boppreh/keyboard) 
 + [fbx_python_bindings](https://github.com/FXTD-ODYSSEY/fbx_python_bindings)
