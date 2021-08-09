@@ -45,7 +45,7 @@ def main():
             time.sleep(0.1)
             sys.stdout.flush()
     except:
-        print("error")
+        sys.exit()
 
 
 if __name__ == "__main__":

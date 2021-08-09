@@ -19,10 +19,15 @@ import codecs
 import platform
 import posixpath
 import traceback
+import subprocess
 from subprocess import PIPE, Popen
 from threading import Thread
 from functools import partial
 from collections import OrderedDict, defaultdict
+
+startupinfo = subprocess.STARTUPINFO()
+startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+startupinfo.wShowWindow = subprocess.SW_HIDE
 
 try:
     from queue import Queue, Empty
@@ -356,11 +361,12 @@ if __name__ == "__main__":
         ON_POSIX = "posix" in sys.builtin_module_names
         p = Popen(
             [interpreter, exec_file],
-            shell=True,
+            shell=False,
             stdout=PIPE,
             stderr=PIPE,
             bufsize=1,
             close_fds=ON_POSIX,
+            startupinfo=startupinfo,
         )
         unreal_app.aboutToQuit.connect(p.terminate)
 
