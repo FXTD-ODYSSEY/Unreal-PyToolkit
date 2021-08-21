@@ -38,9 +38,10 @@ import unreal
 
 DIR = os.path.dirname(__file__)
 CONTENT = os.path.dirname(DIR)
-CONFIG = os.path.join(CONTENT, "_config")
+PyToolkit = os.path.join(CONTENT, "PyToolkit")
 VENDOR = os.path.join(CONTENT, "_vendor")
-PYTHON = os.path.join(CONTENT, "Python")
+CONFIG = os.path.join(PyToolkit, "_config")
+PYTHON = os.path.join(PyToolkit, "Python")
 menu_py = os.path.join(CONFIG, "menu.py")
 MENU_MODULE = imp.load_source("__menu__", menu_py) if os.path.exists(menu_py) else None
 MENU_ADD_TIME = 0.2
@@ -92,7 +93,7 @@ def add_vendor_path():
 
     for module, paths in module_data.items():
         if not can_import(module):
-            sys.path.extend(paths)
+            sys.path = paths + sys.path
 
 
 add_vendor_path()
@@ -105,7 +106,7 @@ sys_lib = unreal.SystemLibrary
 
 menus = unreal.ToolMenus.get()
 
-FORMAT_ARGS = {"Content": CONTENT}
+FORMAT_ARGS = {"Content": CONTENT, "PyToolkit": PyToolkit}
 
 COMMAND_TYPE = {
     "COMMAND": unreal.ToolMenuStringCommandType.COMMAND,
@@ -205,6 +206,7 @@ def handle_menu(data):
                     context = unreal.ToolMenuContext()
                     script_label = str(script_object.get_label(context))
                     if not script_label:
+
                         @unreal.uclass()
                         class RuntimeScriptClass(script_class):
                             label = unreal.uproperty(str)
@@ -221,8 +223,8 @@ def handle_menu(data):
         prop.setdefault("type", unreal.MultiBlockType.MENU_ENTRY)
         entry = unreal.ToolMenuEntry(**prop)
         entry.set_label(label)
+        
         typ = COMMAND_TYPE.get(config.get("type", "").upper(), 0)
-
         command = config.get("command", "").format(**FORMAT_ARGS)
         entry.set_string_command(typ, "", string=command)
         menu.add_menu_entry(config.get("section", ""), entry)
@@ -360,12 +362,12 @@ if __name__ == "__main__":
 
     if setting.get("hook"):
         # NOTE 调用 hook 下的脚本
-        path = os.path.join(CONTENT, "_hook")
+        path = os.path.join(PyToolkit, "_hook")
         os.path.isdir(path) and run_py(path)
 
     if setting.get("blueprint"):
         # NOTE 执行 BP 目录下所有的 python 脚本 注册蓝图
-        path = os.path.join(CONTENT, "BP")
+        path = os.path.join(PyToolkit, "BP")
         os.path.isdir(path) and run_py(path)
 
     hotkey_enabled = setting.get("hotkey")
@@ -384,7 +386,7 @@ if __name__ == "__main__":
         interpreter = os.path.join(ThirdParty, PYTHON, os_platform, "python.exe")
         interpreter = os.path.abspath(interpreter)
 
-        exec_file = os.path.join(CONTENT, "_key_listener", "__listener__.py")
+        exec_file = os.path.join(PyToolkit, "_key_listener", "__listener__.py")
         msg = "lost path \n%s\n%s" % (interpreter, exec_file)
         assert os.path.exists(interpreter) and os.path.exists(exec_file), msg
 

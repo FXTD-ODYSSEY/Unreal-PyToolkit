@@ -55,49 +55,49 @@
                         "section": "Model",
                         "label": "场景摆放工具",
                         "type": "COMMAND",
-                        "command": "py \"{Content}/Model/Placer/placer.py\""
+                        "command": "py \"{PyToolkit}/Model/Placer/placer.py\""
                     },
                     "skeletal_socket_tool": {
                         "section": "Anim",
                         "label": "Socket 自动化添加工具",
                         "type": "COMMAND",
-                        "command": "py \"{Content}/Anim/skeletal_socket_tool/skeletal_socket_tool.py\""
+                        "command": "py \"{PyToolkit}/Anim/skeletal_socket_tool/skeletal_socket_tool.py\""
                     },
                     "fbx_importer": {
                         "section": "Anim",
                         "label": "动画导入比较面板",
                         "type": "COMMAND",
-                        "command": "py \"{Content}/Anim/FBXImporter/main.py\""
+                        "command": "py \"{PyToolkit}/Anim/FBXImporter/main.py\""
                     },
                     "render_tool": {
                         "section": "Render",
                         "label": "Sequencer 批量渲染工具",
                         "type": "COMMAND",
-                        "command": "py \"{Content}/Render/sequencer_batch_render/render_tool.py\""
+                        "command": "py \"{PyToolkit}/Render/sequencer_batch_render/render_tool.py\""
                     },
                     "launcher": {
                         "section": "Msic",
                         "label": "UE启动器",
                         "type": "COMMAND",
-                        "command": "py \"{Content}/_key_listener/ue_launcher/launcher.py\""
+                        "command": "py \"{PyToolkit}/_key_listener/ue_launcher/launcher.py\""
                     },
                     "property_transfer": {
                         "section": "Msic",
                         "label": "属性传递工具",
                         "type": "COMMAND",
-                        "command": "py \"{Content}/Msic/property_transfer/property_transfer_tool.py\""
+                        "command": "py \"{PyToolkit}/Msic/property_transfer/property_transfer_tool.py\""
                     },
                     "renamer": {
                         "section": "Msic",
                         "label": "批量改名工具",
                         "type": "COMMAND",
-                        "command": "py \"{Content}/Msic/Renamer/renamer.py\""
+                        "command": "py \"{PyToolkit}/Msic/Renamer/renamer.py\""
                     },
                     "restart": {
                         "section": "Msic",
                         "label": "引擎重启",
                         "type": "COMMAND",
-                        "command": "py \"{Content}/Msic/restart_engine.py\""
+                        "command": "py \"{PyToolkit}/Msic/restart_engine.py\""
                     },
                     "document": {
                         "section": "Help",
@@ -125,7 +125,7 @@
                 "section": "toolbar_section",
                 "label": "Restart",
                 "type": "COMMAND",
-                "command": "py \"{Content}/Msic/restart_engine.py\""
+                "command": "py \"{PyToolkit}/Msic/restart_engine.py\""
             }
         }
     },
@@ -141,11 +141,11 @@
                 "section": "FileProject",
                 "label": "Restart",
                 "type": "COMMAND",
-                "command": "py \"{Content}/Msic/restart_engine.py\""
+                "command": "py \"{PyToolkit}/Msic/restart_engine.py\""
             }
         }
     },
-    "ContentBrowser.AssetContextMenu": {
+    "PyToolkitBrowser.AssetContextMenu": {
         "section": {
             "asset_section": {
                 "label": "PyToolkit 资源菜单嵌入测试",
@@ -166,7 +166,7 @@
                 "label": "输出模型 UV 边界图",
                 "section": "entry_section",
                 "type": "COMMAND",
-                "command": "py \"{Content}/Msic/_menu/01_uv_capture.py\""
+                "command": "py \"{PyToolkit}/Msic/_menu/01_uv_capture.py\""
             },
             "TextureReimport_size256": {
                 "property": {
@@ -175,7 +175,7 @@
                 "label": "贴图重载 256 x 256",
                 "section": "entry_section",
                 "type": "COMMAND",
-                "command": "py \"{Content}/Msic/_menu/02_reimport_texture.py\" 256"
+                "command": "py \"{PyToolkit}/Msic/_menu/02_reimport_texture.py\" 256"
             },
             "TextureReimport_size512": {
                 "property": {
@@ -184,7 +184,7 @@
                 "label": "贴图重载 512 x 512",
                 "section": "entry_section",
                 "type": "COMMAND",
-                "command": "py \"{Content}/Msic/_menu/02_reimport_texture.py\" 512"
+                "command": "py \"{PyToolkit}/Msic/_menu/02_reimport_texture.py\" 512"
             },
             "TextureReimport_size1024": {
                 "property": {
@@ -193,7 +193,7 @@
                 "label": "贴图重载 1024 x 1024",
                 "section": "entry_section",
                 "type": "COMMAND",
-                "command": "py \"{Content}/Msic/_menu/02_reimport_texture.py\" 1024"
+                "command": "py \"{PyToolkit}/Msic/_menu/02_reimport_texture.py\" 1024"
             },
             "TextureReimport_size2048": {
                 "property": {
@@ -202,7 +202,7 @@
                 "label": "贴图重载 2048 x 2048",
                 "section": "entry_section",
                 "type": "COMMAND",
-                "command": "py \"{Content}/Msic/_menu/02_reimport_texture.py\" 2048"
+                "command": "py \"{PyToolkit}/Msic/_menu/02_reimport_texture.py\" 2048"
             }
         },
         "sub_menu": {
@@ -244,7 +244,7 @@
             }
         }
     },
-    "ContentBrowser.FolderContextMenu": {
+    "PyToolkitBrowser.FolderContextMenu": {
         "section": {
             "folder_section": {
                 "label": "PyToolkit 文件夹菜单嵌入测试",
@@ -273,11 +273,11 @@
             }
         }
     },
-    "ContentBrowser.AddNewContextMenu": {
+    "PyToolkitBrowser.AddNewContextMenu": {
         "section": {
             "new_asset_section": {
                 "label": "PyToolkit 创建新资源菜单嵌入测试",
-                "insert_name": "ContentBrowserNewAdvancedAsset",
+                "insert_name": "PyToolkitBrowserNewAdvancedAsset",
                 "insert_type": "AFTER"
             }
         },

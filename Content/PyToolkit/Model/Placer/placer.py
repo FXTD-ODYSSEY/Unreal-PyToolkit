@@ -13,6 +13,7 @@ __date__ = "2020-09-28 21:29:03"
 
 
 import os
+import struct
 import tempfile
 import posixpath
 import webbrowser
@@ -287,7 +288,8 @@ class PlacerWidget(QtWidgets.QWidget):
             if not isinstance(asset, unreal.StaticMesh):
                 continue
             widget = PlacerItem(asset, self)
-            data = "".join([chr(v) for v in py_lib.get_thumbnial(asset)])
+            data = py_lib.get_thumbnail(asset)
+            data = struct.pack("=" + "B" * len(data), *data)
             image = QtGui.QImage(data, size, size, QtGui.QImage.Format_RGB32)
             widget.setPixmap(QtGui.QPixmap.fromImage(image).scaled(size / 2, size / 2))
             item = QtWidgets.QListWidgetItem(self.List_Container)
