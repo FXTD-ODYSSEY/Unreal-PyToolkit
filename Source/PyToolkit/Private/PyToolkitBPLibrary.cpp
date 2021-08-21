@@ -462,4 +462,16 @@ bool UPyToolkitBPLibrary::ExecLevelEditorAction(FString Action)
     return Available;
 }
 
+void UPyToolkitBPLibrary::RunFunction(UObject *CDO, UFunction *Function)
+{
+    // We dont run this on the CDO, as bad things could occur!
+    UObject *TempObject = NewObject<UObject>(GetTransientPackage(), Cast<UObject>(CDO)->GetClass());
+    TempObject->AddToRoot(); // Some Blutility actions might run GC so the TempObject needs to be rooted to avoid getting destroyed
+
+    FScopedTransaction Transaction(NSLOCTEXT("UnrealEd", "BlutilityAction", "Blutility Action"));
+    FEditorScriptExecutionGuard ScriptGuard;
+    TempObject->ProcessEvent(Function, nullptr);
+    TempObject->RemoveFromRoot();
+}
+
 #pragma endregion

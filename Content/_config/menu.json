@@ -151,9 +151,79 @@
                 "label": "PyToolkit 资源菜单嵌入测试",
                 "insert_name": "AssetContextSourceControl",
                 "insert_type": "AFTER"
+            },
+            "entry_section": {
+                "label": "资源批处理",
+                "insert_name": "CommonAssetActions",
+                "insert_type": "AFTER"
+            }
+        },
+        "entry": {
+            "UVCapture": {
+                "property": {
+                    "script_object": "UVCapture"
+                },
+                "label": "输出模型 UV 边界图",
+                "section": "entry_section",
+                "type": "COMMAND",
+                "command": "py \"{Content}/Msic/_menu/01_uv_capture.py\""
+            },
+            "TextureReimport_size256": {
+                "property": {
+                    "script_object": "TextureReimport"
+                },
+                "label": "贴图重载 256 x 256",
+                "section": "entry_section",
+                "type": "COMMAND",
+                "command": "py \"{Content}/Msic/_menu/02_reimport_texture.py\" 256"
+            },
+            "TextureReimport_size512": {
+                "property": {
+                    "script_object": "TextureReimport"
+                },
+                "label": "贴图重载 512 x 512",
+                "section": "entry_section",
+                "type": "COMMAND",
+                "command": "py \"{Content}/Msic/_menu/02_reimport_texture.py\" 512"
+            },
+            "TextureReimport_size1024": {
+                "property": {
+                    "script_object": "TextureReimport"
+                },
+                "label": "贴图重载 1024 x 1024",
+                "section": "entry_section",
+                "type": "COMMAND",
+                "command": "py \"{Content}/Msic/_menu/02_reimport_texture.py\" 1024"
+            },
+            "TextureReimport_size2048": {
+                "property": {
+                    "script_object": "TextureReimport"
+                },
+                "label": "贴图重载 2048 x 2048",
+                "section": "entry_section",
+                "type": "COMMAND",
+                "command": "py \"{Content}/Msic/_menu/02_reimport_texture.py\" 2048"
             }
         },
         "sub_menu": {
+            "batch_menu":{
+                "init": {
+                    "label": "通用资源批处理选项",
+                    "section": "entry_section",
+                    "tooltip": "通用资源批处理选项"
+                },
+                "section": {
+                    "Test": "测试"
+                },
+                "entry": {
+                    "Common": {
+                        "section": "Test",
+                        "label": "演示:资源菜单触发(打印到屏幕)",
+                        "type": "PYTHON",
+                        "command": "unreal.SystemLibrary.print_string(None,'资源菜单触发',text_color=[255,255,255,255])"
+                    }
+                }
+            },
             "py_menu": {
                 "init": {
                     "label": "PyToolkit测试",
@@ -228,7 +298,28 @@
                         "type": "PYTHON",
                         "command": "unreal.SystemLibrary.print_string(None,'新资源菜单触发',text_color=[255,255,255,255])"
                     }
+                },
+                "sub_menu":{
+                    "test_menu":{
+                        "init": {
+                            "label": "PyToolkit 多重 sub_menu",
+                            "section": "new_asset_section",
+                            "tooltip": "PyToolkit 多重 sub_menu"
+                        },
+                        "section": {
+                            "Test": "测试"
+                        },
+                        "entry": {
+                            "Common": {
+                                "section": "Test",
+                                "label": "演示:PyToolkit 多重 sub_menu(打印到屏幕)",
+                                "type": "PYTHON",
+                                "command": "unreal.SystemLibrary.print_string(None,'PyToolkit 多重 sub_menu',text_color=[255,255,255,255])"
+                            }
+                        }
+                    }
                 }
+
             }
         }
     }

@@ -1,5 +1,6 @@
 {
     "hotkey":true,
+    "hook":true,
     "blueprint":true
 }
 

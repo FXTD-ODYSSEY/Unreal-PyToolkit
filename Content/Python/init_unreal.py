@@ -13,8 +13,8 @@ __date__ = "2020-05-30 21:47:47"
 
 import os
 import sys
+import imp
 import json
-import time
 import codecs
 import platform
 import posixpath
@@ -41,6 +41,10 @@ CONTENT = os.path.dirname(DIR)
 CONFIG = os.path.join(CONTENT, "_config")
 VENDOR = os.path.join(CONTENT, "_vendor")
 PYTHON = os.path.join(CONTENT, "Python")
+menu_py = os.path.join(CONFIG, "menu.py")
+MENU_MODULE = imp.load_source("__menu__", menu_py) if os.path.exists(menu_py) else None
+MENU_ADD_TIME = 0.2
+
 
 def can_import(module):
     try:
@@ -63,8 +67,10 @@ def read_json(json_path):
         data = {}
     return data
 
+
 def read_config_json(config):
     return read_json(os.path.join(CONFIG, "%s.json" % config))
+
 
 def add_vendor_path():
     config_path = os.path.join(VENDOR, "vendor.json")
@@ -87,6 +93,7 @@ def add_vendor_path():
     for module, paths in module_data.items():
         if not can_import(module):
             sys.path.extend(paths)
+
 
 add_vendor_path()
 
@@ -145,7 +152,7 @@ ACTION_TYPE = {
 
 def handle_menu(data):
     """
-    handle_menu recursive menu generation
+    handle_menu 递归生成菜单
     """
     menu = data.get("menu")
     if not menu:
@@ -154,6 +161,7 @@ def handle_menu(data):
     for section, config in data.get("section", {}).items():
         config = config if isinstance(config, dict) else {"label": config}
         config.setdefault("label", "untitle")
+        # NOTE 如果存在 insert_type 需要将字符串转换
         insert = INSERT_TYPE.get(config.get("insert_type", "").upper())
         if insert:
             config["insert_type"] = insert
@@ -169,15 +177,13 @@ def handle_menu(data):
         menu.set_editor_property(prop, value)
 
     for entry_name, config in data.get("entry", {}).items():
+        label = config.get("label", "untitle")
         prop = config.get("property", {})
-
-        for k, v in prop.items():
-            prop.pop("owner") if not prop.get("owner") is None else None
-            prop.pop("script_object") if not prop.get("script_object") is None else None
-
-            if v == "":
-                prop.pop(k)
-            elif k == "insert_position":
+        for k in prop.copy():
+            v = prop.pop(k)
+            if v and k in ["name", "tutorial_highlight_name"]:
+                prop[k] = v
+            if k == "insert_position":
                 position = INSERT_TYPE.get(v.get("position", "").upper())
                 v["position"] = (
                     position if position else unreal.ToolMenuInsertType.FIRST
@@ -189,15 +195,32 @@ def handle_menu(data):
                 prop[k] = typ if typ else unreal.MultiBlockType.MENU_ENTRY
             elif k == "user_interface_action_type":
                 typ = ACTION_TYPE.get(str(v).upper())
-                prop.update({k: typ}) if typ else prop.pop(k)
+                typ and prop.update({k: typ})
+            elif k == "script_object":
+                script_class = getattr(MENU_MODULE, v, None)
+                if script_class and issubclass(
+                    script_class, unreal.ToolMenuEntryScript
+                ):
+                    script_object = script_class()
+                    context = unreal.ToolMenuContext()
+                    script_label = str(script_object.get_label(context))
+                    if not script_label:
+                        @unreal.uclass()
+                        class RuntimeScriptClass(script_class):
+                            label = unreal.uproperty(str)
+
+                            @unreal.ufunction(override=True)
+                            def get_label(self, context):
+                                return self.label
+
+                        script_object = RuntimeScriptClass()
+                        script_object.label = label
+                    prop[k] = script_object
 
         prop.setdefault("name", entry_name)
         prop.setdefault("type", unreal.MultiBlockType.MENU_ENTRY)
         entry = unreal.ToolMenuEntry(**prop)
-        tooltip = config.get("tooltip")
-        entry.set_tool_tip(tooltip) if tooltip else None
-
-        entry.set_label(config.get("label", "untitle"))
+        entry.set_label(label)
         typ = COMMAND_TYPE.get(config.get("type", "").upper(), 0)
 
         command = config.get("command", "").format(**FORMAT_ARGS)
@@ -214,6 +237,7 @@ def handle_menu(data):
         sub_menu = menu.add_sub_menu(owner, section_name, name, label, tooltip)
         config.setdefault("menu", sub_menu)
         handle_menu(config)
+
 
 def create_menu():
     # NOTE Read menu json settings
@@ -233,21 +257,23 @@ def create_menu():
     return fail_menus
 
 
-def register_BP():
-    path = os.path.join(CONTENT, "BP")
-    if not os.path.isdir(path):
-        return
-    for root, _, files in os.walk(path):
-        for f in files:
-            if not f.endswith(".py"):
-                continue
-            command = 'py "%s"' % posixpath.join(root, f).replace("\\", "/")
-            unreal.SystemLibrary.execute_console_command(None, command)
+def run_py(path):
+    if os.path.isfile(path) and path.endswith(".py"):
+        command = 'py "%s"' % path
+        sys_lib.execute_console_command(None, command)
+    else:
+        for root, _, files in os.walk(path):
+            for f in files:
+                if not f.endswith(".py"):
+                    continue
+                command = 'py "%s"' % posixpath.join(root, f).replace("\\", "/")
+                sys_lib.execute_console_command(None, command)
+
 
 def slate_deco(func):
     def wrapper(self, single=True, *args, **kwargs):
         if single:
-            # TODO crash 
+            # TODO crash
             for win in QtWidgets.QApplication.allWidgets():
                 if win is self:
                     continue
@@ -262,7 +288,6 @@ def slate_deco(func):
         return res
 
     return wrapper
-
 
 
 if __name__ == "__main__":
@@ -296,7 +321,7 @@ if __name__ == "__main__":
             __tick_menu_elapsed__ += delta
 
             # NOTE avoid frequently executing
-            if __tick_menu_elapsed__ < 0.5:
+            if __tick_menu_elapsed__ < MENU_ADD_TIME:
                 return
 
             __tick_menu_elapsed__ = 0
@@ -333,8 +358,15 @@ if __name__ == "__main__":
 
     setting = read_config_json("setting")
 
+    if setting.get("hook"):
+        # NOTE 调用 hook 下的脚本
+        path = os.path.join(CONTENT, "_hook")
+        os.path.isdir(path) and run_py(path)
+
     if setting.get("blueprint"):
-        register_BP()
+        # NOTE 执行 BP 目录下所有的 python 脚本 注册蓝图
+        path = os.path.join(CONTENT, "BP")
+        os.path.isdir(path) and run_py(path)
 
     hotkey_enabled = setting.get("hotkey")
     if hotkey_enabled:
