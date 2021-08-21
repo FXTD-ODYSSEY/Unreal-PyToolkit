@@ -171,7 +171,7 @@ class UPyToolkitBPLibrary : public UBlueprintFunctionLibrary
 	static FString GetCurrentContentPath();
 
 	UFUNCTION(BlueprintCallable, Category = "PyToolkit|Msic")
-	static TArray<uint8> GetThumbnial(UObject *MeshObject, int32 _imageRes = 128);
+	static TArray<uint8> GetThumbnail(UObject *MeshObject, int32 _imageRes = 128);
 	
 	UFUNCTION(BlueprintCallable, Category = "PyToolkit|Msic")
 	static void RunFunction(UObject* CDO, UFunction* Function);

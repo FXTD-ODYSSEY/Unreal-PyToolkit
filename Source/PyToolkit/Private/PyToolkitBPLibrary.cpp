@@ -381,7 +381,7 @@ FString UPyToolkitBPLibrary::GetCurrentContentPath()
 }
 
 
-TArray<uint8> UPyToolkitBPLibrary::GetThumbnial(UObject* MeshObject,int32 _imageRes)
+TArray<uint8> UPyToolkitBPLibrary::GetThumbnail(UObject* MeshObject,int32 _imageRes)
 {
     // NOTE https://blog.csdn.net/zhangxiaofan666/article/details/97643308
     // int32 _imageRes = 128;
