@@ -145,7 +145,7 @@
             }
         }
     },
-    "PyToolkitBrowser.AssetContextMenu": {
+    "ContentBrowser.AssetContextMenu": {
         "section": {
             "asset_section": {
                 "label": "PyToolkit 资源菜单嵌入测试",
@@ -244,7 +244,7 @@
             }
         }
     },
-    "PyToolkitBrowser.FolderContextMenu": {
+    "ContentBrowser.FolderContextMenu": {
         "section": {
             "folder_section": {
                 "label": "PyToolkit 文件夹菜单嵌入测试",
@@ -273,7 +273,7 @@
             }
         }
     },
-    "PyToolkitBrowser.AddNewContextMenu": {
+    "ContentBrowser.AddNewContextMenu": {
         "section": {
             "new_asset_section": {
                 "label": "PyToolkit 创建新资源菜单嵌入测试",

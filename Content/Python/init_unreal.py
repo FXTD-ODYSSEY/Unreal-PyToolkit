@@ -291,7 +291,6 @@ def slate_deco(func):
 
     return wrapper
 
-
 if __name__ == "__main__":
 
     # NOTE This part is for the initial setup. Need to run once to spawn the application.

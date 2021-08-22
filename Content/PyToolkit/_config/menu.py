@@ -34,7 +34,7 @@ class UVCapture(unreal.ToolMenuEntryScript):
     
     @unreal.ufunction(override=True)
     def is_visible(self,context):
-        print(self.label)
+        # print(self.label)
         types = (unreal.StaticMesh,unreal.SkeletalMesh)
         assets = [asset for asset in util_lib.get_selected_assets() if isinstance(asset,types)]
         return bool(assets)

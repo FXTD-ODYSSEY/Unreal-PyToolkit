@@ -19,8 +19,9 @@ from functools import partial
 
 
 DIR = os.path.dirname(__file__)
-CONTENT = os.path.dirname(DIR)
-CONFIG = os.path.join(CONTENT, "_config")
+PyToolkit = os.path.dirname(DIR)
+CONFIG = os.path.join(PyToolkit, "_config")
+CONTENT = os.path.dirname(PyToolkit)
 VENDOR = os.path.join(CONTENT, "_vendor")
 
 MODULE = os.path.join(VENDOR, "keyboard")

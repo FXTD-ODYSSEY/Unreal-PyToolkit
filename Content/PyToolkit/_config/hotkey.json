@@ -1,10 +1,10 @@
 {
     "alt+`":{
         "type":"COMMAND",
-        "command": "py \"{Content}/_key_listener/ue_launcher/launcher.py\""
+        "command": "py \"{PyToolkit}/_key_listener/ue_launcher/launcher.py\""
     },
     "ctrl+shift+c":{
         "type":"COMMAND",
-        "command": "py \"{Content}/_key_listener/copy_reference.py\""
+        "command": "py \"{PyToolkit}/_key_listener/copy_reference.py\""
     }
 }

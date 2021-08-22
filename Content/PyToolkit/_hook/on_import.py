@@ -40,7 +40,6 @@ def main():
     # on_asset_post_import_delegate.add_callable(OnAssetImport.import_log)
     on_asset_post_import_delegate.add_callable(import_log)
     import_subsystem.set_editor_property("on_asset_post_import",on_asset_post_import_delegate)
-    print(on_asset_post_import_delegate)
 
 if __name__ == "__main__":
     main()
