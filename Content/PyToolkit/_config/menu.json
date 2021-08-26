@@ -163,7 +163,7 @@
                 "property": {
                     "script_object": "UVCapture"
                 },
-                "label": "输出模型 UV 边界图",
+                "label": "输出模型 UV 快照",
                 "section": "entry_section",
                 "type": "COMMAND",
                 "command": "py \"{PyToolkit}/Msic/_menu/01_uv_capture.py\""
@@ -206,7 +206,7 @@
             }
         },
         "sub_menu": {
-            "batch_menu":{
+            "batch_menu": {
                 "init": {
                     "label": "通用资源批处理选项",
                     "section": "entry_section",
@@ -299,8 +299,8 @@
                         "command": "unreal.SystemLibrary.print_string(None,'新资源菜单触发',text_color=[255,255,255,255])"
                     }
                 },
-                "sub_menu":{
-                    "test_menu":{
+                "sub_menu": {
+                    "test_menu": {
                         "init": {
                             "label": "PyToolkit 多重 sub_menu",
                             "section": "new_asset_section",
@@ -319,7 +319,6 @@
                         }
                     }
                 }
-
             }
         }
     }
