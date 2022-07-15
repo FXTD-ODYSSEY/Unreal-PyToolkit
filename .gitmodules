@@ -25,6 +25,6 @@
 [submodule "Content/_vendor/fbx_python_bindings"]
 	path = Content/_vendor/fbx_python_bindings
 	url = https://github.com/FXTD-ODYSSEY/fbx_python_bindings.git
-[submodule ".\\Content\\_vendor\\QBinder"]
-	path = .\\Content\\_vendor\\QBinder
+[submodule "Content/_vendor/QBinder"]
+	path = Content/_vendor/QBinder
 	url = https://github.com/FXTD-ODYSSEY/QBinder.git
